@@ -1,0 +1,12 @@
+docx2pdf==0.1.8
+fpdf==1.7.2
+langchain==0.1.4
+langchain_community==0.0.16
+langchain_openai==0.0.5
+pandas==1.5.3
+pinecone==0.1.0
+python_docx==1.1.0
+st_gsheets_connection==0.0.3
+streamlit==1.30.0
+tiktoken==0.5.2
+tqdm==4.66.1
