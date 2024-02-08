@@ -4,24 +4,25 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 
-def insert_into_word_doc(doc_path,list_members,df_premiums):
+def insert_into_word_doc(doc_path, list_members, df_premiums):
     # Define the doc
     doc = Document(doc_path)
 
     # Modify df_offer
     doc.tables[0].cell(1, 3).text = datetime.datetime.today().strftime("%d-%m-%Y")
-    doc.tables[0].cell(1, 4).text = (datetime.datetime.today() + datetime.timedelta(days=30)).strftime("%d-%m-%Y")
+    doc.tables[0].cell(1, 4).text = (
+        datetime.datetime.today() + datetime.timedelta(days=30)
+    ).strftime("%d-%m-%Y")
 
     # Center align the text
-    for cell_number in range(3,5):
+    for cell_number in range(3, 5):
         for paragraph in doc.tables[0].cell(1, cell_number).paragraphs:
             paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
-
 
     # Format correctly
     for i, member in enumerate(list_members):
         # Extract the date from the current member
-        year, month, day = str(member[2]).split('-')  # Assuming the date is at index 2
+        year, month, day = str(member[2]).split("-")  # Assuming the date is at index 2
         date_reformatted = f"{day[:2]}-{month}-{year}"
 
         # Access the specific cell
@@ -54,6 +55,11 @@ def insert_into_word_doc(doc_path,list_members,df_premiums):
 
     return
 
+def invoke(query, qa, k):
+    qa.retriever.search_kwargs["k"] = k
+    result = qa({"query": query})
+    return result
+
 
 def create_download_button(pdf_path):
     with open(pdf_path, "rb") as file:
@@ -61,5 +67,5 @@ def create_download_button(pdf_path):
             label="Download PDF",
             data=file,
             file_name="document.pdf",
-            mime="application/octet-stream"
+            mime="application/octet-stream",
         )
