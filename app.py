@@ -1,9 +1,5 @@
 ## Import libraries
 
-import sys
-
-sys.path.append("/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/")
-
 import streamlit as st
 import pandas as pd
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -15,6 +11,15 @@ import datetime
 import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import ssl
+import requests
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+
+# Your code to read Excel
+primes = pd.read_excel('https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/sehassur_devis.xlsx')
+
 
 
 # Use the columns to create a layout. Adjust the proportions as needed for your layout.
@@ -26,7 +31,7 @@ with col2:
 
 
 # Path to your local image
-local_image_path = "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/doodle.png"
+local_image_path = "https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/doodle.png?raw=true"
 
 # Call the function to set the background image
 style.set_bg_image(local_image_path)
@@ -35,11 +40,28 @@ style.set_bg_image(local_image_path)
 scopes = ['https://www.googleapis.com./auth/spreadsheets',
           'https://www.googleapis.com/auth/drive']
 
-creds = ServiceAccountCredentials.from_json_keyfile_name("/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/buoyant-apogee-411313-3fc58fa1faaa.json")
+# URL of the file on GitHub (ensure the token is kept secure and the repository is private)
+file_url = 'https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/buoyant-apogee-411313-3fc58fa1faaa.json?token=GHSAT0AAAAAACM6C5JLAUIQVCJ7UMSGJG5GZOMH2BA'
+
+# Local path to save the downloaded file
+local_file_path = '/tmp/service_account.json'
+
+# Download the file
+response = requests.get(file_url)
+if response.status_code == 200:
+    with open(local_file_path, 'wb') as file:
+        file.write(response.content)
+    print("File downloaded successfully.")
+else:
+    print(f"Failed to download file: HTTP {response.status_code}")
+    # Handle failure appropriately
+
+
+
+creds = ServiceAccountCredentials.from_json_keyfile_name(local_file_path)
 
 file = gspread.authorize(creds)
 workbook = file.open("BDD clients opération commerciale")
-sheet = workbook.sheet1
 
 
 css="""
@@ -130,11 +152,11 @@ def main():
 
     # Read table for the quote
     primes = pd.read_excel(
-        "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/sehassur_devis.xlsx",
+        "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/sehassur_devis.xlsx",
         sheet_name="primes",
     )
     coefficients = pd.read_excel(
-        "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/sehassur_devis.xlsx",
+        "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/sehassur_devis.xlsx",
         sheet_name="coefficients",
     )
 
@@ -145,6 +167,7 @@ def main():
         all_fields_filled = True  # Assume all fields are initially filled
         phone_valid = True
         email_valid = True
+        temp_file_path = None
 
         # Get quote number, which is the index of the last row filled
         all_values = workbook.sheet1.get_all_values()
@@ -249,6 +272,10 @@ def main():
 
 
             if phone_valid and email_valid and not member_over_60_found and all_fields_filled:
+                st.session_state['file_ready_for_download'] = True
+                st.session_state[
+                    'temp_file_path'] = temp_file_path  # Assuming `temp_file_path` holds the path to the generated file
+
                 # Extract family members' dates of birth
                 family_dobs = [dob for _, _, dob,_ in family_details]
 
@@ -262,9 +289,28 @@ def main():
                     calculation.sum_family_premiums(family_premiums)
                 ).T
 
+                import requests
+                from docx import Document
+
+                # URL of the .docx file on GitHub
+                docx_url = 'https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/devis_agecap.docx'
+
+                # Temporarily save the .docx file (adjust path as needed for your cloud environment)
+                local_docx_path = '/tmp/devis_agecap_downloaded.docx'
+
+                # Download the file
+                response = requests.get(docx_url)
+                if response.status_code == 200:
+                    with open(local_docx_path, 'wb') as f:
+                        f.write(response.content)
+                    print("File downloaded successfully.")
+                else:
+                    print(f"Failed to download file: HTTP {response.status_code}")
+                    exit()
+
                 # Insert into word doc
                 temp_file_path = doc_manip.insert_into_word_doc(
-                    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/devis_agecap.docx",
+                    local_docx_path,
                     family_details,
                     total_family_premiums,id_devis
                 )
@@ -272,36 +318,39 @@ def main():
                 # Store the path in the session state to access it outside the form's scope
                 st.session_state['temp_file_path'] = temp_file_path
 
-            if 'temp_file_path' in st.session_state and os.path.exists(st.session_state['temp_file_path']):
-                # Display success message
-                st.success("Votre devis est prêt à être téléchargé.")
-                # Create a download button for the PDF
-                with open(st.session_state['temp_file_path'], 'rb') as file:
-                    btn = st.download_button(
-                        label="Télécharger le devis",
-                        data=file,
-                        file_name="Devis_Agecap.pdf",
-                        mime="application/pdf"
-                    )
-                if btn:
-                    data_append_validated = ["Othman", "Some other value", "Another value"]
-                    google_services.append_data_to_sheet(workbook.sheet1, data_append_validated)
-                    # Use the path to your service account key file
-                    SERVICE_ACCOUNT_FILE = '/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/buoyant-apogee-411313-3fc58fa1faaa.json'
-                    # Folder ID where the file should be uploaded
-                    FOLDER_ID = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'  # Replace with your actual folder ID
-                    # Specify the filename and path of the PDF file to upload
-                    filename = f"devis_{id_devis}"
-                    filepath = st.session_state['temp_file_path']
-                    google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
-                                                                mimetype='application/pdf')            # Clean up after download
-                    os.remove(st.session_state['temp_file_path'])
-                    del st.session_state['temp_file_path']
+        # Outside the form, check if the file is ready for download and then render the download button
+    if 'file_ready_for_download' in st.session_state and st.session_state['file_ready_for_download']:
+        if 'temp_file_path' in st.session_state and os.path.exists(st.session_state['temp_file_path']):
+            # Display success message
+            st.success("Votre devis est prêt à être téléchargé.")
+
+            # Create a download button for the PDF, now outside the form
+            with open(st.session_state['temp_file_path'], 'rb') as file:
+                btn = st.download_button(
+                    label="Télécharger le devis",
+                    data=file,
+                    file_name="Devis_Agecap.pdf",
+                    mime="application/pdf"
+                )
+
+            if btn:
+                data_append_validated = ["Othman", "Some other value", "Another value"]
+                google_services.append_data_to_sheet(workbook.sheet1, data_append_validated)
+                # Use the path to your service account key file
+                SERVICE_ACCOUNT_FILE = local_file_path
+                # Folder ID where the file should be uploaded
+                FOLDER_ID = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'  # Replace with your actual folder ID
+                # Specify the filename and path of the PDF file to upload
+                filename = f"devis_{id_devis}"
+                filepath = st.session_state['temp_file_path']
+                google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
+                                                            mimetype='application/pdf')            # Clean up after download
+                os.remove(st.session_state['temp_file_path'])
+                del st.session_state['temp_file_path']
 
 
 
-
-### Chatbot
+    ### Chatbot
     with st.container():
         # Display a stylish and sophisticated banner
         # Création de deux colonnes : une pour l'image et une pour la bannière

@@ -1,16 +1,19 @@
-from utils import google_services
+import requests
 
-# Use the path to your service account key file
-SERVICE_ACCOUNT_FILE = '/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/buoyant-apogee-411313-3fc58fa1faaa.json'
+# The raw URL of the Excel file on GitHub
+excel_url = 'https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/sehassur_devis.xlsx'
 
-# Folder ID where the file should be uploaded
-FOLDER_ID = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'  # Replace with your actual folder ID
+# The local path where you want to save the downloaded Excel file
+save_path = 'sehassur_devis.xlsx'
 
-# Specify the filename and path of the PDF file to upload
-filename = 'sehassur_test'
-filepath = "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/Fiche produit SEHASSUR.pdf"
+# Attempt to download the Excel file
+response = requests.get(excel_url)
 
-# Upload the file
-google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID, mimetype='application/pdf')
-
-data = [*family_details, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"), query, response]
+# Check if the request was successful (HTTP status code 200)
+if response.status_code == 200:
+    # Write the content of the response (the Excel file) to a local file
+    with open(save_path, 'wb') as file:
+        file.write(response.content)
+    print(f"Excel file was successfully downloaded and saved as '{save_path}'.")
+else:
+    print(f"Failed to download the Excel file. HTTP status code: {response.status_code}")
