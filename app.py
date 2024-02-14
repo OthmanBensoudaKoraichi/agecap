@@ -117,6 +117,12 @@ def main():
             </div>
         """, unsafe_allow_html=True)
 
+    # Ajout d'une note sous la bannière
+    st.markdown("""
+        <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
+            <strong>Note importante :</strong> La tarification de votre devis est précisément ajustée en fonction de la <strong>date de naissance</strong> de chaque membre de la famille. Il est donc essentiel de remplir ces champs avec exactitude pour assurer une estimation adéquate de votre devis.
+        </div>
+    """, unsafe_allow_html=True)
 
     # Initialize session state for family members count
     if "family_count" not in st.session_state:
@@ -136,6 +142,10 @@ def main():
     with st.form("insurance_form"):
         member_over_60_found = False
         family_details = []
+        all_fields_filled = True  # Assume all fields are initially filled
+        phone_valid = True
+        email_valid = True
+
         # Get quote number, which is the index of the last row filled
         all_values = workbook.sheet1.get_all_values()
         id_devis = f'AM_{len(all_values) + 1}'  # This gives  the index of the last row with data
@@ -161,10 +171,10 @@ def main():
                         key=f"relation_{i}"
                     )
 
-                first_name = st.text_input(f"Prénom {(i == 0) * '(obligatoire)'}", key=f"first_name_{i}")
-                surname = st.text_input(f"Nom {(i == 0) * '(obligatoire)'}", key=f"surname_{i}")
+                first_name = st.text_input(f"Prénom {(i == 0) * '*'}", key=f"first_name_{i}")
+                surname = st.text_input(f"Nom {(i == 0) * '*'}", key=f"surname_{i}")
                 dob = st.date_input(
-                    "Date de naissance",
+                    f"Date de naissance {(i == 0) * '*'}",
                     key=f"dob_{i}",
                     min_value=datetime.datetime.now() - datetime.timedelta(days=365.25 * 100),
                     format="DD-MM-YYYY",
@@ -188,77 +198,105 @@ def main():
             on_click=function_check.increment_family_count,
         )
 
-        email_address = st.text_input("Adresse email du souscripteur", key="email")
-        if email_address and not function_check.is_valid_email(email_address):
-            st.error("Format de l'adresse email invalide")
 
-        phone_number = st.text_input("Numéro de téléphone du souscripteur", key="phone").replace(
+        # Validate souscripteur details
+        souscripteur_first_name = st.session_state.get("first_name_0", "")
+        souscripteur_surname = st.session_state.get("surname_0", "")
+        if not souscripteur_first_name or not souscripteur_surname:
+            all_fields_filled = False
+
+
+        email_address = st.text_input("Adresse email du souscripteur *", key="email")
+        if email_address and not function_check.is_valid_email(email_address):
+            email_valid = False
+        elif not email_address:
+            all_fields_filled = False
+
+
+        phone_number = st.text_input("Numéro de téléphone du souscripteur *", key="phone").replace(
             " ", ""
         )
         if phone_number and not function_check.is_valid_number(phone_number):
-            st.error("Format du numéro invalide")
+            phone_valid = False
+        elif not phone_number and not function_check.is_valid_number(phone_number):
+            all_fields_filled = False
 
-        # Final submit button is only enabled if all family members are below 60
-        if not member_over_60_found:
-            submit_button = st.form_submit_button("Calculer le devis")
-        elif member_over_60_found:
-            st.warning(
-                "La génération de devis n'est pas possible pour les familles avec un membre âgé de plus de 60 ans. Veuillez rafraîchir la page et remplir le formulaire à nouveau si cela était une erreur.")
-            data_append_old = [["Othman", "Some other value", "Another value"]]
-            google_services.append_data_to_sheet(workbook.sheet2, data_append_old)
-            submit_button = False
+        # Select the medium, with index = 1 so that no medium is selected by default
+        medium = st.radio(
+            "Sur quel medium avez-vous vu notre formulaire? *",
+            ('LinkedIn', 'Facebook', 'Instagram','Ne souhaite pas préciser'), index = 3
+        )
+
+        submit_button = st.form_submit_button("Calculer le devis")
+
+        if submit_button:
+            if phone_valid == False:
+                st.error("Format du numéro de téléphone invalide")
+            if email_valid == False:
+                st.error("Format de l'adresse email invalide")
+            # Check if a medium has been selected
+            if medium not in ('LinkedIn', 'Facebook', 'Instagram','Ne souhaite pas préciser'):
+                st.error("La sélection d'un médium est obligatoire.")
+                all_fields_filled = False
+            # Final submit button is only enabled if all family members are below 60
+            if member_over_60_found and all_fields_filled:
+                st.warning("La génération de devis n'est pas possible pour les familles avec un membre âgé de plus de 60 ans. Veuillez rafraîchir la page et remplir le formulaire à nouveau si cela était une erreur.")
+                data_append_old = ["Othman", "Some other value", "Another value"]
+                google_services.append_data_to_sheet(workbook.sheet2, data_append_old)
+            if not all_fields_filled:
+                st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")
 
 
 
-    if submit_button:
-            # Extract family members' dates of birth
-            family_dobs = [dob for _, _, dob,_ in family_details]
+            if phone_valid and email_valid and not member_over_60_found and all_fields_filled:
+                # Extract family members' dates of birth
+                family_dobs = [dob for _, _, dob,_ in family_details]
 
-            # Calculate premiums
-            family_premiums = calculation.calculate_family_premiums(
-                family_dobs, primes, coefficients
-            )
+                # Calculate premiums
+                family_premiums = calculation.calculate_family_premiums(
+                    family_dobs, primes, coefficients
+                )
 
-            # Sum premiums
-            total_family_premiums = pd.DataFrame.from_dict(
-                calculation.sum_family_premiums(family_premiums)
-            ).T
+                # Sum premiums
+                total_family_premiums = pd.DataFrame.from_dict(
+                    calculation.sum_family_premiums(family_premiums)
+                ).T
 
-            # Insert into word doc
-            temp_file_path = doc_manip.insert_into_word_doc(
-                "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/devis_agecap.docx",
-                family_details,
-                total_family_premiums,id_devis
-            )
+                # Insert into word doc
+                temp_file_path = doc_manip.insert_into_word_doc(
+                    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/devis_agecap.docx",
+                    family_details,
+                    total_family_premiums,id_devis
+                )
 
-            # Store the path in the session state to access it outside the form's scope
-            st.session_state['temp_file_path'] = temp_file_path
+                # Store the path in the session state to access it outside the form's scope
+                st.session_state['temp_file_path'] = temp_file_path
 
-    if 'temp_file_path' in st.session_state and os.path.exists(st.session_state['temp_file_path']):
-        # Display success message
-        st.success("Votre devis est prêt à être téléchargé.")
-        # Create a download button for the PDF
-        with open(st.session_state['temp_file_path'], 'rb') as file:
-            btn = st.download_button(
-                label="Télécharger le devis",
-                data=file,
-                file_name="Devis_Agecap.pdf",
-                mime="application/pdf"
-            )
-        if btn:
-            data_append_validated = [["Othman", "Some other value", "Another value"]]
-            google_services.append_data_to_sheet(workbook.sheet1, data_append_validated)
-            # Use the path to your service account key file
-            SERVICE_ACCOUNT_FILE = '/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/buoyant-apogee-411313-3fc58fa1faaa.json'
-            # Folder ID where the file should be uploaded
-            FOLDER_ID = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'  # Replace with your actual folder ID
-            # Specify the filename and path of the PDF file to upload
-            filename = f"devis_{id_devis}"
-            filepath = st.session_state['temp_file_path']
-            google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
-                                                        mimetype='application/pdf')            # Clean up after download
-            os.remove(st.session_state['temp_file_path'])
-            del st.session_state['temp_file_path']
+            if 'temp_file_path' in st.session_state and os.path.exists(st.session_state['temp_file_path']):
+                # Display success message
+                st.success("Votre devis est prêt à être téléchargé.")
+                # Create a download button for the PDF
+                with open(st.session_state['temp_file_path'], 'rb') as file:
+                    btn = st.download_button(
+                        label="Télécharger le devis",
+                        data=file,
+                        file_name="Devis_Agecap.pdf",
+                        mime="application/pdf"
+                    )
+                if btn:
+                    data_append_validated = ["Othman", "Some other value", "Another value"]
+                    google_services.append_data_to_sheet(workbook.sheet1, data_append_validated)
+                    # Use the path to your service account key file
+                    SERVICE_ACCOUNT_FILE = '/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/buoyant-apogee-411313-3fc58fa1faaa.json'
+                    # Folder ID where the file should be uploaded
+                    FOLDER_ID = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'  # Replace with your actual folder ID
+                    # Specify the filename and path of the PDF file to upload
+                    filename = f"devis_{id_devis}"
+                    filepath = st.session_state['temp_file_path']
+                    google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
+                                                                mimetype='application/pdf')            # Clean up after download
+                    os.remove(st.session_state['temp_file_path'])
+                    del st.session_state['temp_file_path']
 
 
 
@@ -266,26 +304,49 @@ def main():
 ### Chatbot
     with st.container():
         # Display a stylish and sophisticated banner
-        st.markdown("""
-            <style>
-                .banner {
-                    color: #fff;  /* White text color */
-                    padding: 20px;  /* Padding inside the banner for spacing */
-                    border-radius: 10px;  /* Rounded corners for a softer look */
-                    background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Gradient background */
-                    box-shadow: 0 4px 6px 0 rgba(0,0,0,0.2);  /* Subtle shadow for depth */
-                    margin-bottom: 20px;  /* Margin at the bottom */
-                    text-align: center;  /* Center the text */
-                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Modern, readable font */
-                    font-size: 24px;  /* Slightly larger font size for impact */
-                    font-weight: 500;  /* Medium font weight */
-                }
-            </style>
-            <div class="banner">
-                Posez une question sur notre assurance maladie complémentaire et recevez une réponse instantanément.
-            </div>
-        """, unsafe_allow_html=True)
+        # Création de deux colonnes : une pour l'image et une pour la bannière
+        colbot1, colbot2 = st.columns([1, 3], gap = 'small')  # Ajustez les proportions selon vos besoins
 
+        # Dans la première colonne, ajoutez votre image
+        with colbot1:
+            st.image("/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/agecap_hero.png", width=150)  # Ajustez le chemin et la largeur selon vos besoins
+
+        # In the second column, place your banner
+        with colbot2:
+            st.markdown("""
+                <style>
+                    .speech-bubble {
+                        position: relative;
+                        background: #6CB2E4;
+                        border-radius: .4em;
+                        color: #fff;
+                        padding: 20px;
+                        text-align: center;
+                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                        font-size: 18px;
+                        font-weight: 500;
+                        margin-bottom: 20px;
+                    }
+
+                    .speech-bubble:after {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: -20px;
+                        width: 0;
+                        height: 0;
+                        border: 10px solid transparent;
+                        border-right-color: #6CB2E4;
+                        border-left: 0;
+                        border-top: 0;
+                        margin-top: 5px;
+                        margin-left: -10px;
+                    }
+                </style>
+                <div class="speech-bubble">
+                    Posez une question sur notre assurance maladie complémentaire et recevez une réponse instantanément.
+                </div>
+            """, unsafe_allow_html=True)
         # Initialize chat history
         if "messages" not in st.session_state:
             st.session_state.messages = []
@@ -321,10 +382,10 @@ def main():
                 # Prepare the data to be appended
                 # Include other details as required, for example, chat history
                 # Concatenate chat messages into a single string or format as needed
-                chat_history = " // ".join([f"{msg['role']}: {msg['content']}" for msg in st.session_state.messages])
+                chat_history = "--------".join([f"{msg['role']}: {msg['content']}" for msg in st.session_state.messages])
 
                 # Append the data to the sheet
-                google_services.append_data_to_sheet(workbook.sheet1,[[chat_history]])
+                google_services.append_data_to_sheet(workbook.sheet1,[chat_history])
 
 
 if __name__ == "__main__":
