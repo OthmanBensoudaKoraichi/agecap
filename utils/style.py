@@ -19,16 +19,17 @@ def get_image_base64(image_path):
     return f"data:image/jpeg;base64,{encoded_string}"
 
 
-def set_bg_image(image_path, opacity=0.8, deploy = True):
+def set_bg_image(image_path, opacity=0.8, deploy=True):
     # Assuming opacity is between 0 (fully transparent) and 1 (fully opaque)
-    if deploy == False:
+    if not deploy:
+        # Function to convert image to Base64 should be defined somewhere
         base64_image = get_image_base64(image_path)
 
         # Use local CSS to set the background image with the Base64 string and add a transparent overlay using RGBA
         st.markdown(f"""
         <style>
         .stApp {{
-            background-image: linear-gradient(rgba(255, 255, 255, {opacity}), rgba(255, 255, 255, {opacity})), url("{base64_image}");
+            background-image: linear-gradient(rgba(255, 255, 255, {opacity}), rgba(255, 255, 255, {opacity})), url("data:image/png;base64,{base64_image}");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -37,14 +38,16 @@ def set_bg_image(image_path, opacity=0.8, deploy = True):
         """, unsafe_allow_html=True)
 
     else:
-        # Use local CSS to set the background image with the Base64 string and add a transparent overlay using RGBA
+        # Directly use the image URL and ensure it's correctly formatted within the url() function
         st.markdown(f"""
         <style>
         .stApp {{
-            background-image: linear-gradient(rgba(255, 255, 255, {opacity}), rgba(255, 255, 255, {opacity})), {image_path});
+            background-image: linear-gradient(rgba(255, 255, 255, {opacity}), rgba(255, 255, 255, {opacity})), url("{image_path}");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
         }}
         </style>
         """, unsafe_allow_html=True)
+
+        return

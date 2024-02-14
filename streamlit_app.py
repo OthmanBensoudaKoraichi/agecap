@@ -31,10 +31,10 @@ with col2:
 
 
 # Path to your local image
-local_image_path = "https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/doodle.png?raw=true"
+doodle_path = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/doodle.png"
 
 # Call the function to set the background image
-style.set_bg_image(local_image_path)
+style.set_bg_image(doodle_path, deploy = True)
 
 
 scopes = ['https://www.googleapis.com./auth/spreadsheets',
