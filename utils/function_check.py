@@ -14,7 +14,8 @@ def is_valid_email(email):
 
 # Function to increment family count
 def increment_family_count():
-    if st.session_state.family_count < 7:
-        st.session_state.family_count += 1
-    else:
-        pass
+    if "family_count" in st.session_state:
+        if st.session_state["family_count"] < 7:  # 7 because the index starts at 0
+            st.session_state["family_count"] += 1
+        else:
+            st.warning("Le maximum de 7 membres a été atteint.")

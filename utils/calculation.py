@@ -11,13 +11,17 @@ def find_age_group(age, primes_df):
     return None
 
 
+def calculate_age(dob):
+    today = datetime.date.today()
+    age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+    return age
+
 # Function to calculate each premium
 def calculate_family_premiums(family_dobs, primes_df, coefficients_df):
-    today = datetime.date.today()
     family_premiums = []
 
     for dob in family_dobs:
-        age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
+        age = calculate_age(dob)
         age_group = find_age_group(age, primes_df)
 
         if age_group:
