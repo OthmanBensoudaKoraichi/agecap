@@ -329,8 +329,8 @@ def main():
                 btn = st.download_button(
                     label="Télécharger le devis",
                     data=file,
-                    file_name="Devis_Agecap.pdf",
-                    mime="application/pdf"
+                    file_name="Devis_Agecap.docx",
+                    mime="application/docx"
                 )
 
             if btn:

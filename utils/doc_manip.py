@@ -65,13 +65,15 @@ def insert_into_word_doc(doc_path, list_members, df_premiums,id_devis):
         docx_path = tmp.name
 
     # Convert the docx to pdf
-    pdf_path = docx_path.replace(".docx", ".pdf")
-    convert(docx_path, pdf_path)
+    #pdf_path = docx_path.replace(".docx", ".pdf")
+    #convert(docx_path, pdf_path)
 
     # Make sure to remove the temporary docx file if you no longer need it
-    os.unlink(docx_path)
+    #os.unlink(docx_path)
 
-    return pdf_path
+    #return pdf_path
+
+    return docx_path
 
 
 # Function to read the file and return its contents
