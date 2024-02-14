@@ -16,6 +16,15 @@ import requests
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
+hide_streamlit_style = """
+<style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style>
+
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+
 
 # Your code to read Excel
 primes = pd.read_excel('https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/sehassur_devis.xlsx')
