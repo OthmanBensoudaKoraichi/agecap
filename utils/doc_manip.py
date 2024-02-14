@@ -2,7 +2,7 @@ import datetime
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import tempfile
-from docx2pdf import convert
+#from docx2pdf import convert
 import os
 
 
