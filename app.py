@@ -22,7 +22,7 @@ col1, col2, col3 = st.columns([1,2,1])  # This creates three columns, with the m
 
 # Place the image in the middle column to center it on the page
 with col2:
-    st.image("/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/agecaplogo.png")
+    st.image("https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecaplogo.png?raw=true")
 
 
 # Path to your local image
@@ -309,7 +309,7 @@ def main():
 
         # Dans la première colonne, ajoutez votre image
         with colbot1:
-            st.image("/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/agecap_hero.png", width=150)  # Ajustez le chemin et la largeur selon vos besoins
+            st.image("https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecap_hero.png?raw=true", width=150)  # Ajustez le chemin et la largeur selon vos besoins
 
         # In the second column, place your banner
         with colbot2:
@@ -347,6 +347,7 @@ def main():
                     Posez une question sur notre assurance maladie complémentaire et recevez une réponse instantanément.
                 </div>
             """, unsafe_allow_html=True)
+
         # Initialize chat history
         if "messages" not in st.session_state:
             st.session_state.messages = []
@@ -363,7 +364,7 @@ def main():
 
             if query:
                 # Display user message in chat message container
-                st.chat_message(name = "Vous",avatar = '/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/user_avatar.png').markdown(query)
+                st.chat_message(name = "Vous",avatar = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/user_avatar.png?raw=true').markdown(query)
                 # Add user message to chat history
                 st.session_state.messages.append({"role": "Vous", "content": query})
 
@@ -374,7 +375,7 @@ def main():
                     combined_input = context + "\n" + query
                     response = qa.run(combined_input)
 
-                    with st.chat_message(name = "Assistant Agecap",avatar='/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/agecaplogosmall.png'):
+                    with st.chat_message(name = "Assistant Agecap",avatar='https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecaplogosmall.png?raw=true'):
                         st.markdown(response)
                     # Add ai response to chat history
                 st.session_state.messages.append({"role": "Assistant Agecap", "content": response})
