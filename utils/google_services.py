@@ -1,6 +1,11 @@
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
+import ssl
+import requests
+import streamlit as st
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
 
 # The scopes required by the app. If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
@@ -41,3 +46,24 @@ def append_data_to_sheet(sheet, data):
 # Example usage of the append_data_to_sheet function
 #data_to_append = ["Example 2", "2024-02-12", "Example Query", "Example Response", "Example Chat History"]
 #append_data_to_sheet(sheet, data_to_append)
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
+def download_service_account_json(file_url):
+    # Local path to save the downloaded file
+    local_file_path = '/tmp/service_account.json'
+
+    # Download the file
+    response = requests.get(file_url)
+    if response.status_code == 200:
+        with open(local_file_path, 'wb') as file:
+            file.write(response.content)
+        return local_file_path
+    else:
+        pass
+
+def setup_google_drive(credentials_path, name_google_sheets):
+    # Use credentials to setup Google Drive access
+    creds = ServiceAccountCredentials.from_json_keyfile_name(credentials_path)
+    file = gspread.authorize(creds)
+    return file.open(name_google_sheets)

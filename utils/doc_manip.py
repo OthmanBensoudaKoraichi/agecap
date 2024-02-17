@@ -76,9 +76,3 @@ def insert_into_word_doc(doc_path, list_members, df_premiums,id_devis):
     return docx_path
 
 
-# Function to read the file and return its contents
-def load_file(file_path):
-    with open(file_path, 'rb') as file:
-        return file.read()
-
-
