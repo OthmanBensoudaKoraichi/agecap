@@ -7,7 +7,7 @@ hero_path = "https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/
 user_avatar = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/user_avatar.png?raw=true'
 bot_avatar = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecaplogosmall.png?raw=true'
 video_url = "https://vimeo.com/913774763?share=copy"
-favicon = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/user_avatar.png?raw=true'
+favicon = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecaplogosmall.png?raw=true'
 folder_id = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'
 
 context = (

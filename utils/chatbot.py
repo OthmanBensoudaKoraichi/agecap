@@ -25,11 +25,11 @@ def display_chat_history(user_avatar, bot_avatar):
     for message in st.session_state.messages:
         # Determine the alignment and background color based on the message role
         if message["role"] == "Vous":
-            alignment = "left"
+            alignment = "right"
             background_color = "#E1F5FE"  # Light blue background for the user messages
             avatar = user_avatar
         else:
-            alignment = "right"
+            alignment = "left"
             background_color = "#C8E6C9"  # Light green background for bot messages
             avatar = bot_avatar
 
