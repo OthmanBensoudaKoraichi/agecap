@@ -5,8 +5,7 @@ from streamlit_extras.switch_page_button import switch_page
 # Set the layout of the app
 style.set_app_layout(config.doodle)
 
-# Titre de l'application
-st.title("Questionnaire Médical")
+
 
 # Boutons pour changer de page
 go_to_form = st.button(label="Retourner au formulaire")
@@ -16,6 +15,9 @@ if go_to_form:
 go_to_quote = st.button(label="Retourner au devis")
 if go_to_quote:
     switch_page("Devis")
+
+# Titre de l'application
+st.title("Questionnaire Médical")
 
 # Utiliser st.radio pour la sélection initiale
 choix = st.radio("Voulez-vous également assurer votre conjoint(e) ?", ("Oui", "Non"),index=1)

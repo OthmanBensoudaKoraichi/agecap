@@ -13,6 +13,18 @@ st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_stat
 style.set_app_layout(config.doodle)
 
 ## Display the HTML content directly in the Streamlit app
+# Outside the form, check if the file is ready for download and then render the download button
+if 'file_ready_for_download' in st.session_state and st.session_state['file_ready_for_download']:
+    if 'temp_file_path' in st.session_state:
+        # Create a download button for the HTML file
+        with open(st.session_state['temp_file_path'], 'rb') as file:
+            btn = st.download_button(
+                label="Télécharger le devis",
+                data=file,
+                file_name="Devis_Agecap.html",
+                mime="text/html",
+                type = "primary"
+            )
 # Initialize session state
 if 'quote_calculated' not in st.session_state:
     st.session_state.quote_calculated = False

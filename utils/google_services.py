@@ -69,9 +69,8 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
     if type == "chat" and already_has_input == True:
         try:
             number_of_interactions = len(st.session_state.messages) // 2  # Using integer division for pairs
-            # ASCII value of 'F' is 70. We add the number of interactions to get the correct column.
             ascii_value = ord(
-                'G') + number_of_interactions - 1  # Subtract 1 because 1 pair means 'F', 2 pairs mean 'G', etc.
+                'I') + number_of_interactions - 1
             column_letter = chr(ascii_value)
             cell_to_update = f'{column_letter}{last_filled_row}'
             sheet.update(cell_to_update, data)
