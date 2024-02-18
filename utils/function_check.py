@@ -4,7 +4,10 @@ import streamlit as st
 
 # Function to validate Moroccan number
 def is_valid_number(number):
-    return re.match(r"0+[5-9]\d{8}$", number)
+    # Remove non-numeric characters to normalize the input
+    sanitized_number = re.sub(r"\D", "", number)  # \D matches any character that is not a digit
+    # Match the normalized number with the pattern
+    return re.match(r"^0[5-9]\d{8}$", sanitized_number)
 
 
 # Function to validate email

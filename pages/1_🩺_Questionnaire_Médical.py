@@ -1,11 +1,21 @@
 import streamlit as st
 from utils import chatbot, google_services, config,style
+from streamlit_extras.switch_page_button import switch_page
 
 # Set the layout of the app
 style.set_app_layout(config.doodle)
 
 # Titre de l'application
 st.title("Questionnaire Médical")
+
+# Boutons pour changer de page
+go_to_form = st.button(label="Retourner au formulaire")
+if go_to_form:
+    switch_page("Formulaire")
+
+go_to_quote = st.button(label="Retourner au devis")
+if go_to_quote:
+    switch_page("Devis")
 
 # Utiliser st.radio pour la sélection initiale
 choix = st.radio("Voulez-vous également assurer votre conjoint(e) ?", ("Oui", "Non"),index=1)
@@ -27,8 +37,8 @@ with st.form(key='medical_form'):
         col2 = None
 
     with col1:
-        st.markdown("**Assuré**")
-        # Questions pour l'assuré...
+        st.markdown("**Assuré(e)**")
+        # Questions pour l'assuré(e)...
 
     if st.session_state.assurer_conjoint and col2 is not None:
         with col2:

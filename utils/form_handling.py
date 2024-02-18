@@ -3,19 +3,23 @@ import os
 import pandas as pd
 import streamlit as st
 from utils import calculation, function_check, doc_manip,google_services, config,data_loaders
-import requests
 from streamlit_extras.switch_page_button import switch_page
+import tempfile
 
 
 def process_form_submission(credentials,workbook):
 
-    change_page = st.button("Change page")
-    if change_page:
-        switch_page("questionnaire médical")
     primes, coefficients = data_loaders.load_excel_data(config.primes_and_coef, config.primes_and_coef)
     # Initialize session state for family members count
     if "family_count" not in st.session_state:
         st.session_state["family_count"] = 1
+
+    if 'already_has_input' not in st.session_state:
+        st.session_state.already_has_input = False
+
+    if 'quote_calculated' not in st.session_state:
+        st.session_state.quote_calculated = False
+
     with st.form("insurance_form"):
         member_over_60_found = False
         family_details = []
@@ -23,11 +27,11 @@ def process_form_submission(credentials,workbook):
         phone_valid = True
         email_valid = True
         temp_file_path = None
-        already_has_input = False
+
 
         # Get quote number, which is the index of the last row filled
         all_values = workbook.sheet1.get_all_values()
-        id_devis = f'AM_{len(all_values) + 1}'  # This gives  the index of the last row with data
+        id_devis = f'AM{len(all_values) + 1}'  # This gives  the index of the last row with data
 
         # Input fields for family members
         for i in range(st.session_state["family_count"]):
@@ -125,15 +129,15 @@ def process_form_submission(credentials,workbook):
             if not all_fields_filled:
                 st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")
 
-
-
             if phone_valid and email_valid and not member_over_60_found and all_fields_filled:
                 st.session_state['file_ready_for_download'] = True
-                st.session_state[
-                    'temp_file_path'] = temp_file_path  # Assuming `temp_file_path` holds the path to the generated file
 
-                # Extract family members' dates of birth
-                family_dobs = [dob for _, _, dob,_ in family_details]
+                html_template_path = '/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/devis_agecap.html'
+                with open(html_template_path, 'r') as file:
+                    html_template = file.read()
+
+                # Extract family members' dates of birth and other details
+                family_dobs = [dob for _, _, dob, _ in family_details]
 
                 # Calculate premiums
                 family_premiums = calculation.calculate_family_premiums(
@@ -145,52 +149,44 @@ def process_form_submission(credentials,workbook):
                     calculation.sum_family_premiums(family_premiums)
                 ).T
 
-                # URL of the .docx file on GitHub
-                docx_url = config.devis_doc
-
-                # Temporarily save the .docx file (adjust path as needed for your cloud environment)
-                local_docx_path = '/tmp/devis_agecap_downloaded.docx'
-
-                # Download the file
-                response = requests.get(docx_url)
-                if response.status_code == 200:
-                    with open(local_docx_path, 'wb') as f:
-                        f.write(response.content)
-                    print("File downloaded successfully.")
-                else:
-                    print(f"Failed to download file: HTTP {response.status_code}")
-                    exit()
-
-                # Insert into word doc
-                temp_file_path = doc_manip.insert_into_word_doc(
-                    local_docx_path,
+                # Generate the modified HTML content
+                modified_html = doc_manip.insert_into_html(
+                    html_template,
                     family_details,
-                    total_family_premiums,id_devis
+                    total_family_premiums,
+                    id_devis
                 )
+
+                # Save the modified HTML to a temporary file
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as tmp:
+                    tmp.write(modified_html)
+                    temp_file_path = tmp.name
 
                 # Store the path in the session state to access it outside the form's scope
                 st.session_state['temp_file_path'] = temp_file_path
+                st.session_state.quote_calculated = True
+                st.session_state['html_file'] = modified_html
+                switch_page("Devis")
 
-        # Outside the form, check if the file is ready for download and then render the download button
+    # Outside the form, check if the file is ready for download and then render the download button
     if 'file_ready_for_download' in st.session_state and st.session_state['file_ready_for_download']:
-        if 'temp_file_path' in st.session_state and os.path.exists(st.session_state['temp_file_path']):
-            # Display success message
-            st.success("Votre devis est prêt à être téléchargé.")
+        if 'temp_file_path' in st.session_state:
 
-            # Create a download button for the PDF, now outside the form
+            # Create a download button for the HTML file
             with open(st.session_state['temp_file_path'], 'rb') as file:
                 btn = st.download_button(
                     label="Télécharger le devis",
                     data=file,
-                    file_name="Devis_Agecap.docx",
-                    mime="application/docx",
-                    type = "primary"
+                    file_name="Devis_Agecap.html",
+                    mime="text/html"
                 )
 
+
             if btn:
-                already_has_input = True
-                data_append_validated = [[family_details[0][0], family_details[0][1], email_address, phone_number, medium]]
-                google_services.append_data_to_sheet("form",already_has_input,workbook.sheet1, data_append_validated)
+
+                st.session_state.already_has_input = True
+                data_append_validated = [[family_details[0][0], family_details[0][1],family_details[0][2], email_address, phone_number, medium, id_devis,datetime.datetime.today().strftime("%d-%m-%Y")]]
+                google_services.append_data_to_sheet("form",st.session_state.already_has_input,workbook.sheet1, data_append_validated)
                 # Use the path to your service account key file
                 SERVICE_ACCOUNT_FILE = credentials
                 # Folder ID where the file should be uploaded

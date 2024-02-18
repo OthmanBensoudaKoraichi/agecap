@@ -5,8 +5,6 @@ def load_file(file_path):
     with open(file_path, 'rb') as file:
         return file.read()
 
-
-
 # Function to load excel data
 def load_excel_data(primes_url, coefficients_url):
     primes = pd.read_excel(primes_url, sheet_name="primes")
