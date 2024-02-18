@@ -4,8 +4,14 @@ import pandas as pd
 import streamlit as st
 from utils import calculation, function_check, doc_manip,google_services, config,data_loaders
 import requests
+from streamlit_extras.switch_page_button import switch_page
+
 
 def process_form_submission(credentials,workbook):
+
+    change_page = st.button("Change page")
+    if change_page:
+        switch_page("questionnaire médical")
     primes, coefficients = data_loaders.load_excel_data(config.primes_and_coef, config.primes_and_coef)
     # Initialize session state for family members count
     if "family_count" not in st.session_state:
@@ -17,6 +23,7 @@ def process_form_submission(credentials,workbook):
         phone_valid = True
         email_valid = True
         temp_file_path = None
+        already_has_input = False
 
         # Get quote number, which is the index of the last row filled
         all_values = workbook.sheet1.get_all_values()
@@ -44,7 +51,7 @@ def process_form_submission(credentials,workbook):
                     )
 
                 first_name = st.text_input(f"Prénom {(i == 0) * '*'}", key=f"first_name_{i}")
-                surname = st.text_input(f"Nom {(i == 0) * '*'}", key=f"surname_{i}")
+                surname = st.text_input(f"Nom de famille {(i == 0) * '*'}", key=f"surname_{i}")
                 dob = st.date_input(
                     f"Date de naissance {(i == 0) * '*'}",
                     key=f"dob_{i}",
@@ -181,8 +188,9 @@ def process_form_submission(credentials,workbook):
                 )
 
             if btn:
-                data_append_validated = [family_details[0], family_details[1], "Another value"]
-                google_services.append_data_to_sheet(workbook.sheet1, data_append_validated)
+                already_has_input = True
+                data_append_validated = [[family_details[0][0], family_details[0][1], email_address, phone_number, medium]]
+                google_services.append_data_to_sheet("form",already_has_input,workbook.sheet1, data_append_validated)
                 # Use the path to your service account key file
                 SERVICE_ACCOUNT_FILE = credentials
                 # Folder ID where the file should be uploaded

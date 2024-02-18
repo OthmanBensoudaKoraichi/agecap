@@ -28,7 +28,7 @@ def upload_file_to_google_drive(service_account_file, filename, filepath, folder
     print(f"File ID: {file.get('id')}")
 
 
-def append_data_to_sheet(sheet, data):
+def append_data_to_sheet(type,already_has_input,sheet, data):
     """
     Appends a row of data to the specified Google Sheet.
 
@@ -36,12 +36,50 @@ def append_data_to_sheet(sheet, data):
     sheet: The worksheet object obtained from gspread, representing the specific sheet to append data to.
     data: A list of data to append. Each element in the list corresponds to a cell in the row.
     """
-    try:
-        # Append the data to the last row of the sheet
-        sheet.append_row(data, value_input_option='USER_ENTERED')
-        print("Data appended successfully.")
-    except Exception as e:
-        print(f"An error occurred while appending data to the sheet: {e}")
+    # Assume we're using column A to check for the last filled row
+    column_a = sheet.col_values(1)  # Get all values from column A
+
+    # Find the last filled row in column A
+    last_filled_row = len(column_a) + 1  # +1 because sheet rows start at 1
+
+    if type == "form" and already_has_input == False:
+        try:
+            # Append the data to the last row of the sheet
+            sheet.append_row(data, value_input_option='USER_ENTERED')
+            print("Data appended successfully.")
+        except Exception as e:
+            print(f"An error occurred while appending data to the sheet: {e}")
+
+    if type == "form" and already_has_input == True:
+        try:
+            range_to_update = f'A{last_filled_row}:E{last_filled_row}'
+            sheet.update(range_to_update, data)
+            print("Data appended successfully.")
+        except Exception as e:
+            print(f"An error occurred while appending data to the sheet: {e}")
+
+
+    if type == "chat" and already_has_input == False:
+        try:
+            cell_to_update = f'F{last_filled_row +1}'
+            sheet.update(cell_to_update, data)
+            print("Data appended successfully.")
+        except Exception as e:
+            print(f"An error occurred while appending data to the sheet: {e}")
+    if type == "chat" and already_has_input == True:
+        try:
+            number_of_interactions = len(st.session_state.messages) // 2  # Using integer division for pairs
+            # ASCII value of 'F' is 70. We add the number of interactions to get the correct column.
+            ascii_value = ord(
+                'F') + number_of_interactions - 1  # Subtract 1 because 1 pair means 'F', 2 pairs mean 'G', etc.
+            column_letter = chr(ascii_value)
+            cell_to_update = f'{column_letter}{last_filled_row}'
+            sheet.update(cell_to_update, data)
+            print("Data appended successfully.")
+        except Exception as e:
+            print(f"An error occurred while appending data to the sheet: {e}")
+
+
 
 # Example usage of the append_data_to_sheet function
 #data_to_append = ["Example 2", "2024-02-12", "Example Query", "Example Response", "Example Chat History"]

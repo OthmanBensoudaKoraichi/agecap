@@ -25,11 +25,11 @@ def display_chat_history(user_avatar, bot_avatar):
     for message in st.session_state.messages:
         # Determine the alignment and background color based on the message role
         if message["role"] == "Vous":
-            alignment = "right"
+            alignment = "left"
             background_color = "#E1F5FE"  # Light blue background for the user messages
             avatar = user_avatar
         else:
-            alignment = "left"
+            alignment = "right"
             background_color = "#C8E6C9"  # Light green background for bot messages
             avatar = bot_avatar
 
@@ -51,9 +51,14 @@ def get_chatbot_response(qa, vectorstore, context, query):
         response = qa.run(combined_input)
         return response
 
-def append_chat_to_sheet(sheet):
-    chat_history = "--------".join([f"{msg['role']}: {msg['content']}" for msg in st.session_state.messages])
-    google_services.append_data_to_sheet(sheet, [chat_history])
+def append_chat_to_sheet(downloaded,sheet):
+    if downloaded == True:
+        chat_history = "--------".join([f"{msg['role']}: {msg['content']}" for msg in st.session_state.messages])
+        google_services.append_data_to_sheet(sheet, [chat_history])
+    else:
+        chat_history = "--------".join([f"{msg['role']}: {msg['content']}" for msg in st.session_state.messages])
+        google_services.append_data_to_sheet(sheet, [chat_history])
+
 
 # Chatbot interaction
 def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, workbook):
@@ -66,15 +71,16 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
         # Container to display messages
         messages = st.container()
 
-        if len(st.session_state.messages) >= 30:
+        if len(st.session_state.messages) >= 20:
             # Display a message to the user indicating the limit is reached
-            st.error("Nous sommes ravis que vous soyez intéressé(e) par notre produit ! Si vous avez plus de questions, n'hésitez pas à nous appeler au 05 22 22 41 80")
+            st.success("Nous sommes ravis que vous soyez intéressé(e) par notre produit ! Si vous avez plus de questions, n'hésitez pas à nous appeler au 05 22 22 41 80")
         else:
 
             # Input from user
             query = st.chat_input("Posez votre question", key="chatbot_input")
 
             if query:
+                already_has_input = True
                 # Append user query to chat history
                 st.session_state.messages.append({"role": "Vous", "content": query})
 
@@ -85,15 +91,62 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
                 # Append chatbot response to chat history
                 st.session_state.messages.append({"role": "Assistant Agecap", "content": response})
 
+                # Format the current interaction
+                current_interaction = f"Client: {query} ----- Assistant: {response}"
+
                 # Display chat history
                 display_chat_history(user_avatar, bot_avatar)
 
                 # Append chat history to the Google Sheet
-                append_chat_to_sheet(workbook.sheet1)
+                google_services.append_data_to_sheet("chat",already_has_input,workbook.sheet1, current_interaction)
 
 def set_chatbot_style():
     # This function now sets the style within the sidebar
     with st.sidebar:
+        # Bannière avec gradient, bords arrondis, et ombre pour un look sophistiqué
+        st.markdown("""
+            <style>
+                .chat-banner {
+                    color: #fff;  /* White text color */
+                    padding: 10px;  /* Padding inside the banner for spacing */
+                    border-radius: 10px;  /* Rounded corners for a softer look */
+                    background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Gradient background */
+                    margin-bottom: 20px;  /* Margin at the bottom */
+                    text-align: center;  /* Center the text */
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Modern, readable font */
+                    font-size: 24px;  /* Slightly larger font size for impact */
+                    font-weight: bold;  /* Medium font weight */
+                }
+                .speech-bubble {
+                    position: relative;
+                    background: #6CB2E4;
+                    border-radius: .4em;
+                    color: #fff;
+                    padding: 20px;
+                    text-align: center;
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                    font-size: 18px;
+                    font-weight: 500;
+                    margin-bottom: 20px;
+                }
+                .speech-bubble:after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -20px;
+                    width: 0;
+                    height: 0;
+                    border: 10px solid transparent;
+                    border-right-color: #6CB2E4;
+                    border-left: 0;
+                    border-top: 0;
+                    margin-top: 5px;
+                    margin-left: -10px;
+                }
+            </style>
+            <div class="chat-banner">Chattez avec nous !</div>
+            """, unsafe_allow_html=True)
+
         colbot1, colbot2 = st.columns([1, 3], gap='small')
 
         with colbot1:
@@ -101,34 +154,6 @@ def set_chatbot_style():
 
         with colbot2:
             st.markdown("""
-                <style>
-                    .speech-bubble {
-                        position: relative;
-                        background: #6CB2E4;
-                        border-radius: .4em;
-                        color: #fff;
-                        padding: 20px;
-                        text-align: center;
-                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                        font-size: 18px;
-                        font-weight: 500;
-                        margin-bottom: 20px;
-                    }
-                    .speech-bubble:after {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: -20px;
-                        width: 0;
-                        height: 0;
-                        border: 10px solid transparent;
-                        border-right-color: #6CB2E4;
-                        border-left: 0;
-                        border-top: 0;
-                        margin-top: 5px;
-                        margin-left: -10px;
-                    }
-                </style>
                 <div class="speech-bubble">
                     Posez une question sur notre assurance maladie complémentaire et recevez une réponse instantanément.
                 </div>

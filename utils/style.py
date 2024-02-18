@@ -34,6 +34,15 @@ def set_app_layout(doodle_path):
     </style>
     """
 
+    # Hide 'press enter to submit form'
+    st.markdown("""
+        <style>
+            .stTextInput>div>div>span {
+                display: none;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+
     st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
     css = """
@@ -144,8 +153,6 @@ def display_important_message():
     """, unsafe_allow_html=True)
 
     return
-
-
 
 def create_columns():
     # Create columns in the Streamlit app
