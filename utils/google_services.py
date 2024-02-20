@@ -52,7 +52,7 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
 
     if type == "form" and already_has_input == True:
         try:
-            range_to_update = f'A{last_filled_row}:H{last_filled_row}'
+            range_to_update = f'A{last_filled_row}:M{last_filled_row}'
             sheet.update(range_to_update, data)
             print("Data appended successfully.")
         except Exception as e:
@@ -61,7 +61,7 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
 
     if type == "chat" and already_has_input == False:
         try:
-            cell_to_update = f'I{last_filled_row +1}'
+            cell_to_update = f'N{last_filled_row +1}'
             sheet.update(cell_to_update, data)
             print("Data appended successfully.")
         except Exception as e:
@@ -70,7 +70,7 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
         try:
             number_of_interactions = len(st.session_state.messages) // 2  # Using integer division for pairs
             ascii_value = ord(
-                'I') + number_of_interactions - 1
+                'N') + number_of_interactions - 1
             column_letter = chr(ascii_value)
             cell_to_update = f'{column_letter}{last_filled_row}'
             sheet.update(cell_to_update, data)
@@ -78,6 +78,35 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
         except Exception as e:
             print(f"An error occurred while appending data to the sheet: {e}")
 
+def append_questionnaire_status(already_has_input,come_after_email,sheet, data):
+    """
+    Appends a row of data to the specified Google Sheet.
+
+    Args:
+    sheet: The worksheet object obtained from gspread, representing the specific sheet to append data to.
+    data: A list of data to append. Each element in the list corresponds to a cell in the row.
+    """
+    # Assume we're using column A to check for the last filled row
+    column_a = sheet.col_values(1)  # Get all values from column A
+
+    # Find the last filled row in column A
+    last_filled_row = len(column_a) + 1  # +1 because sheet rows start at 1
+
+    if already_has_input == True:
+        try:
+            cell_to_update = f'M{last_filled_row}'
+            sheet.update(cell_to_update, data)
+            print("Data appended successfully.")
+        except Exception as e:
+            print(f"An error occurred while appending data to the sheet: {e}")
+
+    if come_after_email == True:
+        try:
+            cell_to_update = sheet.find("searchCriteria", in_column=7)
+            sheet.update(cell_to_update, data)
+            print("Data appended successfully.")
+        except Exception as e:
+            print(f"An error occurred while appending data to the sheet: {e}")
 
 
 # Example usage of the append_data_to_sheet function

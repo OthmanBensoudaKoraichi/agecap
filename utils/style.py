@@ -7,24 +7,6 @@ def set_app_layout(doodle_path):
     # Set background image
     set_bg_image(doodle_path, deploy=True)
 
-    # Define and inject custom CSS
-    custom_css = """
-    <style>
-    div[data-testid="stSidebar"] > div:first-child {
-        background-color: rgba(255,255,255,0.5);
-    }
-    div[data-testid="stHeader"] {
-        background-color: rgba(255,255,255,0.8);
-    }
-    div[data-testid="stBody"] {
-        background-color: rgba(255,255,255,0.8);
-    }
-    /* Add more custom CSS if needed */
-    </style>
-    """
-
-    # Inject the custom CSS into the Streamlit app
-    st.markdown(custom_css, unsafe_allow_html=True)
 
     # Hide Streamlit's menu and footer
     hide_streamlit_style = """
@@ -144,6 +126,33 @@ def display_intro_banner():
 
     return
 
+def banner_questionnaire_medical():
+    st.markdown("""
+                <style>
+                    .banner {
+                        display: inline-block;
+                        color: #fff;  /* Couleur du texte blanc */
+                        padding: 10px 20px;  /* Espacement à l'intérieur de la bannière */
+                        border-radius: 10px;  /* Coins arrondis pour un look plus doux */
+                        background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Arrière-plan en dégradé */
+                        box-shadow: 0 4px 6px 0 rgba(0,0,0,0.2);  /* Ombre subtile pour la profondeur */
+                        margin-top: 20px;  /* Marge en haut */
+                        text-align: center;  /* Centrer le texte */
+                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Police moderne et lisible */
+                        font-size: 24px;  /* Taille de police légèrement plus grande pour l'impact */
+                        font-weight: bold;  /* Poids de police en gras pour un impact maximal */
+                    }
+                    .banner-container {
+                        text-align: center;  /* Centre la bannière dans le conteneur */
+                    }
+                </style>
+                <div class="banner-container">
+                    <div class="banner">
+                        Questionnaire Médical
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
 def display_important_message():
     # Ajout d'une note sous la bannière
     st.markdown("""
@@ -163,3 +172,21 @@ def place_logo(col2,logo):
     # Function to place the logo image in the specified column
     with col2:
         st.image(logo)
+
+
+def set_language(lang):
+    st.session_state.language = lang
+
+def initialize_language_selection():
+    # Define a function to set the language in session state
+    # Initialize session state for language if it's not already set
+    if 'language' not in st.session_state:
+        st.session_state.language = "french"  # Default language
+
+    # Language selection buttons
+    if st.button('Français', type = "primary"):
+        set_language("fr")
+    if st.button('العربية', type = "primary"):
+        set_language("ar")
+
+

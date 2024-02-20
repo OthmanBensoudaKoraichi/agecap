@@ -70,6 +70,6 @@ def sum_family_premiums(family_premiums):
     # Round the totals after summation
     for freq in total_premiums:
         for rate in total_premiums[freq]:
-            total_premiums[freq][rate] = round(total_premiums[freq][rate], 1)
+            total_premiums[freq][rate] = int(total_premiums[freq][rate])
 
     return total_premiums

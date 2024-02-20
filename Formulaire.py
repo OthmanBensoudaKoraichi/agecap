@@ -1,15 +1,16 @@
 # Import libraries
-
 import streamlit as st
 from utils import style, google_services, config, chatbot, form_handling
-
+from st_pages import Page,show_pages
 
 # Main function
 def main():
 
+
     ### STYLE ###
     st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state="auto",
                        menu_items=None)
+
 
     # Set the layout of the app
     style.set_app_layout(config.doodle)

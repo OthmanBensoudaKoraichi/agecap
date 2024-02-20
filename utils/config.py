@@ -11,7 +11,7 @@ favicon = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/ag
 folder_id = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'
 
 context = (
-    "Vous êtes un courtier en assurances basé au Maroc, spécialisé dans les assurances maladies. "
+    "Vous êtes Agecap, un courtier en assurances basé au Maroc, spécialisé dans les assurances maladies. "
     "Votre expertise en assurance maladie vous permet de donner des conseils avisés et personnalisés à vos clients, "
     "en vous appuyant sur votre vaste connaissance du domaine. "
     "Votre communication avec les clients doit être directe, cordiale et compréhensible, sans mentionner explicitement "
@@ -21,6 +21,34 @@ context = (
     "tout en restant serviable et orienté vers la solution. "
     "Votre objectif est de répondre aux interrogations de manière aussi naturelle et personnelle que possible, "
     "comme si vous partagiez votre propre expertise sans faire référence à des documents externes. "
+    "Lorsque l'on vous demande des informations de contact"
     "Voici la question de l'utilisateur : "
 )
+
+language_dict = {
+    "fr": {
+        "Bannière principale" : "Remplissez notre formulaire et obtenez devis en 1 clic !" ,
+        "Prénom": "Prénom",
+        "Note importante" : "<strong>Note importante :</strong> La tarification de votre devis est précisément ajustée en fonction de la <strong>date de naissance</strong> de chaque membre de la famille. Il est donc essentiel de remplir ces champs avec exactitude pour assurer une estimation adéquate de votre devis.",
+        "Nom de famille": "Nom de famille",
+        "Date de naissance" : "Date de naissance",
+        "membre famille" : "Ajouter un membre de la famille",
+        "email" : "Adresse email du souscripteur",
+        "tel" : "Numéro de téléphone du souscripteur",
+        "Sur quel réseau social avez-vous vu notre formulaire?" : "Sur quel réseau social avez-vous vu notre formulaire?",
+        "Linkedin" : "Linkedin",
+        "Facebook" : "Facebook",
+        "Instagram" : "Ne souhaite pas préciser",
+        "Calculer le devis" : "Calculer le devis",
+        "redirection" : "Cela vous redirigera vers votre devis en quelques secondes.",
+        "Chat banniere" : "Chattez avec nous ! ",
+        "Chat message" : "Posez une question sur notre assurance maladie complémentaire et recevez une réponse instantanément.",
+        "Posez votre question" : "Posez votre question",
+
+    },
+    "ar": {
+        "Relation au souscripteur": "Subscriber relationship",
+        "Assurance complémentaire": "Do you have supplementary health insurance with another company?"
+    }
+}
 

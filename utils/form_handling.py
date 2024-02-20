@@ -1,7 +1,7 @@
 import datetime
 import pandas as pd
 import streamlit as st
-from utils import calculation, function_check, doc_manip,google_services, config,data_loaders, hash_maker
+from utils import calculation, function_check, doc_manip,google_services, config,data_loaders, hash_maker, email_sender
 from streamlit_extras.switch_page_button import switch_page
 import tempfile
 
@@ -16,8 +16,6 @@ def process_form_submission(credentials,workbook):
     if 'already_has_input' not in st.session_state:
         st.session_state.already_has_input = False
 
-    if 'quote_calculated' not in st.session_state:
-        st.session_state.quote_calculated = False
 
     with st.form("insurance_form"):
         member_over_60_found = False
@@ -26,6 +24,8 @@ def process_form_submission(credentials,workbook):
         phone_valid = True
         email_valid = True
         temp_file_path = None
+        nb_adultes = 0
+        nb_enfants = 0
 
         # Input fields for family members
         for i in range(st.session_state["family_count"]):
@@ -54,13 +54,17 @@ def process_form_submission(credentials,workbook):
                     f"Date de naissance {(i == 0) * '*'}",
                     key=f"dob_{i}",
                     min_value=datetime.datetime.now() - datetime.timedelta(days=365.25 * 100),
-                    format="DD-MM-YYYY",
+                    format="DD-MM-YYYY"
                 )
 
 
                 family_details.append((first_name, surname, dob,relation_type))
                 # Calculate age from dob and set flag if over 60
                 age = calculation.calculate_age(dob)
+                if age < 20:
+                    nb_enfants += 1
+                if age >= 20:
+                    nb_adultes += 1
                 if age > 60:
                     member_over_60_found = True
 
@@ -82,8 +86,12 @@ def process_form_submission(credentials,workbook):
         if not souscripteur_first_name or not souscripteur_surname:
             all_fields_filled = False
 
-
+        if "email_address" not in st.session_state:
+            st.session_state["email_address"] = None
         email_address = st.text_input("Adresse email du souscripteur *", key="email")
+        st.session_state["email_address"] = email_address
+
+
         if email_address and not function_check.is_valid_email(email_address):
             email_valid = False
         elif not email_address:
@@ -108,9 +116,11 @@ def process_form_submission(credentials,workbook):
         st.caption("Cela vous redirigera vers votre devis en quelques secondes.")
 
         if submit_button:
-
+            if 'id_devis' not in st.session_state:
+                st.session_state.id_devis = None
             # Create id_devis
             id_devis = hash_maker.make_hash(family_details[0][0],family_details[0][1],family_details[0][1])
+            st.session_state.id_devis = id_devis
 
             if phone_valid == False:
                 st.error("Format du numéro de téléphone invalide")
@@ -167,12 +177,11 @@ def process_form_submission(credentials,workbook):
 
                 # Store the path in the session state to access it outside the form's scope
                 st.session_state['temp_file_path'] = temp_file_path
-                st.session_state.quote_calculated = True
                 st.session_state['html_file'] = modified_html
                 st.session_state.already_has_input = True
                 data_append_validated = [
                     [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y")]]
+                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), st.session_state.already_has_input,nb_adultes,nb_enfants,"FR", "Non" ]]
                 google_services.append_data_to_sheet("form", st.session_state.already_has_input, workbook.sheet1,
                                                      data_append_validated)
                 # Use the path to your service account key file
@@ -183,8 +192,9 @@ def process_form_submission(credentials,workbook):
                 filename = f"devis_{id_devis}"
                 filepath = st.session_state['temp_file_path']
                 google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
-                                                            mimetype='application/pdf')  # Clean up after download
+                                                            mimetype='application/html')  # Clean up after download
 
+                email_sender.send_email()
                 switch_page("Devis")
 
     return

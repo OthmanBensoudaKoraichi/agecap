@@ -12,9 +12,12 @@ st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_stat
 # Set the layout of the app
 style.set_app_layout(config.doodle)
 
+
 ## Display the HTML content directly in the Streamlit app
 # Outside the form, check if the file is ready for download and then render the download button
 if 'file_ready_for_download' in st.session_state and st.session_state['file_ready_for_download']:
+
+
     if 'temp_file_path' in st.session_state:
         # Create a download button for the HTML file
         with open(st.session_state['temp_file_path'], 'rb') as file:
@@ -25,11 +28,24 @@ if 'file_ready_for_download' in st.session_state and st.session_state['file_read
                 mime="text/html",
                 type = "primary"
             )
+
+    # Write next steps
+    message = ("Votre devis est prêt.\n"
+               "Pour continuer, veuillez remplir notre court questionnaire médical de 5 minutes.")
+
+    st.success(message)
+
+    questionnaire_medical = st.button("Accéder au questionnaire médical",type = "primary")
+    if questionnaire_medical:
+        switch_page("questionnaire médical")
+    contact = "Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question."
+    st.info(contact)
+
 # Initialize session state
 if 'quote_calculated' not in st.session_state:
-    st.session_state.quote_calculated = False
-if st.session_state.quote_calculated == True:
-    components.html(st.session_state['html_file'], height=3000, width=1000)
+    st.session_state.quote_calculated = "Non"
+if st.session_state.quote_calculated == "Oui":
+    components.html(st.session_state['html_file'], height=3000)
 else :
     st.markdown("""
             <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
@@ -37,8 +53,6 @@ else :
             </div>
         """, unsafe_allow_html=True)
     go_to_form = st.button(label = "Retourner au formulaire")
-    if go_to_form:
-        switch_page("Formulaire")
 
 
 ### GOOGLE CREDENTIALS ###
