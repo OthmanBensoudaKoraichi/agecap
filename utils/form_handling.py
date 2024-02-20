@@ -194,7 +194,7 @@ def process_form_submission(credentials,workbook):
                 google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
                                                             mimetype='application/html')  # Clean up after download
 
-                email_sender.send_email()
+                #email_sender.send_email(st.session_state["email_address"])
                 switch_page("Devis")
 
     return
