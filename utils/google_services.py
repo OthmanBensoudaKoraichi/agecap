@@ -27,6 +27,26 @@ def upload_file_to_google_drive(service_account_file, filename, filepath, folder
     file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
     print(f"File ID: {file.get('id')}")
 
+def get_last_filled_row(sheet):
+    if 'last_filled_row' not in st.session_state:
+        st.session_state.last_filled_row = None
+    if st.session_state.last_filled_row == None:
+        # Assume we're using column A to check for the last filled row
+        column_a = sheet.col_values(1)  # Get all values from column A
+        # I also note the first column corresponding to the chatbot's outputs
+        column_n = sheet.col_values(14)
+
+        # Note the last filled row number
+        last_filled_row_a = len(column_a) + 1
+        last_filled_row_n = len(column_n) + 1
+
+        last_row = max(last_filled_row_a, last_filled_row_n)
+        st.session_state.last_filled_row = last_row
+
+    else:
+        pass
+
+    return st.session_state.last_filled_row
 
 def append_data_to_sheet(type,already_has_input,sheet, data):
     """
@@ -36,12 +56,9 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
     sheet: The worksheet object obtained from gspread, representing the specific sheet to append data to.
     data: A list of data to append. Each element in the list corresponds to a cell in the row.
     """
-    # Assume we're using column A to check for the last filled row
-    column_a = sheet.col_values(1)  # Get all values from column A
-
-    # Find the last filled row in column A
-    last_filled_row = len(column_a) + 1  # +1 because sheet rows start at 1
-
+    # Get last row filled
+    last_filled_row = get_last_filled_row(sheet)
+    # In theory, I don't need to check for already_has_input here.
     if type == "form" and already_has_input == False:
         try:
             # Append the data to the last row of the sheet
@@ -52,16 +69,17 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
 
     if type == "form" and already_has_input == True:
         try:
-            range_to_update = f'A{last_filled_row}:M{last_filled_row}'
+            range_to_update = f'A{last_filled_row }:M{last_filled_row}'
             sheet.update(range_to_update, data)
             print("Data appended successfully.")
         except Exception as e:
             print(f"An error occurred while appending data to the sheet: {e}")
 
-
+    # For the chatbot, I need to check for already_has_input
     if type == "chat" and already_has_input == False:
         try:
-            cell_to_update = f'N{last_filled_row +1}'
+
+            cell_to_update = f'N{last_filled_row}'
             sheet.update(cell_to_update, data)
             print("Data appended successfully.")
         except Exception as e:

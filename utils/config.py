@@ -9,6 +9,7 @@ bot_avatar = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files
 video_url = "https://vimeo.com/913774763?share=copy"
 favicon = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecap_favicon.png?raw=true'
 folder_id = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'
+devis_html = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/devis_agecap.html"
 
 context = (
     "Vous êtes Agecap, un courtier en assurances basé au Maroc, spécialisé dans les assurances maladies. "
@@ -25,6 +26,7 @@ context = (
     "Téléphone : 05 22 22 41 80"
     "Adresse : 88 Avenue Mers Sultan, Casablanca"
     "Adresse email : assistance.agecap@gmail.com"
+    "Lorsque l'on te pose une question, comme la procédure de remboursement, réponds avec exactitude et vis-à-vis d'Agecap"
     "Voici la question de l'utilisateur : "
 )
 
