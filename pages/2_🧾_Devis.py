@@ -41,19 +41,17 @@ if 'file_ready_for_download' in st.session_state and st.session_state['file_read
     contact = "Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question."
     st.info(contact)
 
-# Initialize session state
-if 'quote_calculated' not in st.session_state:
-    st.session_state.quote_calculated = False
-if st.session_state.quote_calculated == True:
+if ('quote_calculated' and 'html_file') in st.session_state:
+    # If a quote has been calculated and an HTML file exists in the session state, display it
     components.html(st.session_state['html_file'], height=3000)
-else :
+else:
+    # If a quote hasn't been calculated or no HTML file exists, prompt the user to return to the form
     st.markdown("""
             <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
                 Veuillez retourner sur la page du formulaire afin de générer un devis.
             </div>
         """, unsafe_allow_html=True)
-    go_to_form = st.button(label = "Retourner au formulaire")
-
+    go_to_form = st.button(label="Retourner au formulaire")
 
 ### GOOGLE CREDENTIALS ###
 credentials_path = google_services.download_service_account_json(st.secrets["jsonkey_google"])

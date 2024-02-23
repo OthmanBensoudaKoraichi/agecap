@@ -171,6 +171,7 @@ urllib3==2.1.0
 validators==0.22.0
 watchdog==3.0.0
 Werkzeug==3.0.1
+XlsxWriter==3.2.0
 xxhash==3.4.1
 yarg==0.1.9
 yarl==1.9.4

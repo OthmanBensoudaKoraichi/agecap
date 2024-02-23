@@ -1,3 +1,5 @@
+import streamlit as st
+
 # Setting all variables used in main
 agecap_logo = "https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecaplogo.png?raw=true"
 doodle = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/doodle.png"
@@ -10,19 +12,33 @@ video_url = "https://vimeo.com/913774763?share=copy"
 favicon = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecap_favicon.png?raw=true'
 folder_id = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'
 devis_html = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/devis_agecap.html"
+months = {
+    'Janvier': 1,
+    'Février': 2,
+    'Mars': 3,
+    'Avril': 4,
+    'Mai': 5,
+    'Juin': 6,
+    'Juillet': 7,
+    'Août': 8,
+    'Septembre': 9,
+    'Octobre': 10,
+    'Novembre': 11,
+    'Décembre': 12
+}
 
 email = """
 Cher client,
 
 Merci d'avoir entamé le processus d'assurance maladie avec nous ! Votre démarche proactive montre votre engagement envers votre santé et celle de votre famille.
 
-Pour continuer la démarche, veuillez remplir notre questionnaire en ligne.
+Pour continuer la démarche, veuillez remplir notre questionnaire en ligne en entrant votre numéro de devis {num_devis}
 
 Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.
 
 Cordialement,
 L'équipe Agecap.
-"""
+""".format(num_devis=st.session_state.get('id_devis', 'Non spécifié'))
 
 email_subject = "Devis assurance maladie complémentaire"
 

@@ -56,17 +56,30 @@ def process_form_submission(credentials,workbook):
                     first_name = st.text_input("Prénom *", key=f"first_name_{i}")
                     surname = st.text_input("Nom de famille *", key=f"surname_{i}")
 
-                dob = st.date_input(
-                    f"Date de naissance {(i == 0) * '*'}",
-                    key=f"dob_{i}",
-                    value=datetime.datetime.now() - datetime.timedelta(days=365.25 * 25),
-                    # Exemple de valeur par défaut
-                    min_value=datetime.datetime.now() - datetime.timedelta(days=365.25 * 100),
-                    format="DD-MM-YYYY"
-                )
+                day_options = list(range(1, 32))  # Possible day values
+                month_options = config.months
+                current_year = datetime.datetime.now().year
+                year_options = list(range(current_year - 100, current_year + 1))  # Last 100 years
 
+                # Using st.columns to align day, month, and year on the same line
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    selected_day = st.selectbox("Jour de naissance", options=day_options, index=0, key=f"day_{i}")
+                with col2:
+                    selected_month = st.selectbox("Mois de naissance", options=month_options.keys(), index=0, key=f"month_{i}")
+                with col3:
+                    selected_year = st.selectbox("Année de naissance", options=year_options, index=25,
+                                                 key=f"year_{i}")  # Default to 25 years ago
 
-                family_details.append((first_name, surname, dob,relation_type))
+                # Constructing the datetime object for the date of birth
+                dob = datetime.datetime(year=selected_year, month=month_options[selected_month], day=selected_day)
+
+                # Append the details to the family_details list
+                if i == 0:
+                    family_details.append((first_name, surname, dob, relation_type))
+                else:
+                    # For additional family members where first_name and surname may not be defined
+                    family_details.append(("", "", dob, relation_type))
                 # Calculate age from dob and set flag if over 60
                 age = calculation.calculate_age(dob)
                 if age < 20:
@@ -143,7 +156,7 @@ def process_form_submission(credentials,workbook):
                 data_append_old = [
                     [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
                      medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y")]]
-                google_services.append_data_to_sheet("form", st.session_state.already_has_input, workbook.sheet1,
+                google_services.append_data_to_sheet("form" ,workbook.sheet1,
                                                      data_append_old)
                 st.warning("La génération de devis n'est pas possible pour les familles avec un membre âgé de plus de 60 ans. Veuillez rafraîchir la page et remplir le formulaire à nouveau si cela était une erreur.")
 
@@ -210,7 +223,7 @@ def process_form_submission(credentials,workbook):
                 google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
                                                             mimetype='application/html')  # Clean up after download
 
-                email_sender.send_email(st.session_state["email_address"])
+                email_sender.send_email(st.session_state["email_address"],st.session_state['temp_file_path'])
                 switch_page("Devis")
 
     return

@@ -28,17 +28,31 @@ if 'come_after_email' not in st.session_state:
 if 'id_devis' not in st.session_state:
     st.session_state.id_devis = None
 
+
 # Formulaire pour entrer le numéro de devis si celui-ci n'a pas encore été calculé
 if st.session_state.quote_calculated == False:
     st.session_state.come_after_email = True
     with st.form(key="numéro_de_devis"):
-        num_devis = st.text_input("#### Entrez le numéro de devis que vous avez obtenu par email (Exemple : AM-b332a).")
+        num_devis = st.text_input("#### Entrez le numéro de devis que vous avez obtenu par email (Exemple : b332a-AM).")
         st.session_state.id_devis = num_devis
         submit_num_devis = st.form_submit_button("Valider")
 
+    # Récupération des numéros de devis depuis la 7ème colonne après avoir soumis le formulaire pour éviter les appels inutiles à l'API
     if submit_num_devis:
-        # Ici, vous mettriez à jour l'état pour indiquer que le devis a été calculé ou vérifié
-        st.session_state.quote_calculated = True
+        list_quote_numbers = workbook.sheet1.col_values(7)
+
+        if num_devis in list_quote_numbers:
+            # Trouver l'indice de la ligne où se trouve le numéro de devis (ajouter 1 car l'indexation commence à 1 dans la feuille de calcul)
+            row_index = list_quote_numbers.index(num_devis) + 1
+            # Récupérer le nom dans la 2ème colonne pour cette ligne
+            nom = workbook.sheet1.cell(row_index,
+                                       2).value  # Assurez-vous que l'indexation des colonnes correspond à votre feuille
+            st.success(f"Numéro de devis trouvé sous le nom de {nom.upper()}.")
+            st.session_state.quote_calculated = True
+        else:
+            st.error(
+                "Numéro de devis introuvable. Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.")
+
 
 # Si le devis a été calculé ou après la soumission du formulaire de devis, exécutez le reste
 if st.session_state.quote_calculated == True:
@@ -154,7 +168,7 @@ if st.session_state.quote_calculated == True:
                     st.markdown(f"### Enfant {i + 1}")
                     prenom = st.text_input("**Prénom**", key=f"child_{i + 1}_name")
                     etat_de_sante_actuel = st.text_input("**État de santé actuel**", key=f"child_{i + 1}_current_health")
-                    date_de_naissance = st.date_input("**Date de naissance**", value=datetime.date(2010, 1, 1),
+                    date_de_naissance = st.text_input("**Date de naissance (Jour/Mois/Année)**",
                                                       key=f"child_{i + 1}_birth_date")
                     infirmities = st.text_input("**Infirmités**", key=f"child_{i + 1}_infirmities")
                     maladies_anterieures = st.text_input("**Maladies antérieures**", key=f"child_{i + 1}_previous_diseases")
