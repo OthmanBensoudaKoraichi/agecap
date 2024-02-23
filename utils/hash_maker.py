@@ -10,4 +10,4 @@ def make_hash(souscripteur_first_name,souscripteur_surname,souscripteur_dob):
     hex_dig = hash_object.hexdigest()
 
     # You may want to truncate the hash to a certain length for convenience
-    return f'AM-{hex_dig[:6]}'  # Taking the first 10 characters for simplicity
+    return f'{hex_dig[:6]}-AM'  # Taking the first 10 characters for simplicity

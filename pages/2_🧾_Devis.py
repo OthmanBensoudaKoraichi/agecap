@@ -43,8 +43,8 @@ if 'file_ready_for_download' in st.session_state and st.session_state['file_read
 
 # Initialize session state
 if 'quote_calculated' not in st.session_state:
-    st.session_state.quote_calculated = "Non"
-if st.session_state.quote_calculated == "Oui":
+    st.session_state.quote_calculated = False
+if st.session_state.quote_calculated == True:
     components.html(st.session_state['html_file'], height=3000)
 else :
     st.markdown("""

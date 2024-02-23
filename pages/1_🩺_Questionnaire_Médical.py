@@ -19,8 +19,8 @@ if credentials_path:
 
 ### Program ###
 
-if 'already_has_input' not in st.session_state:
-    st.session_state.already_has_input = False
+if 'quote_calculated' not in st.session_state:
+    st.session_state.quote_calculated = False
 
 if 'come_after_email' not in st.session_state:
     st.session_state.come_after_email = False
@@ -29,7 +29,7 @@ if 'id_devis' not in st.session_state:
     st.session_state.id_devis = None
 
 # Formulaire pour entrer le numéro de devis si celui-ci n'a pas encore été calculé
-if st.session_state.already_has_input == False:
+if st.session_state.quote_calculated == False:
     st.session_state.come_after_email = True
     with st.form(key="numéro_de_devis"):
         num_devis = st.text_input("#### Entrez le numéro de devis que vous avez obtenu par email (Exemple : AM-b332a).")
@@ -38,10 +38,10 @@ if st.session_state.already_has_input == False:
 
     if submit_num_devis:
         # Ici, vous mettriez à jour l'état pour indiquer que le devis a été calculé ou vérifié
-        st.session_state.already_has_input = True
+        st.session_state.quote_calculated = True
 
 # Si le devis a été calculé ou après la soumission du formulaire de devis, exécutez le reste
-if st.session_state.already_has_input == True:
+if st.session_state.quote_calculated == True:
     # Boutons pour changer de page
     go_to_quote = st.button(label="Retourner au devis")
     if go_to_quote:
@@ -342,7 +342,7 @@ if st.session_state.already_has_input == True:
             status = "Oui après email"
 
 
-        google_services.append_questionnaire_status(st.session_state.already_has_input, st.session_state.come_after_email, workbook.sheet1, status)
+        google_services.append_questionnaire_status(st.session_state.quote_calculated, st.session_state.come_after_email, workbook.sheet1, status)
 
 ### Chatbot ###
 

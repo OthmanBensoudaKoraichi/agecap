@@ -91,7 +91,7 @@ def insert_into_html(html_code, list_members, df_premiums, id_devis):
         year, month, day = str(member[2]).split("-")
         date_reformatted = f"{day[:2]}-{month}-{year}"
         relation = member[3]
-        members_html += f'<tr><td>{member[0]} {member[1]}</td><td>{relation}</td><td>{date_reformatted}</td></tr>'
+        members_html += f'<tr><td>{relation}</td><td>{date_reformatted}</td></tr>'
 
     # Use the new placeholder comment for members
     html_code = html_code.replace('<!-- Placeholder for Members Information -->', members_html)

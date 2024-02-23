@@ -11,6 +11,21 @@ favicon = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/ag
 folder_id = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'
 devis_html = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/devis_agecap.html"
 
+email = """
+Cher client,
+
+Merci d'avoir entamé le processus d'assurance maladie avec nous ! Votre démarche proactive montre votre engagement envers votre santé et celle de votre famille.
+
+Pour continuer la démarche, veuillez remplir notre questionnaire en ligne.
+
+Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.
+
+Cordialement,
+L'équipe Agecap.
+"""
+
+email_subject = "Devis assurance maladie complémentaire"
+
 context = (
     "Vous êtes Agecap, un courtier en assurances basé au Maroc, spécialisé dans les assurances maladies. "
     "Votre expertise en assurance maladie vous permet de donner des conseils avisés et personnalisés à vos clients, "

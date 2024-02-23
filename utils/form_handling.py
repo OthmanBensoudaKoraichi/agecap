@@ -4,7 +4,7 @@ import streamlit as st
 from utils import calculation, function_check, doc_manip,google_services, config,data_loaders, hash_maker, email_sender
 from streamlit_extras.switch_page_button import switch_page
 import tempfile
-
+import requests
 
 def process_form_submission(credentials,workbook):
 
@@ -13,8 +13,8 @@ def process_form_submission(credentials,workbook):
     if "family_count" not in st.session_state:
         st.session_state["family_count"] = 1
 
-    if 'already_has_input' not in st.session_state:
-        st.session_state.already_has_input = False
+    if 'quote_calculated' not in st.session_state:
+        st.session_state.quote_calculated = False
 
 
     with st.form("insurance_form"):
@@ -28,6 +28,9 @@ def process_form_submission(credentials,workbook):
         nb_enfants = 0
 
         # Input fields for family members
+        if "family_count" not in st.session_state:
+            st.session_state["family_count"] = 3  # Supposons 3 pour l'exemple
+
         for i in range(st.session_state["family_count"]):
             expanded = True  # Expand all by default
 
@@ -48,11 +51,16 @@ def process_form_submission(credentials,workbook):
                         key=f"relation_{i}"
                     )
 
-                first_name = st.text_input(f"Prénom {(i == 0) * '*'}", key=f"first_name_{i}")
-                surname = st.text_input(f"Nom de famille {(i == 0) * '*'}", key=f"surname_{i}")
+                # Condition pour afficher les champs Prénom et Nom de famille uniquement pour le souscripteur
+                if i == 0:
+                    first_name = st.text_input("Prénom *", key=f"first_name_{i}")
+                    surname = st.text_input("Nom de famille *", key=f"surname_{i}")
+
                 dob = st.date_input(
                     f"Date de naissance {(i == 0) * '*'}",
                     key=f"dob_{i}",
+                    value=datetime.datetime.now() - datetime.timedelta(days=365.25 * 25),
+                    # Exemple de valeur par défaut
                     min_value=datetime.datetime.now() - datetime.timedelta(days=365.25 * 100),
                     format="DD-MM-YYYY"
                 )
@@ -145,9 +153,17 @@ def process_form_submission(credentials,workbook):
             if phone_valid and email_valid and not member_over_60_found and all_fields_filled:
                 st.session_state['file_ready_for_download'] = True
 
-                html_template_path = '/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/devis_agecap.html'
-                with open(html_template_path, 'r') as file:
-                    html_template = file.read()
+                # Assuming `config.devis_html` holds the URL to the HTML template
+                response = requests.get(config.devis_html)
+                if response.status_code == 200:
+                    with tempfile.NamedTemporaryFile(delete=False, suffix='.html') as tmp_file:
+                        tmp_file.write(response.content)
+                    with open(tmp_file.name, 'r') as file:
+                        html_template = file.read()
+
+                else:
+                    st.error(
+                        "Un problème technique est survenu. Veuillez nous excuser pour ce désagrément et nous contacter par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com .")
 
                 # Extract family members' dates of birth and other details
                 family_dobs = [dob for _, _, dob, _ in family_details]
@@ -178,11 +194,11 @@ def process_form_submission(credentials,workbook):
                 # Store the path in the session state to access it outside the form's scope
                 st.session_state['temp_file_path'] = temp_file_path
                 st.session_state['html_file'] = modified_html
-                st.session_state.already_has_input = True
+                st.session_state.quote_calculated = True
                 data_append_validated = [
                     [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), st.session_state.already_has_input,nb_adultes,nb_enfants,"FR", "Non" ]]
-                google_services.append_data_to_sheet("form", st.session_state.already_has_input, workbook.sheet1,
+                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), st.session_state.quote_calculated,nb_adultes,nb_enfants,"FR", "Non" ]]
+                google_services.append_data_to_sheet("form", workbook.sheet1,
                                                      data_append_validated)
                 # Use the path to your service account key file
                 SERVICE_ACCOUNT_FILE = credentials

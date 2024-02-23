@@ -2,6 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import streamlit as st
+from utils import config
 
 def send_email(destinataire):
     # Informations de connexion
@@ -16,10 +17,10 @@ def send_email(destinataire):
     msg = MIMEMultipart()
     msg['From'] = email
     msg['To'] = destinataire
-    msg['Subject'] = "Sujet de l'email"
+    msg['Subject'] = config.email_subject
 
     # Corps de l'email
-    body = "Cher client,Merci d'avoir entamé le processus d'assurance maladie avec nous ! Votre démarche proactive montre votre engagement envers votre santé et celle de votre famille. Pour continuer la démarche, veuillez remplir notre questionnaire en ligne. Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question. "
+    body = config.email
 
     msg.attach(MIMEText(body, 'plain'))
 

@@ -48,7 +48,7 @@ def get_last_filled_row(sheet):
 
     return st.session_state.last_filled_row
 
-def append_data_to_sheet(type,already_has_input,sheet, data):
+def append_data_to_sheet(type,sheet, data):
     """
     Appends a row of data to the specified Google Sheet.
 
@@ -58,16 +58,8 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
     """
     # Get last row filled
     last_filled_row = get_last_filled_row(sheet)
-    # In theory, I don't need to check for already_has_input here.
-    if type == "form" and already_has_input == False:
-        try:
-            # Append the data to the last row of the sheet
-            sheet.append_row(data, value_input_option='USER_ENTERED')
-            print("Data appended successfully.")
-        except Exception as e:
-            print(f"An error occurred while appending data to the sheet: {e}")
 
-    if type == "form" and already_has_input == True:
+    if type == "form":
         try:
             range_to_update = f'A{last_filled_row }:M{last_filled_row}'
             sheet.update(range_to_update, data)
@@ -75,16 +67,7 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
         except Exception as e:
             print(f"An error occurred while appending data to the sheet: {e}")
 
-    # For the chatbot, I need to check for already_has_input
-    if type == "chat" and already_has_input == False:
-        try:
-
-            cell_to_update = f'N{last_filled_row}'
-            sheet.update(cell_to_update, data)
-            print("Data appended successfully.")
-        except Exception as e:
-            print(f"An error occurred while appending data to the sheet: {e}")
-    if type == "chat" and already_has_input == True:
+    if type == "chat":
         try:
             number_of_interactions = len(st.session_state.messages) // 2  # Using integer division for pairs
             ascii_value = ord(
@@ -96,7 +79,7 @@ def append_data_to_sheet(type,already_has_input,sheet, data):
         except Exception as e:
             print(f"An error occurred while appending data to the sheet: {e}")
 
-def append_questionnaire_status(already_has_input,come_after_email,sheet, data):
+def append_questionnaire_status(quote_calculated,come_after_email,sheet, data):
     """
     Appends a row of data to the specified Google Sheet.
 
@@ -110,7 +93,7 @@ def append_questionnaire_status(already_has_input,come_after_email,sheet, data):
     # Find the last filled row in column A
     last_filled_row = len(column_a) + 1  # +1 because sheet rows start at 1
 
-    if already_has_input == True:
+    if quote_calculated == True:
         try:
             cell_to_update = f'M{last_filled_row}'
             sheet.update(cell_to_update, data)
@@ -144,7 +127,8 @@ def download_service_account_json(file_url):
             file.write(response.content)
         return local_file_path
     else:
-        pass
+        st.error("Une erreur est survenue. Veuillez nous excuser pour ce désagrément et nous contacter par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com .")
+        st.rerun()
 
 def setup_google_drive(credentials_path, name_google_sheets):
     # Use credentials to setup Google Drive access
