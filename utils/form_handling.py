@@ -37,7 +37,7 @@ def process_form_submission(credentials,workbook):
             # Adjusting member labels based on index
             if i == 0:
                 member_label = "Souscripteur (Vous)"
-                relation_type = '/'
+                relation_type = 'Souscripteur'
             else:
                 member_label = f"Membre de la famille {i}"
 
