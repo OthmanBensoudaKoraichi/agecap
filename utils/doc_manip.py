@@ -81,6 +81,7 @@ def insert_into_html(html_code, list_members, df_premiums, id_devis):
     valid_until_date = (datetime.datetime.today() + datetime.timedelta(days=30)).strftime("%d-%m-%Y")
 
     # Insert `id_devis`, today's date, and the valid until date into the HTML
+    html_code = html_code.replace('<td id="full_name">Placeholder</td>', f'<td id="full_name">{list_members[0][0] + " " + list_members[0][1] }</td>')
     html_code = html_code.replace('<td id="devis-number">Placeholder</td>', f'<td id="devis-number">{id_devis}</td>')
     html_code = html_code.replace('<td id="issued-date">Placeholder</td>', f'<td id="issued-date">{today_date}</td>')
     html_code = html_code.replace('<td id="valid-until-date">Placeholder</td>', f'<td id="valid-until-date">{valid_until_date}</td>')
