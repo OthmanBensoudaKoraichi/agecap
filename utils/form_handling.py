@@ -158,7 +158,7 @@ def process_form_submission(credentials,workbook):
                      medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y")]]
                 google_services.append_data_to_sheet("form" ,workbook.sheet1,
                                                      data_append_old)
-                st.warning("La génération de devis n'est pas possible pour les familles avec un membre âgé de plus de 60 ans. Veuillez rafraîchir la page et remplir le formulaire à nouveau si cela était une erreur.")
+                st.warning("La génération de devis n'est pas possible pour les familles avec un membre âgé de plus de 60 ans. Veuillez modifier la date de naissance si cela était une erreur.")
 
             if not all_fields_filled:
                 st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")
