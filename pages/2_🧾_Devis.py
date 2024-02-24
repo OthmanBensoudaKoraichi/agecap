@@ -31,7 +31,7 @@ if 'file_ready_for_download' in st.session_state and st.session_state['file_read
 
     # Write next steps
     message = ("Votre devis est prêt.\n"
-               "Pour continuer, veuillez remplir notre court questionnaire médical de 5 minutes.")
+               "Pour continuer, veuillez remplir notre court questionnaire médical de 5 minutes. Vous avez également reçu une copie par email si vous souhaitez continuer la procédure ultérieurement (vérifiez dans votre boite de spams).")
 
     st.success(message)
 

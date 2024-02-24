@@ -41,7 +41,7 @@ Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistan
 
 Cordialement,
 L'équipe Agecap.
-""".format(num_devis=st.session_state['id_devis'])
+""".format(num_devis=st.session_state.id_devis )
 
 email_subject = "Devis assurance maladie complémentaire"
 

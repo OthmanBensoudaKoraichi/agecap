@@ -138,7 +138,7 @@ def process_form_submission(credentials,workbook):
 
         if submit_button:
             if 'id_devis' not in st.session_state:
-                st.session_state.id_devis = None
+                st.session_state.id_devis = ''
             # Create id_devis
             id_devis = hash_maker.make_hash(family_details[0][0],family_details[0][1],family_details[0][1])
             st.session_state.id_devis = id_devis
@@ -223,7 +223,7 @@ def process_form_submission(credentials,workbook):
                 google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
                                                             mimetype='application/html')  # Clean up after download
 
-                email_sender.send_email(st.session_state["email_address"],st.session_state['temp_file_path'])
+                email_sender.send_email(st.session_state["email_address"],temp_file_path)
                 switch_page("Devis")
 
     return
