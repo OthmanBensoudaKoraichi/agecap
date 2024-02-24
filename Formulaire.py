@@ -1,7 +1,6 @@
 # Import libraries
 import streamlit as st
 from utils import style, google_services, config, chatbot, form_handling
-from st_pages import Page,show_pages
 
 # Main function
 def main():

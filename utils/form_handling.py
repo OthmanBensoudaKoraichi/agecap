@@ -5,7 +5,6 @@ from utils import calculation, function_check, doc_manip,google_services, config
 from streamlit_extras.switch_page_button import switch_page
 import tempfile
 import requests
-import pdfkit
 
 def process_form_submission(credentials,workbook):
 
