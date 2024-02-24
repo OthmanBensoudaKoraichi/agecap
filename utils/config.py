@@ -27,6 +27,9 @@ months = {
     'Décembre': 12
 }
 
+if 'id_devis' not in st.session_state:
+    st.session_state['id_devis'] = ''
+
 email = """
 Cher client,
 
@@ -38,7 +41,7 @@ Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistan
 
 Cordialement,
 L'équipe Agecap.
-""".format(num_devis=st.session_state.get('id_devis', 'Non spécifié'))
+""".format(num_devis=st.session_state['id_devis'])
 
 email_subject = "Devis assurance maladie complémentaire"
 

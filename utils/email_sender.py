@@ -36,7 +36,7 @@ def send_email(destinataire, attachment_filepath=None):
         # Ajouter un en-tête pour que l'email sache ce qu'il y a dans l'attachement
         part.add_header(
             'Content-Disposition',
-            f'attachment; filename= {"Devis ".join(st.session_state.id_devis)}',
+            f'attachment; filename= {"Devis " + st.session_state.id_devis}',
         )
         msg.attach(part)
 
