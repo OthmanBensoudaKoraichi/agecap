@@ -19,6 +19,9 @@ def process_form_submission(credentials,workbook):
 
 
     with st.form("insurance_form"):
+        st.info(
+            "Si le formulaire ne s'affiche pas correctement et que vous utilisez le mode sombre, veuillez essayer de désactiver le mode sombre dans les paramètres de votre navigateur ou de votre application pour continuer.")
+
         member_over_60_found = False
         family_details = []
         all_fields_filled = True  # Assume all fields are initially filled
@@ -211,7 +214,7 @@ def process_form_submission(credentials,workbook):
                 st.session_state.quote_calculated = True
                 data_append_validated = [
                     [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), st.session_state.quote_calculated,nb_adultes,nb_enfants,"FR", "Non" ]]
+                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non" ]]
                 google_services.append_data_to_sheet("form", workbook.sheet1,
                                                      data_append_validated)
                 # Use the path to your service account key file

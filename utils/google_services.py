@@ -79,7 +79,7 @@ def append_data_to_sheet(type,sheet, data):
         except Exception as e:
             print(f"An error occurred while appending data to the sheet: {e}")
 
-def append_questionnaire_status(quote_calculated,come_after_email,sheet, data):
+def append_questionnaire_status(sheet, status):
     """
     Appends a row of data to the specified Google Sheet.
 
@@ -87,27 +87,15 @@ def append_questionnaire_status(quote_calculated,come_after_email,sheet, data):
     sheet: The worksheet object obtained from gspread, representing the specific sheet to append data to.
     data: A list of data to append. Each element in the list corresponds to a cell in the row.
     """
-    # Assume we're using column A to check for the last filled row
-    column_a = sheet.col_values(1)  # Get all values from column A
+ # Get last row filled
+    last_filled_row = get_last_filled_row(sheet)
 
-    # Find the last filled row in column A
-    last_filled_row = len(column_a) + 1  # +1 because sheet rows start at 1
-
-    if quote_calculated == True:
-        try:
-            cell_to_update = f'M{last_filled_row}'
-            sheet.update(cell_to_update, data)
-            print("Data appended successfully.")
-        except Exception as e:
-            print(f"An error occurred while appending data to the sheet: {e}")
-
-    if come_after_email == True:
-        try:
-            cell_to_update = sheet.find("searchCriteria", in_column=7)
-            sheet.update(cell_to_update, data)
-            print("Data appended successfully.")
-        except Exception as e:
-            print(f"An error occurred while appending data to the sheet: {e}")
+    try:
+        cell_to_update = f'M{last_filled_row }'
+        sheet.update(cell_to_update, status)
+        print("Data appended successfully.")
+    except Exception as e:
+        print(f"An error occurred while appending data to the sheet: {e}")
 
 
 # Example usage of the append_data_to_sheet function

@@ -75,10 +75,6 @@ if st.session_state.quote_calculated == True:
         st.session_state.assurer_conjoint = True
 
 
-    if "questionnaire rempli" not in st.session_state:
-        st.session_state["questionnaire rempli"] = "non"
-
-
     # Création d'un formulaire
     with st.form(key='medical_form'):
         # Afficher les colonnes en fonction du choix
@@ -255,7 +251,6 @@ if st.session_state.quote_calculated == True:
         submit_button = st.form_submit_button("Soumettre")
 
     if submit_button:
-        st.session_state["questionnaire rempli"] = "oui"
         st.success("Merci d'avoir rempli le questionnaire ! Nous l'avons bien reçu et nous vous contacterons dans les plus brefs délais. Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.")
         # Initialisation du dictionnaire pour les informations sur le souscripteur
         data_souscripteur = {
@@ -351,12 +346,12 @@ if st.session_state.quote_calculated == True:
                                                     mimetype='application/html')  # Clean up after download
 
         if st.session_state.come_after_email == False:
-            status = "Oui avant email"
+            status = "Oui avant relance"
         if st.session_state.come_after_email == True:
-            status = "Oui après email"
+            status = "Oui après relance"
 
 
-        google_services.append_questionnaire_status(st.session_state.quote_calculated, st.session_state.come_after_email, workbook.sheet1, status)
+        google_services.append_questionnaire_status(workbook.sheet1, status)
 
 ### Chatbot ###
 
