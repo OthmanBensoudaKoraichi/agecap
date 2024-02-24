@@ -352,7 +352,7 @@ if st.session_state.quote_calculated == True:
 
         if st.session_state.come_after_email == False:
             status = "Oui avant email"
-        if st.session_state.come_after_email == False:
+        if st.session_state.come_after_email == True:
             status = "Oui après email"
 
 

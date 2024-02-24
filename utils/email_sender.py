@@ -11,7 +11,7 @@ def send_email(destinataire, attachment_filepath=None):
 
     Merci d'avoir entamé le processus d'assurance maladie avec nous ! Votre démarche proactive montre votre engagement envers votre santé et celle de votre famille.
 
-    Pour continuer la démarche, veuillez remplir notre questionnaire en ligne en entrant votre numéro de devis {num_devis}
+    Pour continuer la démarche, veuillez remplir notre questionnaire en ligne en entrant votre numéro de devis : {num_devis}
 
     Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.
 
