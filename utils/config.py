@@ -27,23 +27,6 @@ months = {
     'Décembre': 12
 }
 
-if 'id_devis' not in st.session_state:
-    st.session_state['id_devis'] = ''
-
-email = """
-Cher client,
-
-Merci d'avoir entamé le processus d'assurance maladie avec nous ! Votre démarche proactive montre votre engagement envers votre santé et celle de votre famille.
-
-Pour continuer la démarche, veuillez remplir notre questionnaire en ligne en entrant votre numéro de devis {num_devis}
-
-Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.
-
-Cordialement,
-L'équipe Agecap.
-""".format(num_devis=st.session_state.id_devis )
-
-email_subject = "Devis assurance maladie complémentaire"
 
 context = (
     "Vous êtes Agecap, un courtier en assurances basé au Maroc, spécialisé dans les assurances maladies. "

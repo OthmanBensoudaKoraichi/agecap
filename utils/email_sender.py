@@ -4,9 +4,23 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 import streamlit as st
-from utils import config
 
 def send_email(destinataire, attachment_filepath=None):
+    email_body = """
+    Cher client,
+
+    Merci d'avoir entamé le processus d'assurance maladie avec nous ! Votre démarche proactive montre votre engagement envers votre santé et celle de votre famille.
+
+    Pour continuer la démarche, veuillez remplir notre questionnaire en ligne en entrant votre numéro de devis {num_devis}
+
+    Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.
+
+    Cordialement,
+    L'équipe Agecap.
+    """.format(num_devis=st.session_state.id_devis)
+
+    email_subject = "Devis assurance maladie complémentaire"
+
     # Informations de connexion
     email = st.secrets["email"]
     password = st.secrets["mdp"]
@@ -19,10 +33,10 @@ def send_email(destinataire, attachment_filepath=None):
     msg = MIMEMultipart()
     msg['From'] = email
     msg['To'] = destinataire
-    msg['Subject'] = config.email_subject
+    msg['Subject'] = email_subject
 
     # Corps de l'email
-    body = config.email
+    body = email_body
     msg.attach(MIMEText(body, 'plain'))
 
     # Attacher le fichier, si attachment_filepath est fourni

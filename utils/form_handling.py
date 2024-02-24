@@ -5,6 +5,7 @@ from utils import calculation, function_check, doc_manip,google_services, config
 from streamlit_extras.switch_page_button import switch_page
 import tempfile
 import requests
+import pdfkit
 
 def process_form_submission(credentials,workbook):
 
@@ -202,6 +203,7 @@ def process_form_submission(credentials,workbook):
                 # Save the modified HTML to a temporary file
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as tmp:
                     tmp.write(modified_html)
+                    pdfkit.from_file('fichier.html', 'fichier.pdf')
                     temp_file_path = tmp.name
 
                 # Store the path in the session state to access it outside the form's scope
