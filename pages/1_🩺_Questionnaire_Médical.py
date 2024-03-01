@@ -352,7 +352,7 @@ if st.session_state.quote_calculated == True:
         # Folder ID where the file should be uploaded
         FOLDER_ID = config.folder_id  # Replace with your actual folder ID
         # Specify the filename for the upload
-        filename = f"questionnaire_medical{st.session_state.id_devis}.xlsx"
+        filename = f"questionnaire_medical_{st.session_state.id_devis}.xlsx"
 
         # Proceed to upload the file
         google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
