@@ -47,7 +47,7 @@ def display_chat_history(user_avatar, bot_avatar):
 
 
 def get_chatbot_response(qa, vectorstore, context, query):
-    with st.spinner("Please wait for a few seconds..."):
+    with st.spinner("Veuillez attendre quelques secondes..."):
         # Perform similarity search with the current query
         vectorstore.similarity_search(query, k=3)
 
