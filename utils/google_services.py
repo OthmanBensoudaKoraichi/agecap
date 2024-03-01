@@ -27,10 +27,10 @@ def upload_file_to_google_drive(service_account_file, filename, filepath, folder
     file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
     print(f"File ID: {file.get('id')}")
 
-def get_last_filled_row(sheet):
+def get_last_filled_row(sheet,num_devis = None):
     if 'last_filled_row' not in st.session_state:
         st.session_state.last_filled_row = None
-    if st.session_state.last_filled_row == None:
+    if st.session_state.last_filled_row == None and num_devis == None:
         # Assume we're using column A to check for the last filled row
         column_a = sheet.col_values(1)  # Get all values from column A
         # I also note the first column corresponding to the chatbot's outputs
@@ -43,12 +43,18 @@ def get_last_filled_row(sheet):
         last_row = max(last_filled_row_a, last_filled_row_n)
         st.session_state.last_filled_row = last_row
 
+    elif st.session_state.last_filled_row == None and num_devis != None:
+        list_quote_numbers = sheet.col_values(7)
+        row_index = list_quote_numbers.index(num_devis) + 1
+        st.session_state.last_filled_row = row_index
+
+
     else:
         pass
 
     return st.session_state.last_filled_row
 
-def append_data_to_sheet(type,sheet, data):
+def append_data_to_sheet(type,sheet, data,num_devis = None,quote_calculated = False):
     """
     Appends a row of data to the specified Google Sheet.
 
@@ -56,8 +62,10 @@ def append_data_to_sheet(type,sheet, data):
     sheet: The worksheet object obtained from gspread, representing the specific sheet to append data to.
     data: A list of data to append. Each element in the list corresponds to a cell in the row.
     """
+
     # Get last row filled
-    last_filled_row = get_last_filled_row(sheet)
+    last_filled_row = get_last_filled_row(sheet,num_devis)
+
 
     if type == "form":
         try:
@@ -69,17 +77,30 @@ def append_data_to_sheet(type,sheet, data):
 
     if type == "chat":
         try:
+            # Fetch the entire row (assuming you know the maximum number of columns, say 50)
+            row_values = sheet.row_values(last_filled_row, value_render_option='FORMATTED_VALUE')
+
+            # Find the last filled column in that row
+            last_filled_column = len(row_values) - next((i for i, cell in enumerate(reversed(row_values)) if cell), -1)
+
+
             number_of_interactions = len(st.session_state.messages) // 2  # Using integer division for pairs
-            ascii_value = ord(
-                'N') + number_of_interactions - 1
+            if quote_calculated == False:
+
+                ascii_value = ord(
+                    'N') + number_of_interactions - 1
+            else:
+                ascii_value =  ord('N') + last_filled_column - 1
+
             column_letter = chr(ascii_value)
+
             cell_to_update = f'{column_letter}{last_filled_row}'
             sheet.update(cell_to_update, data)
             print("Data appended successfully.")
         except Exception as e:
             print(f"An error occurred while appending data to the sheet: {e}")
 
-def append_questionnaire_status(sheet, status):
+def append_questionnaire_status(sheet, status,num_devis):
     """
     Appends a row of data to the specified Google Sheet.
 
@@ -88,7 +109,7 @@ def append_questionnaire_status(sheet, status):
     data: A list of data to append. Each element in the list corresponds to a cell in the row.
     """
  # Get last row filled
-    last_filled_row = get_last_filled_row(sheet)
+    last_filled_row = get_last_filled_row(sheet,num_devis)
 
     try:
         cell_to_update = f'M{last_filled_row }'

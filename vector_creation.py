@@ -51,7 +51,8 @@ pdf_paths = [
     "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/agecap_infos.pdf",
     "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/87-CG SEHASSUR.pdf",
     "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/Argumentaire de vente SEHASSUR.pdf",
-    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/Fiche produit SEHASSUR.pdf"]
+    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/Fiche produit SEHASSUR.pdf",
+    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/devis_agecap.pdf"]
 
 
 def process_batch(texts, metadatas):

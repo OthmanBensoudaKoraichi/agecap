@@ -45,11 +45,19 @@ def display_chat_history(user_avatar, bot_avatar):
         """
         st.markdown(message_box, unsafe_allow_html=True)
 
+
 def get_chatbot_response(qa, vectorstore, context, query):
-    with st.spinner("Veuillez patienter quelques secondes"):
+    with st.spinner("Please wait for a few seconds..."):
+        # Perform similarity search with the current query
         vectorstore.similarity_search(query, k=3)
-        combined_input = context + "\n" + query
-        response = qa.run(combined_input)
+
+        # Enhance the context with recent chat history before appending the current query
+        chat_history = " ".join([f"{msg['role']}: {msg['content']}" for msg in
+                                 reversed(st.session_state.messages[-4:])])
+        enhanced_context = chat_history + "\n" + context + "\n" + query
+
+        # Query the model with the enhanced context
+        response = qa.run(enhanced_context)
         return response
 
 def append_chat_to_sheet(downloaded,sheet):

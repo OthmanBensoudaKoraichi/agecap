@@ -6,6 +6,8 @@ from streamlit_extras.switch_page_button import switch_page
 import tempfile
 import requests
 
+
+
 def process_form_submission(credentials,workbook):
 
     primes, coefficients = data_loaders.load_excel_data(config.primes_and_coef, config.primes_and_coef)
@@ -18,8 +20,6 @@ def process_form_submission(credentials,workbook):
 
 
     with st.form("insurance_form"):
-        st.info(
-            "Si le formulaire ne s'affiche pas correctement et que vous utilisez le mode sombre, veuillez essayer de désactiver le mode sombre dans les paramètres de votre navigateur ou de votre application pour continuer.")
 
         member_over_60_found = False
         family_details = []
@@ -161,7 +161,7 @@ def process_form_submission(credentials,workbook):
                      medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y")]]
                 google_services.append_data_to_sheet("form" ,workbook.sheet1,
                                                      data_append_old)
-                st.warning("La génération de devis n'est pas possible pour les familles avec un membre âgé de plus de 60 ans. Veuillez modifier la date de naissance si cela était une erreur.")
+                st.warning("Vous avez dépassé 60 ans. Nous vous recontacterons afin de vous proposer un produit adapté à votre situation")
 
             if not all_fields_filled:
                 st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")

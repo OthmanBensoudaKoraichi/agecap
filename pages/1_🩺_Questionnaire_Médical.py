@@ -31,9 +31,9 @@ if 'id_devis' not in st.session_state:
 
 # Formulaire pour entrer le numéro de devis si celui-ci n'a pas encore été calculé
 if st.session_state.quote_calculated == False:
-    st.session_state.come_after_email = True
     with st.form(key="numéro_de_devis"):
         num_devis = st.text_input("#### Entrez le numéro de devis que vous avez obtenu par email (Exemple : b332a-AM).")
+        st.session_state.come_after_email = True
         st.session_state.id_devis = num_devis
         submit_num_devis = st.form_submit_button("Valider")
 
@@ -45,9 +45,11 @@ if st.session_state.quote_calculated == False:
             # Trouver l'indice de la ligne où se trouve le numéro de devis (ajouter 1 car l'indexation commence à 1 dans la feuille de calcul)
             row_index = list_quote_numbers.index(num_devis) + 1
             # Récupérer le nom dans la 2ème colonne pour cette ligne
+            prenom = workbook.sheet1.cell(row_index,
+                                       1).value
             nom = workbook.sheet1.cell(row_index,
                                        2).value  # Assurez-vous que l'indexation des colonnes correspond à votre feuille
-            st.success(f"Numéro de devis trouvé sous le nom de {nom.upper()}.")
+            st.success(f"Numéro de devis trouvé sous le nom de {prenom + ' ' + nom.upper()}.")
             st.session_state.quote_calculated = True
         else:
             st.error(
@@ -65,6 +67,7 @@ if st.session_state.quote_calculated == True:
     style.banner_questionnaire_medical()
 
     # Utiliser st.radio pour la sélection initiale
+    offre = st.radio("**Quelle est l'offre que vous voudriez souscrire??**", ("Essentielle", "Optimale","Intégrale"), index=2)
     choix = st.radio("**Voulez-vous également assurer votre conjoint(e)?**", ("Oui", "Non"),index=1)
 
     # Mettre à jour l'état de session basé sur le choix
@@ -254,6 +257,7 @@ if st.session_state.quote_calculated == True:
         st.success("Merci d'avoir rempli le questionnaire ! Nous l'avons bien reçu et nous vous contacterons dans les plus brefs délais. Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.")
         # Initialisation du dictionnaire pour les informations sur le souscripteur
         data_souscripteur = {
+            "offre" : offre,
             "Quel emploi occupez-vous actuellement?": emploi,
             "Bénéficiez-vous d'une assurance maladie complémentaire auprès d'une autre compagnie?": assurance_complementaire,
             "Si oui, auprès de quelle compagnie? Depuis quand?": assurance_complementaire_si_oui,
@@ -327,31 +331,38 @@ if st.session_state.quote_calculated == True:
 
             df_data_conjoint = pd.DataFrame([data_conjoint]).transpose()
 
+        # Assuming df_informations_enfants, df_data_souscripteur, and df_data_conjoint are defined somewhere above this code
+
         with tempfile.NamedTemporaryFile(delete=False, suffix='.xlsx') as tmpfile:
             with pd.ExcelWriter(tmpfile.name, engine='xlsxwriter') as writer:
                 df_informations_enfants.to_excel(writer, sheet_name='Enfants', index=True)
                 df_data_souscripteur.to_excel(writer, sheet_name='Souscripteur', index=True)
 
-                if st.session_state.assurer_conjoint:
+                if st.session_state.get('assurer_conjoint', False):  # Safely accessing 'assurer_conjoint'
                     df_data_conjoint.to_excel(writer, sheet_name='Conjoint(e)', index=True)
+
+            # Now that the file has been created and data written to it, set the path in session state
+            st.session_state['temp_file_path'] = tmpfile.name
+
+        # Now you can safely access st.session_state['temp_file_path'] as it has been initialized
+        filepath = st.session_state['temp_file_path']
 
         # Use the path to your service account key file
         SERVICE_ACCOUNT_FILE = credentials_path
         # Folder ID where the file should be uploaded
         FOLDER_ID = config.folder_id  # Replace with your actual folder ID
-        # Specify the filename and path of the PDF file to upload
-        filename = f"questionnaire_medical{st.session_state.id_devis}"
-        filepath = st.session_state['temp_file_path']
+        # Specify the filename for the upload
+        filename = f"questionnaire_medical{st.session_state.id_devis}.xlsx"
+
+        # Proceed to upload the file
         google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
-                                                    mimetype='application/html')  # Clean up after download
-
-        if st.session_state.come_after_email == False:
-            status = "Oui avant relance"
-        if st.session_state.come_after_email == True:
+                                                    mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')  # Specify the correct MIME type for an Excel file
+        if st.session_state.come_after_email:
             status = "Oui après relance"
+        else:
+            status = "Oui avant relance"
 
-
-        google_services.append_questionnaire_status(workbook.sheet1, status)
+        google_services.append_questionnaire_status(workbook.sheet1, status,st.session_state.id_devis )
 
 ### Chatbot ###
 
