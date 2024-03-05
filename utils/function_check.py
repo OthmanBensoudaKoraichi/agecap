@@ -6,8 +6,11 @@ import streamlit as st
 def is_valid_number(number):
     # Remove non-numeric characters to normalize the input
     sanitized_number = re.sub(r"\D", "", number)  # \D matches any character that is not a digit
-    # Match the normalized number with the pattern
-    return re.match(r"^0[5-9]\d{8}$", sanitized_number)
+
+    # Match the normalized number with the pattern for both domestic and international Moroccan formats
+    # For domestic format: start with 0 followed by a digit from 5 to 9 and then 8 more digits (total 9 digits after 0)
+    # For international format: start with 212 followed by a digit from 5 to 9 and then 8 more digits (total 9 digits after 212)
+    return re.match(r"^(0[5-9]\d{8}|212[5-9]\d{8})$", sanitized_number)
 
 
 # Function to validate email
