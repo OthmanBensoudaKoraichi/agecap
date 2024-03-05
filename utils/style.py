@@ -2,16 +2,19 @@ import base64
 import streamlit as st
 from utils import config
 
-def set_default_text_color():
-    # Set default text color to black
-    default_text_color_css = """
+def set_label_text_color():
+    # Set label text color to black
+    label_text_color_css = """
     <style>
-    body, html, .stTextInput, .stSelectbox, .stDateInput, .stTimeInput, .stText, .stMarkdown, .stSlider, .stButton > button, .st-bb, .st-at, .st-cf, .st-de, .st-ef {
+    /* Target the labels of input elements */
+    .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label, .stCheckbox label,
+    .stRadio label, .stFileUploader label, .stSlider label {
         color: #000; /* Black color */
     }
     </style>
     """
-    st.markdown(default_text_color_css, unsafe_allow_html=True)
+    st.markdown(label_text_color_css, unsafe_allow_html=True)
+
 def set_app_layout(doodle_path):
     # Set background image
     set_bg_image(doodle_path, deploy=True)
