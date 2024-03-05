@@ -183,6 +183,7 @@ def process_form_submission(credentials,workbook):
 
                 # Extract family members' dates of birth and other details
                 family_dobs = [dob for _, _, dob, _ in family_details]
+                relation_types = [relation_type for _, _, _, relation_type in family_details]
 
                 # Calculate premiums
                 family_premiums = calculation.calculate_family_premiums(

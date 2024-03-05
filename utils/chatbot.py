@@ -49,7 +49,7 @@ def display_chat_history(user_avatar, bot_avatar):
 def get_chatbot_response(qa, vectorstore, context, query):
     with st.spinner("Veuillez attendre quelques secondes..."):
         # Perform similarity search with the current query
-        vectorstore.similarity_search(query, k=5)
+        vectorstore.similarity_search(query, k=6)
 
         # Enhance the context with recent chat history before appending the current query
         chat_history = " ".join([f"{msg['role']}: {msg['content']}" for msg in

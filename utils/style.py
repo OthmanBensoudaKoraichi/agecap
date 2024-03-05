@@ -2,6 +2,16 @@ import base64
 import streamlit as st
 from utils import config
 
+def set_default_text_color():
+    # Set default text color
+    default_text_color_css = """
+    <style>
+    body, html {
+        color: #333; /* Dark gray color */
+    }
+    </style>
+    """
+    st.markdown(default_text_color_css, unsafe_allow_html=True)
 
 def set_app_layout(doodle_path):
     # Set background image
@@ -69,13 +79,9 @@ def get_image_base64(image_path):
     return f"data:image/jpeg;base64,{encoded_string}"
 
 
-def set_bg_image(image_path, opacity=0.8, deploy=True):
-    # Assuming opacity is between 0 (fully transparent) and 1 (fully opaque)
+def set_bg_image(image_path, opacity=0.9, deploy=True):  # Increase opacity for better visibility
     if not deploy:
-        # Function to convert image to Base64 should be defined somewhere
         base64_image = get_image_base64(image_path)
-
-        # Use local CSS to set the background image with the Base64 string and add a transparent overlay using RGBA
         st.markdown(f"""
         <style>
         .stApp {{
@@ -86,9 +92,7 @@ def set_bg_image(image_path, opacity=0.8, deploy=True):
         }}
         </style>
         """, unsafe_allow_html=True)
-
     else:
-        # Directly use the image URL and ensure it's correctly formatted within the url() function
         st.markdown(f"""
         <style>
         .stApp {{
@@ -99,8 +103,6 @@ def set_bg_image(image_path, opacity=0.8, deploy=True):
         }}
         </style>
         """, unsafe_allow_html=True)
-
-        return
 
 def display_intro_banner():
     # Display a stylish and sophisticated banner
@@ -131,7 +133,7 @@ def banner_questionnaire_medical():
                 <style>
                     .banner {
                         display: inline-block;
-                        color: #fff;  /* Couleur du texte blanc */
+                        color: #000;  /* Couleur du texte noir */
                         padding: 10px 20px;  /* Espacement à l'intérieur de la bannière */
                         border-radius: 10px;  /* Coins arrondis pour un look plus doux */
                         background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Arrière-plan en dégradé */

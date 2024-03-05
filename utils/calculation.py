@@ -10,7 +10,6 @@ def find_age_group(age, primes_df):
             return age_group
     return None
 
-
 def calculate_age(dob):
     today = datetime.date.today()
     age = today.year - dob.year - ((today.month, today.day) < (dob.month, dob.day))
@@ -19,6 +18,7 @@ def calculate_age(dob):
 # Function to calculate each premium
 def calculate_family_premiums(family_dobs, primes_df, coefficients_df):
     family_premiums = []
+    first_dob = True  # Flag to check if it's the first dob
 
     for dob in family_dobs:
         age = calculate_age(dob)
@@ -26,6 +26,8 @@ def calculate_family_premiums(family_dobs, primes_df, coefficients_df):
 
         if age_group:
             premium_row = primes_df[primes_df["age"] == age_group].iloc[0]
+            deces_premium = premium_row['deces'] if first_dob else 0  # 'deces' for first dob only
+
             premiums = {
                 "age": age,
                 "age_group": age_group,
@@ -38,7 +40,7 @@ def calculate_family_premiums(family_dobs, primes_df, coefficients_df):
             }
 
             for column in primes_df.columns[1:-1]:  # Skipping 'age' and 'deces'
-                annual_premium = premium_row[column]
+                annual_premium = premium_row[column] + deces_premium  # Add 'deces' to annual premium
                 premiums["premiums"]["Annuel"][column] = annual_premium
                 premiums["premiums"]["Semestriel"][column] = (
                     annual_premium * coefficients_df[column].iloc[0]
@@ -51,6 +53,8 @@ def calculate_family_premiums(family_dobs, primes_df, coefficients_df):
                 )
 
             family_premiums.append(premiums)
+
+            first_dob = False  # Set flag to False after processing the first dob
 
     return family_premiums
 

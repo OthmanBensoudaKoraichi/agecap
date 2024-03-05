@@ -5,14 +5,14 @@ from utils import style, google_services, config, chatbot, form_handling
 # Main function
 def main():
 
-
     ### STYLE ###
     st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state="auto",
                        menu_items=None)
 
-
     # Set the layout of the app
     style.set_app_layout(config.doodle)
+
+    style.set_default_text_color()
 
     # Create columns and place logo
     col1, col2, col3 = style.create_columns()
