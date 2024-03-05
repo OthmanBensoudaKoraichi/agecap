@@ -3,16 +3,15 @@ import streamlit as st
 from utils import config
 
 def set_default_text_color():
-    # Set default text color
+    # Set default text color to black
     default_text_color_css = """
     <style>
-    body, html {
-        color: #333; /* Dark gray color */
+    body, html, .stTextInput, .stSelectbox, .stDateInput, .stTimeInput, .stText, .stMarkdown, .stSlider, .stButton > button, .st-bb, .st-at, .st-cf, .st-de, .st-ef {
+        color: #000; /* Black color */
     }
     </style>
     """
     st.markdown(default_text_color_css, unsafe_allow_html=True)
-
 def set_app_layout(doodle_path):
     # Set background image
     set_bg_image(doodle_path, deploy=True)
@@ -156,14 +155,11 @@ def banner_questionnaire_medical():
                 """, unsafe_allow_html=True)
 
 def display_important_message():
-    # Ajout d'une note sous la bannière
     st.markdown("""
-        <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
+        <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px; color: #000;">
             <strong>Note importante :</strong> La tarification de votre devis est précisément ajustée en fonction de la <strong>date de naissance</strong> de chaque membre de la famille. Il est donc essentiel de remplir ces champs avec exactitude pour assurer une estimation adéquate de votre devis.
         </div>
     """, unsafe_allow_html=True)
-
-    return
 
 def create_columns():
     # Create columns in the Streamlit app
