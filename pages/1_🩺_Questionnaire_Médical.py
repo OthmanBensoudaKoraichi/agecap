@@ -32,12 +32,12 @@ if 'id_devis' not in st.session_state:
 # Formulaire pour entrer le numéro de devis si celui-ci n'a pas encore été calculé
 if st.session_state.quote_calculated == False:
     with st.form(key="numéro_de_devis"):
+        st.session_state.come_after_email = True
         num_devis = st.text_input("#### Entrez le numéro de devis que vous avez obtenu par email (Exemple : b332a-AM).").replace(" ", "")
         submit_num_devis = st.form_submit_button("Valider")
 
     # Récupération des numéros de devis depuis la 7ème colonne après avoir soumis le formulaire pour éviter les appels inutiles à l'API
     if submit_num_devis:
-        st.session_state.come_after_email = True
         st.session_state.id_devis = num_devis
         list_quote_numbers = workbook.sheet1.col_values(7)
 
