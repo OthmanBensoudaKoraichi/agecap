@@ -80,8 +80,8 @@ def insert_into_html(html_code, list_members, df_premiums, id_devis):
     today_date = datetime.datetime.today().strftime("%d-%m-%Y")
     valid_until_date = (datetime.datetime.today() + datetime.timedelta(days=30)).strftime("%d-%m-%Y")
 
-    # Insert `id_devis`, today's date, and the valid until date into the HTML
-    html_code = html_code.replace('<td id="full_name">Placeholder</td>', f'<td id="full_name">{list_members[0][0].capitalize() + " " + list_members[0][1].capitalize() }</td>')
+    # Correctly replace the placeholder for full name
+    html_code = html_code.replace('id="full_name">Placeholder</span>', f'id="full_name">{list_members[0][0].capitalize() + " " + list_members[0][1].capitalize()}</span>')
     html_code = html_code.replace('<td id="devis-number">Placeholder</td>', f'<td id="devis-number">{id_devis}</td>')
     html_code = html_code.replace('<td id="issued-date">Placeholder</td>', f'<td id="issued-date">{today_date}</td>')
     html_code = html_code.replace('<td id="valid-until-date">Placeholder</td>', f'<td id="valid-until-date">{valid_until_date}</td>')
@@ -94,28 +94,21 @@ def insert_into_html(html_code, list_members, df_premiums, id_devis):
         relation = member[3]
         members_html += f'<tr><td>{relation}</td><td>{date_reformatted}</td></tr>'
 
-    # Use the new placeholder comment for members
     html_code = html_code.replace('<!-- Placeholder for Members Information -->', members_html)
-
-    labels = [
-        "Montant TTC annuel",
-        "Montant TTC semestriel",
-        "Montant TTC trimestriel",
-        "Montant TTC mensuel"
-    ]
 
     premiums_html = ''
     for i in range(df_premiums.shape[0]):
-        # Start the row with the label in the first cell, in bold and dark blue
         row_html = f'<tr><td class="dark-blue"><strong>{labels[i]}</strong></td>'
-        # Append the data cells for this row
         for j in range(df_premiums.shape[1]):
             cell_value = df_premiums.iloc[i, j]
-            row_html += f'<td>{cell_value}</td>'
+            # Apply dark blue to specific percentages
+            if cell_value in ["80%", "90%"]:  # Assuming you want to add "85%" if it exists
+                row_html += f'<td class="dark-blue">{cell_value}</td>'
+            else:
+                row_html += f'<td>{cell_value}</td>'
         row_html += '</tr>'
         premiums_html += row_html
 
-    # Use the new placeholder comment for premiums
     html_code = html_code.replace('<!-- Placeholder for Premiums Information -->', premiums_html)
 
     return html_code
