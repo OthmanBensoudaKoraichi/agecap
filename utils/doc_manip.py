@@ -120,6 +120,8 @@ def insert_into_html(html_code, list_members, df_premiums, id_devis):
 
     return html_code
 
+import datetime
+
 def insert_into_html(html_code, list_members, df_premiums, id_devis):
     # Format today's date and the date 30 days from now
     today_date = datetime.datetime.today().strftime("%d-%m-%Y")
@@ -141,6 +143,7 @@ def insert_into_html(html_code, list_members, df_premiums, id_devis):
 
     html_code = html_code.replace('<!-- Placeholder for Members Information -->', members_html)
 
+    # Define labels for the premium options
     labels = [
         "Montant TTC annuel",
         "Montant TTC semestriel",
