@@ -2,6 +2,42 @@ import base64
 import streamlit as st
 from utils import config
 
+def set_text_color():
+    # Set label, radio options, and error message text color to black, including a broader targeting for radio options
+    text_color_css = """
+    <style>
+    /* Target labels of input elements */
+    .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label, .stCheckbox label,
+    .stRadio label, .stFileUploader label, .stSlider label, .stNumberInput label {
+        color: #000; /* Black color for labels */
+    }
+    /* Broader targeting for radio button options */
+    .stRadio > div, .stRadio > div > label {
+        color: #000 !important; /* Force black color for radio options */
+    }
+    /* Target text in Streamlit error messages */
+    .stAlert[data-baseweb="notification"] {
+        color: #000; /* Black color for error text */
+    }
+    </style>
+    """
+    st.markdown(text_color_css, unsafe_allow_html=True)
+
+
+# Call set_text_color() in your main app function to apply the styles
+
+def set_label_text_color():
+    # Set label text color to black
+    label_text_color_css = """
+    <style>
+    /* Target the labels of input elements */
+    .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label, .stCheckbox label,
+    .stRadio label, .stFileUploader label, .stSlider label {
+        color: #000; /* Black color */
+    }
+    </style>
+    """
+    st.markdown(label_text_color_css, unsafe_allow_html=True)
 
 def set_app_layout(doodle_path):
     # Set background image
@@ -123,7 +159,7 @@ def banner_questionnaire_medical():
                 <style>
                     .banner {
                         display: inline-block;
-                        color: #000;  /* Couleur du texte blanc */
+                        color: #000;  /* Couleur du texte noir */
                         padding: 10px 20px;  /* Espacement à l'intérieur de la bannière */
                         border-radius: 10px;  /* Coins arrondis pour un look plus doux */
                         background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Arrière-plan en dégradé */
@@ -146,14 +182,11 @@ def banner_questionnaire_medical():
                 """, unsafe_allow_html=True)
 
 def display_important_message():
-    # Ajout d'une note sous la bannière
     st.markdown("""
-        <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px;">
+        <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px; color: #000;">
             <strong>Note importante :</strong> La tarification de votre devis est précisément ajustée en fonction de la <strong>date de naissance</strong> de chaque membre de la famille. Il est donc essentiel de remplir ces champs avec exactitude pour assurer une estimation adéquate de votre devis.
         </div>
     """, unsafe_allow_html=True)
-
-    return
 
 def create_columns():
     # Create columns in the Streamlit app
