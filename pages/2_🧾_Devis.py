@@ -52,6 +52,8 @@ else:
             </div>
         """, unsafe_allow_html=True)
     go_to_form = st.button(label="Retourner au formulaire")
+    if go_to_form:
+        switch_page("Formulaire")
 
 ### GOOGLE CREDENTIALS ###
 credentials_path = google_services.download_service_account_json(st.secrets["jsonkey_google"])
