@@ -71,7 +71,8 @@ def append_chat_to_sheet(downloaded,sheet):
 
 # Chatbot interaction
 def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, workbook):
-
+    if 'id_devis' not in st.session_state:
+        st.session_state.id_devis = None
     # Use sidebar for chat interaction
     with st.sidebar:
         # Check if chat history exists in session state
@@ -107,7 +108,7 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
                 display_chat_history(user_avatar, bot_avatar)
 
                 # Append chat history to the Google Sheet
-                google_services.append_data_to_sheet("chat",workbook.sheet1, current_interaction)
+                google_services.append_data_to_sheet("chat",workbook.sheet1,num_devis = st.session_state.id_devis , data= current_interaction)
 
 def set_chatbot_style():
     # This function now sets the style within the sidebar
