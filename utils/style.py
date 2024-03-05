@@ -2,6 +2,29 @@ import base64
 import streamlit as st
 from utils import config
 
+def set_text_color():
+    # Set label, radio options, and error message text color to black
+    text_color_css = """
+    <style>
+    /* Target the labels of input elements */
+    .stTextInput label, .stSelectbox label, .stDateInput label, .stTimeInput label, .stCheckbox label,
+    .stRadio label, .stFileUploader label, .stSlider label, .stNumberInput label {
+        color: #000; /* Black color for labels */
+    }
+    /* Target the options of radio buttons */
+    .stRadio > div > label {
+        color: #000; /* Black color for radio options */
+    }
+    /* Target text in error messages */
+    .stAlert {
+        color: #000; /* Black color for error text */
+    }
+    </style>
+    """
+    st.markdown(text_color_css, unsafe_allow_html=True)
+
+# Call set_text_color() in your main app function to apply the styles
+
 def set_label_text_color():
     # Set label text color to black
     label_text_color_css = """

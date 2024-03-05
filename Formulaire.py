@@ -14,6 +14,8 @@ def main():
 
     style.set_label_text_color()
 
+    style.set_text_color()
+
     # Create columns and place logo
     col1, col2, col3 = style.create_columns()
     style.place_logo(col2,config.agecap_logo)
