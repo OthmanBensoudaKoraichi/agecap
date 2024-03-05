@@ -29,6 +29,7 @@ def process_form_submission(credentials,workbook):
         temp_file_path = None
         nb_adultes = 0
         nb_enfants = 0
+        dates_naissance_conforme = True
 
         # Input fields for family members
         if "family_count" not in st.session_state:
@@ -150,6 +151,8 @@ def process_form_submission(credentials,workbook):
                 st.error("Format du numéro de téléphone invalide")
             if email_valid == False:
                 st.error("Format de l'adresse email invalide")
+
+
             # Check if a medium has been selected
             if medium not in ('LinkedIn', 'Facebook', 'Instagram','Ne souhaite pas préciser'):
                 st.error("La sélection d'un réseau social est obligatoire.")
@@ -166,7 +169,15 @@ def process_form_submission(credentials,workbook):
             if not all_fields_filled:
                 st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")
 
-            if phone_valid and email_valid and not member_over_60_found and all_fields_filled:
+            for _, _, dob, _ in family_details:
+                if dob > datetime.datetime.today():
+                    # Use Streamlit's error function to display the error
+                    # Make sure Streamlit is correctly set up for this
+                    dates_naissance_conforme = False
+                    st.error("Une date de naissance entrée n'est pas conforme. Veuillez vérifier les dates de naissance saisies.")
+                    break  # Exit loop after finding the first future date, optional based on your needs
+
+            if phone_valid and email_valid and not member_over_60_found and all_fields_filled and dates_naissance_conforme:
                 st.session_state['file_ready_for_download'] = True
 
                 # Assuming `config.devis_html` holds the URL to the HTML template
