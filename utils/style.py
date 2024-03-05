@@ -12,11 +12,11 @@ def set_text_color():
         color: #000; /* Black color for labels */
     }
     /* Target the options of radio buttons */
-    .stRadio > div > label {
+    .stRadio > div > div > label, .stRadio > label {
         color: #000; /* Black color for radio options */
     }
-    /* Target text in error messages */
-    .stAlert {
+    /* Target text in Streamlit error messages */
+    .stAlert[data-baseweb="notification"] {
         color: #000; /* Black color for error text */
     }
     </style>
