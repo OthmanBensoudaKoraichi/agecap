@@ -2,15 +2,46 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Simulation</title>
 <style>
-    body {font-family: Arial, sans-serif; margin: 20px 100px;} /* Adds 40px margin to left and right */
-    table {border-collapse: collapse; width: 100%;}
-    th, td {border: 1px solid #dddddd; text-align: center; padding: 8px;}
-    th {background-color: #f2f2f2;}
-    h2, h3 {color: #00008B;} /* Dark blue titles */
-    .dark-blue {color: #00008B; font-weight: bold;} /* Dark blue and bold text */
-    .center {text-align: center;} /* Center content */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px; /* Adjusted margin for better mobile view */
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: auto; /* Allows table to adjust column width based on content */
+    }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    h2, h3 {
+        color: #00008B; /* Dark blue titles */
+    }
+    .dark-blue {
+        color: #00008B;
+        font-weight: bold; /* Dark blue and bold text */
+    }
+    .center {
+        text-align: center; /* Center content */
+    }
+    img {
+        max-width: 100%; /* Makes images responsive */
+        height: auto; /* Maintain aspect ratio */
+    }
+    @media screen and (max-width: 768px) {
+        body {
+            margin: 10px; /* Smaller margin for smaller screens */
+        }
+        /* Adapt font sizes, table layout, etc., specifically for mobile devices here */
+    }
 </style>
 </head>
 <body>
