@@ -175,7 +175,7 @@ def banner_questionnaire_medical():
                 <style>
                     .banner {
                         display: inline-block;
-                        color: #000;  /* Couleur du texte noir */
+                        color: #fff;  /* Couleur du texte blanc */
                         padding: 10px 20px;  /* Espacement à l'intérieur de la bannière */
                         border-radius: 10px;  /* Coins arrondis pour un look plus doux */
                         background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Arrière-plan en dégradé */
