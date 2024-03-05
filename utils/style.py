@@ -91,8 +91,24 @@ def embed_vimeo_video(url, width=560, height=315):
     video_id = url.split("/")[-1].split("?")[0]
     # Define custom HTML for embedding the video within a styled container
     video_html = f"""
-        <div style="margin: 10px auto; width: {width}px; border-radius: 20px; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1);">
-            <iframe width="{width}" height="{height}" src="https://player.vimeo.com/video/{video_id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <style>
+            .video-container {{
+                position: relative;
+                width: 100%;
+                padding-bottom: 56.25%; /* Aspect Ratio 16:9 */
+                margin: 10px auto;
+                box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            }}
+            .video-iframe {{
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }}
+        </style>
+        <div class="video-container">
+            <iframe class="video-iframe" src="https://player.vimeo.com/video/{video_id}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
     """
     # Use st.markdown to render the custom video container
