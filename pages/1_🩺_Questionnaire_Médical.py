@@ -67,8 +67,8 @@ if st.session_state.quote_calculated == True:
     style.banner_questionnaire_medical()
 
     # Utiliser st.radio pour la sélection initiale
-    offre = st.radio("**À quelle offre voudriez-vous souscrire?**", ("Essentielle", "Optimale","Intégrale"), index=2)
-    choix = st.radio("**Voulez-vous également assurer votre conjoint(e)?**", ("Oui", "Non"),index=1)
+    offre = st.radio("**À quelle offre voudriez-vous souscrire ?**", ("Essentielle", "Optimale","Intégrale"), index=2)
+    choix = st.radio("**Voulez-vous également assurer votre conjoint(e) ?**", ("Oui", "Non"),index=1)
 
     # Mettre à jour l'état de session basé sur le choix
     # Cela est fait avant d'entrer dans le formulaire pour éviter des modifications après l'instanciation
@@ -90,19 +90,19 @@ if st.session_state.quote_calculated == True:
         with col1:
             st.markdown("**Souscripteur**")
             # Starting the questionnaire
-            emploi = st.text_input("**Quel emploi occupez-vous actuellement?**",key = "emploi")
-            assurance_complementaire = st.radio("**Bénéficiez-vous d'une assurance maladie complémentaire auprès d'une autre compagnie?**",
+            emploi = st.text_input("**Quel emploi occupez-vous actuellement ?**",key = "emploi")
+            assurance_complementaire = st.radio("**Bénéficiez-vous d'une assurance maladie complémentaire auprès d'une autre compagnie ?**",
                                  ["Oui", "Non"],key = "ass_comp")
-            assurance_complementaire_si_oui = st.text_input("**Si oui, auprès de quelle compagnie? Depuis quand?**",key = "ass_comp_si_oui")
+            assurance_complementaire_si_oui = st.text_input("**Si oui, auprès de quelle compagnie? Depuis quand ?**",key = "ass_comp_si_oui")
 
 
-            traitement_medical = st.radio("**Suivez-vous un traitement médical?**", ["Oui", "Non"],key = "trait_med")
-            traitement_si_oui = st.text_input("**Si oui, lesquels?**",key = "traitement_si_oui")
+            traitement_medical = st.radio("**Suivez-vous un traitement médical ?**", ["Oui", "Non"],key = "trait_med")
+            traitement_si_oui = st.text_input("**Si oui, lesquels ?**",key = "traitement_si_oui")
 
 
             maladie_grave = st.radio("**Avez-vous été atteint de maladie grave ou chronique ?**", ["Oui", "Non"],key = "maladie_grave")
 
-            st.write("**Si oui, lesquelles?**")
+            st.write("**Si oui, lesquelles ?**")
             # Définition des variables en fonction de l'état des cases à cocher
             hta = "oui" if st.checkbox("HTA",key = "hta") else "non"
             cholesterol= "oui" if st.checkbox("Cholestérol",key = "chol") else "non"
@@ -113,25 +113,25 @@ if st.session_state.quote_calculated == True:
             # Définition d'un champ de saisie de texte pour les autres conditions
             autres_maladies = st.text_input("**Autres à préciser**",key = "autres_maladies")
             # Additional questions
-            arret_travail = st.radio("**Êtes-vous en arrêt de travail?**", ["Oui", "Non"],key = "arret_travail")
-            arret_travail_si_oui = st.text_input("**Si oui, depuis quand? Pour quel motif?**",key = "arret_travail_si_oui")
+            arret_travail = st.radio("**Êtes-vous en arrêt de travail ?**", ["Oui", "Non"],key = "arret_travail")
+            arret_travail_si_oui = st.text_input("**Si oui, depuis quand ? Pour quel motif ?**",key = "arret_travail_si_oui")
 
-            operations_chirurgicales = st.radio("**Avez-vous subi des opérations chirurgicales?**", ["Oui", "Non"],key = "op_chir")
-            operations_chirurgicales_si_oui = st.text_input("**Si oui, lesquelles? Suites éventuelles?**",key = "op_chir_si_oui")
+            operations_chirurgicales = st.radio("**Avez-vous subi des opérations chirurgicales ?**", ["Oui", "Non"],key = "op_chir")
+            operations_chirurgicales_si_oui = st.text_input("**Si oui, lesquelles ? Suites éventuelles ?**",key = "op_chir_si_oui")
 
             # Infirmité and Pension d'invalidité
-            infirmite = st.radio("**Êtes-vous atteint d'une infirmité?**", ["Oui", "Non"],key = "infirmite")
+            infirmite = st.radio("**Êtes-vous atteint d'une infirmité ?**", ["Oui", "Non"],key = "infirmite")
             infirmite_si_oui = st.text_input("Si oui, laquelle ?",key = "infirmite_si_oui")
 
-            pension_invalidite = st.radio("**Êtes-vous titulaire d'une pension d'invalidité?**", ["Oui", "Non"],key = "pens_inv")
-            pension_invalidite_si_oui = st.text_input("**A quel titre? A quel taux?**",key = "pension_inv_si_oui")
+            pension_invalidite = st.radio("**Êtes-vous titulaire d'une pension d'invalidité ?**", ["Oui", "Non"],key = "pens_inv")
+            pension_invalidite_si_oui = st.text_input("**A quel titre ? A quel taux ?**",key = "pension_inv_si_oui")
 
             # Date d'entrée en invalidité
-            invalidite_date = st.text_input("**Date d'entrée en invalidité?**",key = "invalidite_date")
+            invalidite_date = st.text_input("**Date d'entrée en invalidité ?**",key = "invalidite_date")
 
             # Risques professionnels
             risque_pro = st.radio(
-                "**Êtes-vous exposé à un danger dans l'exercice de votre profession ou avez-vous l'intention de vous engager dans des activités suivantes? "
+                "**Êtes-vous exposé à un danger dans l'exercice de votre profession ou avez-vous l'intention de vous engager dans des activités suivantes ? "
                 "[Aviation, parachutisme, parapente, delta-plane, sports mécaniques, plongée, escalade, spéléologie ou tout autre activité jugée dangereuse]**",
                 ["Oui", "Non"],key = "risque_pro")
 
@@ -142,12 +142,12 @@ if st.session_state.quote_calculated == True:
 
             # Antécédents familiaux
             antecedents_familiaux = st.radio(
-                "**Est-ce que votre mère biologique, votre père ou toute sœur ou frère a été diagnostiqué avant l'âge de 60 ans avec l'un de ce qui suit? [Cancer, crise cardiaque, accident vasculaire cérébral, maladie de Huntington ou toute autre maladie héréditaire]**",["Oui", "Non"],key = "ant_fam")
+                "**Est-ce que votre mère biologique, votre père ou toute sœur ou frère a été diagnostiqué avant l'âge de 60 ans avec l'un de ce qui suit ? [Cancer, crise cardiaque, accident vasculaire cérébral, maladie de Huntington ou toute autre maladie héréditaire]**",["Oui", "Non"],key = "ant_fam")
 
             # Défaut de la vue et Grossesse
-            defaut_vue = st.radio("**Êtes-vous atteint d'un défaut de la vue?**", ["Oui", "Non"],key = "def_vue")
-            grossesse = st.radio("**Êtes-vous en état de grossesse?**", ["Oui", "Non"],key = "grossesse")
-            grossesse_si_oui = st.number_input("**Si oui, de combien de mois?**", min_value=0, max_value=9,key = "grossesse_si_oui")
+            defaut_vue = st.radio("**Êtes-vous atteint d'un défaut de la vue ?**", ["Oui", "Non"],key = "def_vue")
+            grossesse = st.radio("**Êtes-vous en état de grossesse ?**", ["Oui", "Non"],key = "grossesse")
+            grossesse_si_oui = st.number_input("**Si oui, de combien de mois ?**", min_value=0, max_value=9,key = "grossesse_si_oui")
 
             # Physical characteristics
             taille =  st.number_input("**Taille (cm)**", min_value=0, max_value=250, key="height")
@@ -187,18 +187,18 @@ if st.session_state.quote_calculated == True:
             with col2:
                 st.markdown("**Conjoint(e)**")
                 # Starting the questionnaire
-                emploi_conj = st.text_input("**Quel emploi occupez-vous actuellement?**")
+                emploi_conj = st.text_input("**Quel emploi occupez-vous actuellement ?**")
                 assurance_complementaire_conj = st.radio(
-                    "**Bénéficiez-vous d'une assurance maladie complémentaire auprès d'une autre compagnie?**",
+                    "**Bénéficiez-vous d'une assurance maladie complémentaire auprès d'une autre compagnie ?**",
                     ["Oui", "Non"])
-                assurance_complementaire_si_oui_conj = st.text_input("**Si oui, auprès de quelle compagnie? Depuis quand?**")
+                assurance_complementaire_si_oui_conj = st.text_input("**Si oui, auprès de quelle compagnie ? Depuis quand ?**")
 
-                traitement_medical_conj = st.radio("**Suivez-vous un traitement médical?**", ["Oui", "Non"])
-                traitement_si_oui_conj = st.text_input("**Si oui, lesquels?**")
+                traitement_medical_conj = st.radio("**Suivez-vous un traitement médical **", ["Oui", "Non"])
+                traitement_si_oui_conj = st.text_input("**Si oui, lesquels ?**")
 
                 maladie_grave_conj = st.radio("**Avez-vous été atteint de maladie grave ou chronique ?**", ["Oui", "Non"])
 
-                st.write("**Si oui, lesquelles?**")
+                st.write("**Si oui, lesquelles ?**")
                 # Définition des variables en fonction de l'état des cases à cocher
                 hta_conj = "oui" if st.checkbox("HTA") else "non"
                 cholesterol_conj = "oui" if st.checkbox("Cholestérol") else "non"
@@ -209,25 +209,25 @@ if st.session_state.quote_calculated == True:
                 # Définition d'un champ de saisie de texte pour les autres conditions
                 autres_maladies_conj = st.text_input("**Autres à préciser**")
                 # Additional questions
-                arret_travail_conj = st.radio("**Êtes-vous en arrêt de travail?**", ["Oui", "Non"])
-                arret_travail_si_oui_conj = st.text_input("**Si oui, depuis quand? Pour quel motif?**")
+                arret_travail_conj = st.radio("**Êtes-vous en arrêt de travail ?**", ["Oui", "Non"])
+                arret_travail_si_oui_conj = st.text_input("**Si oui, depuis quand? Pour quel motif ?**")
 
-                operations_chirurgicales_conj = st.radio("**Avez-vous subi des opérations chirurgicales?**", ["Oui", "Non"])
-                operations_chirurgicales_si_oui_conj = st.text_input("**Si oui, lesquelles? Suites éventuelles?**")
+                operations_chirurgicales_conj = st.radio("**Avez-vous subi des opérations chirurgicales ?**", ["Oui", "Non"])
+                operations_chirurgicales_si_oui_conj = st.text_input("**Si oui, lesquelles? Suites éventuelles ?**")
 
                 # Infirmité and Pension d'invalidité
-                infirmite_conj = st.radio("**Êtes-vous atteint d'une infirmité?**", ["Oui", "Non"])
+                infirmite_conj = st.radio("**Êtes-vous atteint d'une infirmité ?**", ["Oui", "Non"])
                 infirmite_si_oui_conj = st.text_input("Si oui, laquelle ?")
 
-                pension_invalidite_conj = st.radio("**Êtes-vous titulaire d'une pension d'invalidité?**", ["Oui", "Non"])
-                pension_invalidite_si_oui_conj = st.text_input("**A quel titre? A quel taux?**")
+                pension_invalidite_conj = st.radio("**Êtes-vous titulaire d'une pension d'invalidité ?**", ["Oui", "Non"])
+                pension_invalidite_si_oui_conj = st.text_input("**A quel titre? A quel taux ?**")
 
                 # Date d'entrée en invalidité
-                invalidite_date_conj = st.text_input("**Date d'entrée en invalidité?**")
+                invalidite_date_conj = st.text_input("**Date d'entrée en invalidité ?**")
 
                 # Risques professionnels
                 risque_pro_conj = st.radio(
-                    "**Êtes-vous exposé à un danger dans l'exercice de votre profession ou avez-vous l'intention de vous engager dans des activités suivantes? "
+                    "**Êtes-vous exposé à un danger dans l'exercice de votre profession ou avez-vous l'intention de vous engager dans des activités suivantes ? "
                     "[Aviation, parachutisme, parapente, delta-plane, sports mécaniques, plongée, escalade, spéléologie ou tout autre activité jugée dangereuse]**",
                     ["Oui", "Non"])
 
@@ -238,13 +238,13 @@ if st.session_state.quote_calculated == True:
 
                 # Antécédents familiaux
                 antecedents_familiaux_conj = st.radio(
-                    "**Est-ce que votre mère biologique, votre père ou toute sœur ou frère a été diagnostiqué avant l'âge de 60 ans avec l'un de ce qui suit? [Cancer, crise cardiaque, accident vasculaire cérébral, maladie de Huntington ou toute autre maladie héréditaire]**",
+                    "**Est-ce que votre mère biologique, votre père ou toute sœur ou frère a été diagnostiqué avant l'âge de 60 ans avec l'un de ce qui suit ? [Cancer, crise cardiaque, accident vasculaire cérébral, maladie de Huntington ou toute autre maladie héréditaire]**",
                     ["Oui", "Non"])
 
                 # Défaut de la vue et Grossesse
-                defaut_vue_conj = st.radio("**Êtes-vous atteint d'un défaut de la vue?**", ["Oui", "Non"])
-                grossesse_conj = st.radio("**Êtes-vous en état de grossesse?**", ["Oui", "Non"])
-                grossesse_si_oui_conj = st.number_input("**Si oui, de combien de mois?**", min_value=0, max_value=9)
+                defaut_vue_conj = st.radio("**Êtes-vous atteint d'un défaut de la vue ?**", ["Oui", "Non"])
+                grossesse_conj = st.radio("**Êtes-vous en état de grossesse ?**", ["Oui", "Non"])
+                grossesse_si_oui_conj = st.number_input("**Si oui, de combien de mois ?**", min_value=0, max_value=9)
 
                 # Physical characteristics
                 taille_conj = st.number_input("**Taille (cm)**", min_value=0, max_value=250, key="height_conj")
