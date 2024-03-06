@@ -25,7 +25,7 @@ def send_email(destinataire, temp_file_path):
     # Combine the additional content with the quote content
     combined_html_content = additional_html_content + devis_html_content  # Example: Adding before the quote
 
-    email_subject = f"Devis AMC : {st.session_state.id_devis}"
+    email_subject = f"Devis Assurance Maladie Complémentaire n° {st.session_state.id_devis}"
 
     # Connection information
     email = st.secrets["email"]
