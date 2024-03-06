@@ -113,7 +113,7 @@ def process_form_submission(credentials,workbook):
 
         if "email_address" not in st.session_state:
             st.session_state["email_address"] = None
-        email_address = st.text_input("Adresse email du souscripteur *", key="email")
+        email_address = st.text_input("Adresse email *", key="email")
         st.session_state["email_address"] = email_address
 
 
