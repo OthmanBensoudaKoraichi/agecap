@@ -18,19 +18,19 @@ style.set_app_layout(config.doodle)
 if 'file_ready_for_download' in st.session_state and st.session_state['file_ready_for_download']:
 
 
-    if 'temp_file_path' in st.session_state:
+   # if 'temp_file_path' in st.session_state:
         # Create a download button for the HTML file
-        with open(st.session_state['temp_file_path'], 'rb') as file:
-            btn = st.download_button(
-                label="Télécharger le devis",
-                data=file,
-                file_name="Devis_Agecap.html",
-                mime="text/html",
-                type = "primary"
-            )
+      #  with open(st.session_state['temp_file_path'], 'rb') as file:
+          #  btn = st.download_button(
+              #  label="Télécharger le devis",
+               # data=file,
+              #  file_name="Devis_Agecap.html",
+              #  mime="text/html",
+               # type = "primary"
+          #  )
 
     # Write next steps
-    message = ("Votre devis est prêt.\n"
+    message = ("Votre devis est prêt. Vous pouvez le consulter sur cette page et vous avez reçu une copie par email.\n"
                "Pour continuer, veuillez remplir notre court questionnaire médical de 5 minutes. Vous avez également reçu une copie par email si vous souhaitez continuer la procédure ultérieurement (vérifiez dans votre boite de spams).")
 
     st.success(message)

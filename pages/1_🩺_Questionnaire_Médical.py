@@ -67,7 +67,7 @@ if st.session_state.quote_calculated == True:
     style.banner_questionnaire_medical()
 
     # Utiliser st.radio pour la sélection initiale
-    offre = st.radio("**Quelle est l'offre que vous voudriez souscrire??**", ("Essentielle", "Optimale","Intégrale"), index=2)
+    offre = st.radio("**À quelle offre voudriez-vous souscrire?**", ("Essentielle", "Optimale","Intégrale"), index=2)
     choix = st.radio("**Voulez-vous également assurer votre conjoint(e)?**", ("Oui", "Non"),index=1)
 
     # Mettre à jour l'état de session basé sur le choix
