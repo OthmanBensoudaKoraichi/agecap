@@ -28,6 +28,8 @@ def main():
 
         style.display_important_message()
 
+        style.display_chat_indication_message()
+
     ### GOOGLE CREDENTIALS ###
     credentials_path = google_services.download_service_account_json(st.secrets["jsonkey_google"])
     if credentials_path:

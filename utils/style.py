@@ -199,10 +199,18 @@ def banner_questionnaire_medical():
 
 def display_important_message():
     st.markdown("""
-        <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px; color: #000;">
+        <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px; color: #000; font-size: 14px;">
             <strong>Note importante :</strong> La tarification de votre devis est précisément ajustée en fonction de la <strong>date de naissance</strong> de chaque membre de la famille. Il est donc essentiel de remplir ces champs avec exactitude pour assurer une estimation adéquate de votre devis.
         </div>
     """, unsafe_allow_html=True)
+
+def display_chat_indication_message():
+    st.markdown("""
+        <div style="background-color: #e6ffe6; padding: 10px; border-radius: 5px; margin-top: 3px; margin-bottom: 10px; color: #006400; font-size: 14px;">
+            <strong>Chattez avec nous en direct :</strong> Appuyez sur la petite flèche "<strong>></strong>" en haut à gauche de votre écran pour poser vos questions. 
+        </div>
+    """, unsafe_allow_html=True)
+
 
 def create_columns():
     # Create columns in the Streamlit app
