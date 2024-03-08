@@ -207,7 +207,7 @@ def display_important_message():
 def display_chat_indication_message():
     st.markdown("""
         <div style="background-color: #e6ffe6; padding: 10px; border-radius: 5px; margin-top: 3px; margin-bottom: 10px; color: #006400; font-size: 14px;">
-            <strong>Chattez avec nous en direct :</strong> Appuyez sur la petite flèche "<strong>></strong>" en haut à gauche de votre écran pour poser vos questions. 
+            <strong>Chattez avec nous en direct :</strong> Sur mobile, appuyez sur la petite flèche "<strong>></strong>" en haut à gauche de votre écran pour poser vos questions. 
         </div>
     """, unsafe_allow_html=True)
 
