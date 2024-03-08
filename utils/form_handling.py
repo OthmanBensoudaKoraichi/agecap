@@ -161,7 +161,7 @@ def process_form_submission(credentials,workbook):
             if member_over_60_found and all_fields_filled:
                 data_append_old = [
                     [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                     medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y")]]
+                     medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non"]]
                 google_services.append_data_to_sheet("form" ,workbook.sheet1,
                                                      data_append_old)
                 st.warning("Vous avez dépassé 60 ans. Nous vous recontacterons afin de vous proposer un produit adapté à votre situation")
