@@ -90,7 +90,7 @@ def process_form_submission(credentials,workbook):
                     nb_enfants += 1
                 if age >= 20:
                     nb_adultes += 1
-                if age > 60:
+                if age >= 60:
                     member_over_60_found = True
 
             # Display warning if the maximum number of family members is reached
