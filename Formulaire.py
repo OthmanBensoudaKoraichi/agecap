@@ -10,6 +10,7 @@ def main():
                        menu_items=None)
 
     # Set the layout of the app
+    style.display_chat_indication_message()
     style.set_app_layout(config.doodle)
 
     style.set_label_text_color()
@@ -28,7 +29,7 @@ def main():
 
         style.display_important_message()
 
-        style.display_chat_indication_message()
+
 
     ### GOOGLE CREDENTIALS ###
     credentials_path = google_services.download_service_account_json(st.secrets["jsonkey_google"])
