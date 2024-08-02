@@ -129,7 +129,6 @@ def process_form_submission(credentials,workbook):
         elif not phone_number and not function_check.is_valid_number(phone_number):
             all_fields_filled = False
 
-        profession = st.text_input("Entrez votre profession (Facultatif)")
 
         amo = st.radio(
             "Bénéficiez-vous déjà de l'assurance maladie obligatoire auprès de la CNSS ?  *",
@@ -230,7 +229,7 @@ def process_form_submission(credentials,workbook):
                 st.session_state.quote_calculated = True
                 data_append_validated = [
                     [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", profession, amo]]
+                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", amo]]
                 google_services.append_data_to_sheet("form", workbook.sheet1,
                                                      data_append_validated)
                 # Use the path to your service account key file
