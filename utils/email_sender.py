@@ -36,7 +36,9 @@ def send_email(destinataire, temp_file_path):
 
     # Convert HTML content to PDF
     output_pdf_path = 'devis.pdf'
-    pdfkit.from_string(devis_html_content, output_pdf_path)
+    path_to_wkhtmltopdf = '/usr/bin/wkhtmltopdf'  # Path to wkhtmltopdf executable
+    config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+    pdfkit.from_string(devis_html_content, output_pdf_path, configuration=config)
 
     # Create a secure connection with the SMTP server
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
