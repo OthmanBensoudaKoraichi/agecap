@@ -34,11 +34,8 @@ def send_email(destinataire, temp_file_path):
     email = st.secrets["email"]
     password = st.secrets["mdp"]
 
-    # Convert HTML content to PDF
-    output_pdf_path = 'devis.pdf'
-    path_to_wkhtmltopdf = '/usr/bin/wkhtmltopdf'  # Path to wkhtmltopdf executable
-    config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
-    pdfkit.from_string(devis_html_content, output_pdf_path, configuration=config)
+    output_pdf_path = st.session_state['pdf_path']
+
 
     # Create a secure connection with the SMTP server
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
@@ -58,7 +55,7 @@ def send_email(destinataire, temp_file_path):
         part = MIMEBase('application', 'octet-stream')
         part.set_payload(attachment.read())
         encoders.encode_base64(part)
-        part.add_header('Content-Disposition', f'attachment; filename={output_pdf_path}')
+        part.add_header('Content-Disposition', f'attachment; filename="devis.pdf"')
         msg.attach(part)
 
     # Send the email

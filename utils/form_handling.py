@@ -7,7 +7,6 @@ import tempfile
 import requests
 
 
-
 def process_form_submission(credentials,workbook):
 
     primes, coefficients = data_loaders.load_excel_data(config.primes_and_coef, config.primes_and_coef)
@@ -144,6 +143,7 @@ def process_form_submission(credentials,workbook):
         submit_button = st.form_submit_button("Calculer le devis")
         st.caption("Cela vous redirigera vers votre devis en quelques secondes.")
 
+
         if submit_button:
             if 'id_devis' not in st.session_state:
                 st.session_state.id_devis = ''
@@ -233,12 +233,20 @@ def process_form_submission(credentials,workbook):
                 # Folder ID where the file should be uploaded
                 FOLDER_ID = config.folder_id  # Replace with your actual folder ID
                 # Specify the filename and path of the PDF file to upload
-                filename = f"devis_{id_devis}"
-                filepath = st.session_state['temp_file_path']
+                filename = f"devis_{id_devis}_{souscripteur_first_name}_{souscripteur_surname}"
+                # Read the HTML content from the temporary file
+                with open(st.session_state['temp_file_path'], 'r') as file:
+                    devis_html_content = file.read()
+
+                # Convert HTML content to PDF and store the path in session state
+                st.session_state['pdf_path'] = doc_manip.convert_html_to_pdf(devis_html_content)
+                filepath = st.session_state['pdf_path']
                 google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
-                                                            mimetype='application/html')  # Clean up after download
+                                                            mimetype='application/pdf')  # Clean up after download
 
                 email_sender.send_email(st.session_state["email_address"],temp_file_path)
                 switch_page("Devis")
+
+
 
     return

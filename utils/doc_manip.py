@@ -2,8 +2,8 @@ import datetime
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 import tempfile
-#from docx2pdf import convert
-import os
+import pdfkit
+import shutil
 
 
 def insert_into_word_doc(doc_path, list_members, df_premiums,id_devis):
@@ -167,3 +167,20 @@ def insert_into_html(html_code, list_members, df_premiums, id_devis):
     html_code = html_code.replace('<!-- Placeholder for Premiums Information -->', premiums_html)
 
     return html_code
+
+
+def convert_html_to_pdf(html_content):
+    # Dynamically find the path to wkhtmltopdf
+    path_to_wkhtmltopdf = shutil.which('wkhtmltopdf')
+    if path_to_wkhtmltopdf is None:
+        raise EnvironmentError('No wkhtmltopdf executable found. Please install wkhtmltopdf.')
+
+    # Create a temporary file for the PDF
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_pdf_file:
+        temp_pdf_path = temp_pdf_file.name
+
+    # Convert HTML content to PDF
+    config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+    pdfkit.from_string(html_content, temp_pdf_path, configuration=config)
+
+    return temp_pdf_path
