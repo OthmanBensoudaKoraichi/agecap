@@ -8,7 +8,7 @@ from pinecone import Pinecone as pn
 # Initialize chatbot components
 def initialize_chatbot(openaikey,pineconekey,index_name):
     llm = ChatOpenAI(
-        openai_api_key=openaikey, model_name="gpt-3.5-turbo", temperature=0.0
+        openai_api_key=openaikey, model_name="gpt-4o-mini", temperature=0.0
     )
     embed = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=openaikey)
     pc = pn(api_key=pineconekey)

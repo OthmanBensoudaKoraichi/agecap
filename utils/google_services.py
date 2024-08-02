@@ -34,7 +34,7 @@ def get_last_filled_row(sheet,num_devis = None):
         # Assume we're using column A to check for the last filled row
         column_a = sheet.col_values(1)  # Get all values from column A
         # I also note the first column corresponding to the chatbot's outputs
-        column_n = sheet.col_values(14)
+        column_n = sheet.col_values(16)
 
         # Note the last filled row number
         last_filled_row_a = len(column_a) + 1
@@ -69,7 +69,7 @@ def append_data_to_sheet(type,sheet, data,num_devis = None,quote_calculated = Fa
 
     if type == "form":
         try:
-            range_to_update = f'A{last_filled_row }:M{last_filled_row}'
+            range_to_update = f'A{last_filled_row }:O{last_filled_row}'
             sheet.update(range_to_update, data)
             print("Data appended successfully.")
         except Exception as e:
@@ -88,9 +88,9 @@ def append_data_to_sheet(type,sheet, data,num_devis = None,quote_calculated = Fa
             if quote_calculated == False:
 
                 ascii_value = ord(
-                    'N') + number_of_interactions - 1
+                    'P') + number_of_interactions - 1
             else:
-                ascii_value =  ord('N') + last_filled_column - 1
+                ascii_value =  ord('P') + last_filled_column - 1
 
             column_letter = chr(ascii_value)
 
@@ -112,7 +112,7 @@ def append_questionnaire_status(sheet, status,num_devis):
     last_filled_row = get_last_filled_row(sheet,num_devis)
 
     try:
-        cell_to_update = f'M{last_filled_row }'
+        cell_to_update = f'O{last_filled_row }'
         sheet.update(cell_to_update, status)
         print("Data appended successfully.")
     except Exception as e:

@@ -1,6 +1,9 @@
 import smtplib
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+import pdfkit
 import streamlit as st
 
 def send_email(destinataire, temp_file_path):
@@ -31,6 +34,10 @@ def send_email(destinataire, temp_file_path):
     email = st.secrets["email"]
     password = st.secrets["mdp"]
 
+    # Convert HTML content to PDF
+    output_pdf_path = 'devis.pdf'
+    pdfkit.from_string(devis_html_content, output_pdf_path)
+
     # Create a secure connection with the SMTP server
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     server.login(email, password)
@@ -43,6 +50,14 @@ def send_email(destinataire, temp_file_path):
 
     # Insert the combined content into the email body
     msg.attach(MIMEText(combined_html_content, 'html'))
+
+    # Attach the PDF file
+    with open(output_pdf_path, 'rb') as attachment:
+        part = MIMEBase('application', 'octet-stream')
+        part.set_payload(attachment.read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition', f'attachment; filename={output_pdf_path}')
+        msg.attach(part)
 
     # Send the email
     server.sendmail(email, destinataire, msg.as_string())

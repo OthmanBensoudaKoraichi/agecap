@@ -30,10 +30,8 @@ def process_form_submission(credentials,workbook):
         nb_adultes = 0
         nb_enfants = 0
         dates_naissance_conforme = True
+        profession = None
 
-        # Input fields for family members
-        if "family_count" not in st.session_state:
-            st.session_state["family_count"] = 3  # Supposons 3 pour l'exemple
 
         for i in range(st.session_state["family_count"]):
             expanded = True  # Expand all by default
@@ -131,11 +129,21 @@ def process_form_submission(credentials,workbook):
         elif not phone_number and not function_check.is_valid_number(phone_number):
             all_fields_filled = False
 
+        profession = st.text_input("Entrez votre profession *")
+        if not profession :
+            all_fields_filled = False
+
+        amo = st.radio(
+            "Bénéficiez-vous déjà de l'assurance maladie obligatoire auprès de la CNSS ?  *",
+            ('Oui', 'Non', 'Je ne sais pas'), index = 2
+        )
         # Select the medium, with index = 1 so that no medium is selected by default
         medium = st.radio(
             "Sur quel réseau social avez-vous vu notre formulaire? *",
             ('LinkedIn', 'Facebook', 'Instagram','Ne souhaite pas préciser'), index = 3
         )
+
+
 
         submit_button = st.form_submit_button("Calculer le devis")
         st.caption("Cela vous redirigera vers votre devis en quelques secondes.")
@@ -147,16 +155,15 @@ def process_form_submission(credentials,workbook):
             id_devis = hash_maker.make_hash(family_details[0][0],family_details[0][1],family_details[0][1])
             st.session_state.id_devis = id_devis
 
+            if not profession:
+                st.error("Veuillez entrer votre profession")
+
             if phone_valid == False:
                 st.error("Format du numéro de téléphone invalide")
             if email_valid == False:
                 st.error("Format de l'adresse email invalide")
 
 
-            # Check if a medium has been selected
-            if medium not in ('LinkedIn', 'Facebook', 'Instagram','Ne souhaite pas préciser'):
-                st.error("La sélection d'un réseau social est obligatoire.")
-                all_fields_filled = False
             # Final submit button is only enabled if all family members are below 60
             if member_over_60_found and all_fields_filled:
                 data_append_old = [
@@ -164,7 +171,7 @@ def process_form_submission(credentials,workbook):
                      medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non"]]
                 google_services.append_data_to_sheet("form" ,workbook.sheet1,
                                                      data_append_old)
-                st.warning("Vous avez dépassé 60 ans. Nous vous recontacterons afin de vous proposer un produit adapté à votre situation")
+                st.warning("Merci pour votre intérêt. Étant donné que ce produit est conçu pour des personnes de moins de 60 ans, nous vous recontacterons très bientôt avec une offre parfaitement adaptée à vos besoins.")
 
             if not all_fields_filled:
                 st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")
@@ -225,7 +232,7 @@ def process_form_submission(credentials,workbook):
                 st.session_state.quote_calculated = True
                 data_append_validated = [
                     [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non" ]]
+                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", profession, amo]]
                 google_services.append_data_to_sheet("form", workbook.sheet1,
                                                      data_append_validated)
                 # Use the path to your service account key file

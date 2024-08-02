@@ -67,7 +67,9 @@ if st.session_state.quote_calculated == True:
     style.banner_questionnaire_medical()
 
     # Utiliser st.radio pour la sélection initiale
-    offre = st.radio("**À quelle offre voudriez-vous souscrire ?**", ("Essentielle", "Optimale","Intégrale"), index=2)
+    offre = st.radio("**À quelle offre voudriez-vous souscrire ? (consultez votre devis pour plus d'informations) **", ("Essentielle", "Optimale","Intégrale"), index=2)
+    remb = st.radio("**Quel taux de remboursement désirez-vous ? (consultez votre devis pour plus d'informations)**", ("80%", "90%", "95%"), index=2)
+    freq = st.radio("**À quelle fréquence de remboursement voudriez-vous souscrire ? (consultez votre devis pour plus d'informations)**", ("Mensuelle", "Trimestrielle", "Semestrielle","Annuelle"), index=0)
     choix = st.radio("**Voulez-vous également assurer votre conjoint(e) ?**", ("Oui", "Non"),index=1)
 
     # Mettre à jour l'état de session basé sur le choix
@@ -258,6 +260,8 @@ if st.session_state.quote_calculated == True:
         # Initialisation du dictionnaire pour les informations sur le souscripteur
         data_souscripteur = {
             "offre" : offre,
+            "fréquence": freq,
+            "taux de remboursement": remb,
             "Quel emploi occupez-vous actuellement?": emploi,
             "Bénéficiez-vous d'une assurance maladie complémentaire auprès d'une autre compagnie?": assurance_complementaire,
             "Si oui, auprès de quelle compagnie? Depuis quand?": assurance_complementaire_si_oui,
