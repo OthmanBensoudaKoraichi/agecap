@@ -30,7 +30,6 @@ def process_form_submission(credentials,workbook):
         nb_adultes = 0
         nb_enfants = 0
         dates_naissance_conforme = True
-        profession = None
 
 
         for i in range(st.session_state["family_count"]):
@@ -151,9 +150,6 @@ def process_form_submission(credentials,workbook):
             # Create id_devis
             id_devis = hash_maker.make_hash(family_details[0][0],family_details[0][1],family_details[0][1])
             st.session_state.id_devis = id_devis
-
-            if not profession:
-                st.error("Veuillez entrer votre profession")
 
             if phone_valid == False:
                 st.error("Format du numéro de téléphone invalide")
