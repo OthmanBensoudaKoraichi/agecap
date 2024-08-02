@@ -129,9 +129,7 @@ def process_form_submission(credentials,workbook):
         elif not phone_number and not function_check.is_valid_number(phone_number):
             all_fields_filled = False
 
-        profession = st.text_input("Entrez votre profession *")
-        if not profession :
-            all_fields_filled = False
+        profession = st.text_input("Entrez votre profession (Facultatif)")
 
         amo = st.radio(
             "Bénéficiez-vous déjà de l'assurance maladie obligatoire auprès de la CNSS ?  *",
