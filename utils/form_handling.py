@@ -16,7 +16,7 @@ def remove_family_member(index):
             del st.session_state[key]
 
     # Decrement the indices of the remaining family members
-    for i in range(index + 1, st.session_state["family_count"] + 2):
+    for i in range(index + 1, st.session_state["family_count"] + 1):
         for key in ["relation", "day", "month", "year"]:
             old_key = f"{key}_{i}"
             new_key = f"{key}_{i - 1}"
