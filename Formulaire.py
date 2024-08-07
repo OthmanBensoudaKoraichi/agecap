@@ -50,7 +50,7 @@ def main():
             <style>
             .footer {
                 position: fixed;
-                left: 31%; /* Adjust this percentage to move the image more towards the center */
+                left: 0%; /* Adjust this percentage to move the image more towards the center */
                 bottom: 0;
                 background-color: none;
                 text-align: left;
