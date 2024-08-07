@@ -9,9 +9,20 @@ import requests
 
 def remove_family_member(index):
     st.session_state["family_count"] -= 1
+
+    # Remove the specified family member
     for key in [f"relation_{index}", f"day_{index}", f"month_{index}", f"year_{index}"]:
         if key in st.session_state:
             del st.session_state[key]
+
+    # Decrement the indices of the remaining family members
+    for i in range(index + 1, st.session_state["family_count"] + 2):
+        for key in ["relation", "day", "month", "year"]:
+            old_key = f"{key}_{i}"
+            new_key = f"{key}_{i - 1}"
+            if old_key in st.session_state:
+                st.session_state[new_key] = st.session_state[old_key]
+                del st.session_state[old_key]
 
 def process_form_submission(credentials,workbook):
 
@@ -104,8 +115,8 @@ def process_form_submission(credentials,workbook):
                     member_over_70_found = True
 
                 # Button to remove this family member
-                if i == st.session_state["family_count"] - 1 and i > 0:
-                    if st.form_submit_button(f"Supprimer le dernier membre", type = "primary"):
+                if i > 0:
+                    if st.form_submit_button(f"Supprimer le membre {i}", type = "primary"):
                         remove_family_member(i)
                         st.rerun()
             # Display warning if the maximum number of family members is reached
