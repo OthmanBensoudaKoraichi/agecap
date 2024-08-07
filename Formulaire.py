@@ -52,7 +52,7 @@ def main():
                 position: fixed;
                 right: 0;
                 bottom: 0;
-                background-color: white;
+                background-color: none;
                 text-align: right;
                 z-index: 1000;
             }
