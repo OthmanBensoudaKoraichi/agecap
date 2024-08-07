@@ -2,14 +2,27 @@
 import streamlit as st
 from utils import style, google_services, config, chatbot, form_handling
 from streamlit_float import *
+import time
 
 # Main function
 def main():
 
     ### STYLE ###
-    st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state="auto",
-                       menu_items=None)
 
+
+    if 'handler' not in st.session_state:
+        st.session_state.handler = []
+
+    if len(st.session_state.handler) > 0:
+        state = st.session_state.handler.pop(0)
+        st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state=state,
+                           menu_items=None)
+        if len(st.session_state.handler) > 0:
+            # A little extra wait time as without it sometimes the backend moves "too fast" for the front
+            time.sleep(.1)
+            st.rerun()
+
+    st.button('Force Open', on_click=st.session_state.handler.extend, args=[['collapsed', 'expanded']])
 
     # Set the layout of the app
     style.set_app_layout(config.doodle)
@@ -59,7 +72,7 @@ def main():
             }
             </style>
             <div class="footer">
-                <img src="https://revenblob.blob.core.windows.net/announcement/1131/Photos/photo-1131-638508825831850133.jpeg" alt="Your Image">
+                <img src="https://github.com/OthmanBensoudaKoraichi/agecap/blob/82db2d751f28fefe1089f4546e142a98cf371c53/files/chat_icon.png?raw=true" alt="Your Image">
             </div>
             """,
             unsafe_allow_html=True
