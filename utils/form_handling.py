@@ -87,12 +87,29 @@ def process_form_submission(credentials,workbook):
                 # Using st.columns to align day, month, and year on the same line
                 col1, col2, col3 = st.columns(3)
                 with col1:
-                    selected_day = st.selectbox("Jour de naissance", options=day_options, index=0, key=f"day_{i}")
+                    selected_day = st.selectbox(
+                        "Jour de naissance",
+                        options=day_options,
+                        index=0 if f"day_{i}" not in st.session_state else day_options.index(
+                            st.session_state[f"day_{i}"]),
+                        key=f"day_{i}"
+                    )
                 with col2:
-                    selected_month = st.selectbox("Mois de naissance", options=month_options.keys(), index=0, key=f"month_{i}")
+                    selected_month = st.selectbox(
+                        "Mois de naissance",
+                        options=month_options.keys(),
+                        index=0 if f"month_{i}" not in st.session_state else list(month_options.keys()).index(
+                            st.session_state[f"month_{i}"]),
+                        key=f"month_{i}"
+                    )
                 with col3:
-                    selected_year = st.selectbox("Année de naissance", options=year_options, index=25,
-                                                 key=f"year_{i}")  # Default to 25 years ago
+                    selected_year = st.selectbox(
+                        "Année de naissance",
+                        options=year_options,
+                        index=25 if f"year_{i}" not in st.session_state else year_options.index(
+                            st.session_state[f"year_{i}"]),
+                        key=f"year_{i}"
+                    )
 
                 # Constructing the datetime object for the date of birth
                 dob = datetime.datetime(year=selected_year, month=month_options[selected_month], day=selected_day)
