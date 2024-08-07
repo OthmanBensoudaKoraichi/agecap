@@ -10,7 +10,6 @@ def main():
                        menu_items=None)
 
     # Set the layout of the app
-    style.display_chat_indication_message()
     style.set_app_layout(config.doodle)
 
     style.set_label_text_color()

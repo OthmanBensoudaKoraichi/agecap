@@ -28,6 +28,9 @@ if 'come_after_email' not in st.session_state:
 if 'id_devis' not in st.session_state:
     st.session_state.id_devis = None
 
+if 'name_surname' not in st.session_state:
+    st.session_state.name_surname = ""
+
 
 # Formulaire pour entrer le numéro de devis si celui-ci n'a pas encore été calculé
 if st.session_state.quote_calculated == False:
@@ -51,6 +54,7 @@ if st.session_state.quote_calculated == False:
                                        2).value  # Assurez-vous que l'indexation des colonnes correspond à votre feuille
             st.success(f"Numéro de devis trouvé sous le nom de {prenom + ' ' + nom.upper()}.")
             st.session_state.quote_calculated = True
+            st.session_state.name_surname = prenom + "_" + nom
         else:
             st.error(
                 "Numéro de devis introuvable. Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.")
@@ -356,7 +360,7 @@ if st.session_state.quote_calculated == True:
         # Folder ID where the file should be uploaded
         FOLDER_ID = config.folder_id  # Replace with your actual folder ID
         # Specify the filename for the upload
-        filename = f"questionnaire_medical_{st.session_state.id_devis}.xlsx"
+        filename = f"questionnaire_medical_{st.session_state.id_devis}_{st.session_state.name_surname}.xlsx"
 
         # Proceed to upload the file
         google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,

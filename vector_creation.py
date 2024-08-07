@@ -1,8 +1,5 @@
-## Split text, create vector embeddings with OpenAI embeddings, and store these embeddings on Pinecone.
-
-# Import libraries
-
-from pinecone import Pinecone
+# Import necessary libraries
+from pinecone import Pinecone,ServerlessSpec
 from langchain_openai import OpenAIEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import tiktoken
@@ -10,24 +7,19 @@ from langchain_community.document_loaders import PyPDFLoader
 from tqdm.auto import tqdm
 from uuid import uuid4
 import streamlit as st
+import time
+from openai import OpenAIError
 
-# Every record contains a lot of text.
-# Our first task is therefore to identify a good preprocessing methodology for chunking these articles into more "concise" chunks
-# to later be embedding and stored in our Pinecone vector database.
-# For this we use LangChain's RecursiveCharacterTextSplitter to split our text into chunks of a specified max length.
 
-tiktoken.encoding_for_model("gpt-3.5-turbo")
-
+# Initialize tokenizer
 tokenizer = tiktoken.get_encoding("cl100k_base")
 
-
-# create the length function
+# Create the length function using tiktoken
 def tiktoken_len(text):
     tokens = tokenizer.encode(text, disallowed_special=())
     return len(tokens)
 
-
-# Create a text splitter
+# Create a text splitter using RecursiveCharacterTextSplitter
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=500,
     chunk_overlap=50,
@@ -35,38 +27,46 @@ text_splitter = RecursiveCharacterTextSplitter(
     separators=["\n\n", "\n", " ", ""],
 )
 
-# Create a Pinecone object
+
+# Initialize Pinecone
 pc = Pinecone(api_key=st.secrets["pineconekey"])
 
-# Set index to "agecap", which is the name of our index on Pinecone
+pc.create_index(
+    name="agecap",
+    dimension=3072, # Replace with your model dimensions
+    metric="cosine", # Replace with your model metric
+    spec=ServerlessSpec(
+        cloud="aws",
+        region="us-east-1"
+    )
+)
+
+# Set the Pinecone index to "agecap"
 index = pc.Index("agecap")
 
 # Initialize OpenAI Embeddings
 embed = OpenAIEmbeddings(
-    model="text-embedding-ada-002",
-    openai_api_key=st.secrets["openaikey"],)
+    model="text-embedding-3-large",
+    openai_api_key=st.secrets["openaikey"],
+)
 
-# Paths to your PDF files
+# Define paths to your PDF files
 pdf_paths = [
     "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/agecap_infos.pdf",
     "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/87-CG SEHASSUR.pdf",
     "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/Argumentaire de vente SEHASSUR.pdf",
     "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/Fiche produit SEHASSUR.pdf",
-    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/devis_agecap.pdf"]
+    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/devis_agecap.pdf"
+]
 
-
+# Function to process a batch of texts and metadatas
 def process_batch(texts, metadatas):
-    try:
-        ids = [str(uuid4()) for _ in range(len(texts))]
-        embeds = embed.embed_documents(texts)
-        index.upsert(vectors=zip(ids, embeds, metadatas))
-        return True
-    except openai.error.RateLimitError as e:
-        print("Rate limit exceeded. Waiting before retrying...")
-        time.sleep(60)  # Wait for 60 seconds before retrying
-        return False
+    ids = [str(uuid4()) for _ in range(len(texts))]
+    embeds = embed.embed_documents(texts)
+    index.upsert(vectors=zip(ids, embeds, metadatas))
+    return True
 
-
+# Main processing loop for each PDF file
 for pdf_path in pdf_paths:
     # Load and split PDF
     loader = PyPDFLoader(pdf_path)
@@ -93,8 +93,8 @@ for pdf_path in pdf_paths:
 
     # Process remaining texts
     if texts:
-        ids = [str(uuid4()) for _ in range(len(texts))]
-        embeds = embed.embed_documents(texts)
-        index.upsert(vectors=zip(ids, embeds, metadatas))
+        success = process_batch(texts, metadatas)
+        if success:
+            texts, metadatas = [], []
 
 print("Processing complete.")

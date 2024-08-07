@@ -10,7 +10,7 @@ def initialize_chatbot(openaikey,pineconekey,index_name):
     llm = ChatOpenAI(
         openai_api_key=openaikey, model_name="gpt-4o-mini", temperature=0.0
     )
-    embed = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key=openaikey)
+    embed = OpenAIEmbeddings(model="text-embedding-3-large", openai_api_key=openaikey)
     pc = pn(api_key=pineconekey)
     index = pc.Index(index_name)
     vectorstore = lpn(index, embed, "text")
@@ -102,7 +102,7 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
                 st.session_state.messages.append({"role": "Assistant Agecap", "content": response})
 
                 # Format the current interaction
-                current_interaction = f"Client: {query} ----- Assistant: {response}"
+                current_interaction = f"Client: {query} ----- Assistant Agecap: {response}"
 
                 # Display chat history
                 display_chat_history(user_avatar, bot_avatar)

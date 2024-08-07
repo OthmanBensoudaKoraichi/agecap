@@ -17,10 +17,14 @@ def process_form_submission(credentials,workbook):
     if 'quote_calculated' not in st.session_state:
         st.session_state.quote_calculated = False
 
+    if 'name_surname' not in st.session_state:
+        st.session_state.name_surname = ""
+
 
     with st.form("insurance_form"):
 
         member_over_60_found = False
+        member_over_70_found = False
         family_details = []
         all_fields_filled = True  # Assume all fields are initially filled
         phone_valid = True
@@ -55,6 +59,8 @@ def process_form_submission(credentials,workbook):
                 if i == 0:
                     first_name = st.text_input("Prénom *", key=f"first_name_{i}")
                     surname = st.text_input("Nom de famille *", key=f"surname_{i}")
+                    st.session_state.name_surname = first_name + "_" + surname
+
 
                 day_options = list(range(1, 32))  # Possible day values
                 month_options = config.months
@@ -88,6 +94,9 @@ def process_form_submission(credentials,workbook):
                     nb_adultes += 1
                 if age >= 60:
                     member_over_60_found = True
+                if age >= 70:
+                    member_over_70_found = True
+
 
             # Display warning if the maximum number of family members is reached
             if i == 6:  # Check if this is the 7th family member (index 6)
@@ -156,9 +165,11 @@ def process_form_submission(credentials,workbook):
             if email_valid == False:
                 st.error("Format de l'adresse email invalide")
 
+            if member_over_60_found and not member_over_70_found :
+                pass # go to excel of second company
 
             # Final submit button is only enabled if all family members are below 60
-            if member_over_60_found and all_fields_filled:
+            if member_over_70_found and all_fields_filled:
                 data_append_old = [
                     [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
                      medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non"]]
@@ -246,7 +257,5 @@ def process_form_submission(credentials,workbook):
 
                 email_sender.send_email(st.session_state["email_address"],temp_file_path)
                 switch_page("Devis")
-
-
 
     return
