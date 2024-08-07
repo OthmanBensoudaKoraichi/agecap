@@ -37,7 +37,7 @@ if st.session_state.quote_calculated == False:
     with st.form(key="numéro_de_devis"):
         st.session_state.come_after_email = True
         num_devis = st.text_input("#### Entrez le numéro de devis que vous avez obtenu par email (Exemple : b332a-AM).").replace(" ", "")
-        submit_num_devis = st.form_submit_button("Valider")
+        submit_num_devis = st.form_submit_button("Valider", type = "primary")
 
     # Récupération des numéros de devis depuis la 7ème colonne après avoir soumis le formulaire pour éviter les appels inutiles à l'API
     if submit_num_devis:
@@ -63,7 +63,7 @@ if st.session_state.quote_calculated == False:
 # Si le devis a été calculé ou après la soumission du formulaire de devis, exécutez le reste
 if st.session_state.quote_calculated == True:
     # Boutons pour changer de page
-    go_to_quote = st.button(label="Retourner au devis")
+    go_to_quote = st.button(label="Retourner au devis", type = "primary")
     if go_to_quote:
         switch_page("Devis")
 

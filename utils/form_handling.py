@@ -7,6 +7,12 @@ import tempfile
 import requests
 
 
+def remove_family_member(index):
+    st.session_state["family_count"] -= 1
+    for key in [f"relation_{index}", f"day_{index}", f"month_{index}", f"year_{index}"]:
+        if key in st.session_state:
+            del st.session_state[key]
+
 def process_form_submission(credentials,workbook):
 
     primes, coefficients = data_loaders.load_excel_data(config.primes_and_coef, config.primes_and_coef)
@@ -97,7 +103,11 @@ def process_form_submission(credentials,workbook):
                 if age >= 70:
                     member_over_70_found = True
 
-
+                # Button to remove this family member
+                if i > 0:
+                    if st.form_submit_button(f"Supprimer le membre {i}", type = "primary"):
+                        remove_family_member(i)
+                        st.rerun()
             # Display warning if the maximum number of family members is reached
             if i == 6:  # Check if this is the 7th family member (index 6)
                 st.warning("Le maximum de 7 membres a été atteint.")
@@ -107,6 +117,7 @@ def process_form_submission(credentials,workbook):
         st.form_submit_button(
             "Ajouter un membre de la famille",
             on_click=function_check.increment_family_count,
+            type = "primary"
         )
 
 
@@ -149,113 +160,114 @@ def process_form_submission(credentials,workbook):
 
 
 
-        submit_button = st.form_submit_button("Calculer le devis")
+        submit_button = st.form_submit_button("Calculer le devis", type = "primary")
         st.caption("Cela vous redirigera vers votre devis en quelques secondes.")
 
 
         if submit_button:
-            if 'id_devis' not in st.session_state:
-                st.session_state.id_devis = ''
-            # Create id_devis
-            id_devis = hash_maker.make_hash(family_details[0][0],family_details[0][1],family_details[0][1])
-            st.session_state.id_devis = id_devis
+            with st.spinner("Calcul du devis en cours. Veuillez patienter quelques secondes."):
+                if 'id_devis' not in st.session_state:
+                    st.session_state.id_devis = ''
+                # Create id_devis
+                id_devis = hash_maker.make_hash(family_details[0][0],family_details[0][1],family_details[0][1])
+                st.session_state.id_devis = id_devis
 
-            if phone_valid == False:
-                st.error("Format du numéro de téléphone invalide")
-            if email_valid == False:
-                st.error("Format de l'adresse email invalide")
+                if phone_valid == False:
+                    st.error("Format du numéro de téléphone invalide")
+                if email_valid == False:
+                    st.error("Format de l'adresse email invalide")
 
-            if member_over_60_found and not member_over_70_found :
-                pass # go to excel of second company
+                if member_over_60_found and not member_over_70_found :
+                    pass # go to excel of second company
 
-            # Final submit button is only enabled if all family members are below 60
-            if member_over_70_found and all_fields_filled:
-                data_append_old = [
-                    [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                     medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non"]]
-                google_services.append_data_to_sheet("form" ,workbook.sheet1,
-                                                     data_append_old)
-                st.warning("Merci pour votre intérêt. Étant donné que ce produit est conçu pour des personnes de moins de 60 ans, nous vous recontacterons très bientôt avec une offre parfaitement adaptée à vos besoins.")
+                # Final submit button is only enabled if all family members are below 60
+                if member_over_70_found and all_fields_filled:
+                    data_append_old = [
+                        [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
+                         medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non"]]
+                    google_services.append_data_to_sheet("form" ,workbook.sheet1,
+                                                         data_append_old)
+                    st.warning("Merci pour votre intérêt. Étant donné que ce produit est conçu pour des personnes de moins de 60 ans, nous vous recontacterons très bientôt avec une offre parfaitement adaptée à vos besoins.")
 
-            if not all_fields_filled:
-                st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")
+                if not all_fields_filled:
+                    st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")
 
-            for _, _, dob, _ in family_details:
-                if dob > datetime.datetime.today():
-                    # Use Streamlit's error function to display the error
-                    # Make sure Streamlit is correctly set up for this
-                    dates_naissance_conforme = False
-                    st.error("Une date de naissance entrée n'est pas conforme. Veuillez vérifier les dates de naissance saisies.")
-                    break  # Exit loop after finding the first future date, optional based on your needs
+                for _, _, dob, _ in family_details:
+                    if dob > datetime.datetime.today():
+                        # Use Streamlit's error function to display the error
+                        # Make sure Streamlit is correctly set up for this
+                        dates_naissance_conforme = False
+                        st.error("Une date de naissance entrée n'est pas conforme. Veuillez vérifier les dates de naissance saisies.")
+                        break  # Exit loop after finding the first future date, optional based on your needs
 
-            if phone_valid and email_valid and not member_over_60_found and all_fields_filled and dates_naissance_conforme:
-                st.session_state['file_ready_for_download'] = True
+                if phone_valid and email_valid and not member_over_60_found and all_fields_filled and dates_naissance_conforme:
+                    st.session_state['file_ready_for_download'] = True
 
-                # Assuming `config.devis_html` holds the URL to the HTML template
-                response = requests.get(config.devis_html)
-                if response.status_code == 200:
-                    with tempfile.NamedTemporaryFile(delete=False, suffix='.html') as tmp_file:
-                        tmp_file.write(response.content)
-                    with open(tmp_file.name, 'r') as file:
-                        html_template = file.read()
+                    # Assuming `config.devis_html` holds the URL to the HTML template
+                    response = requests.get(config.devis_html)
+                    if response.status_code == 200:
+                        with tempfile.NamedTemporaryFile(delete=False, suffix='.html') as tmp_file:
+                            tmp_file.write(response.content)
+                        with open(tmp_file.name, 'r') as file:
+                            html_template = file.read()
 
-                else:
-                    st.error(
-                        "Un problème technique est survenu. Veuillez nous excuser pour ce désagrément et nous contacter par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com .")
+                    else:
+                        st.error(
+                            "Un problème technique est survenu. Veuillez nous excuser pour ce désagrément et nous contacter par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com .")
 
-                # Extract family members' dates of birth and other details
-                family_dobs = [dob for _, _, dob, _ in family_details]
-                relation_types = [relation_type for _, _, _, relation_type in family_details]
+                    # Extract family members' dates of birth and other details
+                    family_dobs = [dob for _, _, dob, _ in family_details]
+                    relation_types = [relation_type for _, _, _, relation_type in family_details]
 
-                # Calculate premiums
-                family_premiums = calculation.calculate_family_premiums(
-                    family_dobs, primes, coefficients
-                )
+                    # Calculate premiums
+                    family_premiums = calculation.calculate_family_premiums(
+                        family_dobs, primes, coefficients
+                    )
 
-                # Sum premiums
-                total_family_premiums = pd.DataFrame.from_dict(
-                    calculation.sum_family_premiums(family_premiums)
-                ).T
+                    # Sum premiums
+                    total_family_premiums = pd.DataFrame.from_dict(
+                        calculation.sum_family_premiums(family_premiums)
+                    ).T
 
-                # Generate the modified HTML content
-                modified_html = doc_manip.insert_into_html(
-                    html_template,
-                    family_details,
-                    total_family_premiums,
-                    id_devis
-                )
+                    # Generate the modified HTML content
+                    modified_html = doc_manip.insert_into_html(
+                        html_template,
+                        family_details,
+                        total_family_premiums,
+                        id_devis
+                    )
 
-                # Save the modified HTML to a temporary file
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as tmp:
-                    tmp.write(modified_html)
-                    temp_file_path = tmp.name
+                    # Save the modified HTML to a temporary file
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".html", mode="w") as tmp:
+                        tmp.write(modified_html)
+                        temp_file_path = tmp.name
 
-                # Store the path in the session state to access it outside the form's scope
-                st.session_state['temp_file_path'] = temp_file_path
-                st.session_state['html_file'] = modified_html
-                st.session_state.quote_calculated = True
-                data_append_validated = [
-                    [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                     medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", amo]]
-                google_services.append_data_to_sheet("form", workbook.sheet1,
-                                                     data_append_validated)
-                # Use the path to your service account key file
-                SERVICE_ACCOUNT_FILE = credentials
-                # Folder ID where the file should be uploaded
-                FOLDER_ID = config.folder_id  # Replace with your actual folder ID
-                # Specify the filename and path of the PDF file to upload
-                filename = f"devis_{id_devis}_{souscripteur_first_name}_{souscripteur_surname}"
-                # Read the HTML content from the temporary file
-                with open(st.session_state['temp_file_path'], 'r') as file:
-                    devis_html_content = file.read()
+                    # Store the path in the session state to access it outside the form's scope
+                    st.session_state['temp_file_path'] = temp_file_path
+                    st.session_state['html_file'] = modified_html
+                    st.session_state.quote_calculated = True
+                    data_append_validated = [
+                        [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
+                         medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", amo]]
+                    google_services.append_data_to_sheet("form", workbook.sheet1,
+                                                         data_append_validated)
+                    # Use the path to your service account key file
+                    SERVICE_ACCOUNT_FILE = credentials
+                    # Folder ID where the file should be uploaded
+                    FOLDER_ID = config.folder_id  # Replace with your actual folder ID
+                    # Specify the filename and path of the PDF file to upload
+                    filename = f"devis_{id_devis}_{souscripteur_first_name}_{souscripteur_surname}"
+                    # Read the HTML content from the temporary file
+                    with open(st.session_state['temp_file_path'], 'r') as file:
+                        devis_html_content = file.read()
 
-                # Convert HTML content to PDF and store the path in session state
-                st.session_state['pdf_path'] = doc_manip.convert_html_to_pdf(devis_html_content)
-                filepath = st.session_state['pdf_path']
-                google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
-                                                            mimetype='application/pdf')  # Clean up after download
+                    # Convert HTML content to PDF and store the path in session state
+                    st.session_state['pdf_path'] = doc_manip.convert_html_to_pdf(devis_html_content)
+                    filepath = st.session_state['pdf_path']
+                    google_services.upload_file_to_google_drive(SERVICE_ACCOUNT_FILE, filename, filepath, FOLDER_ID,
+                                                                mimetype='application/pdf')  # Clean up after download
 
-                email_sender.send_email(st.session_state["email_address"],temp_file_path)
-                switch_page("Devis")
+                    email_sender.send_email(st.session_state["email_address"],temp_file_path)
+                    switch_page("Devis")
 
     return

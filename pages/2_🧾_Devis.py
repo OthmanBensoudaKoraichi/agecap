@@ -51,7 +51,7 @@ else:
                 Veuillez retourner sur la page du formulaire afin de générer un devis.
             </div>
         """, unsafe_allow_html=True)
-    go_to_form = st.button(label="Retourner au formulaire")
+    go_to_form = st.button(label="Retourner au formulaire", type = "primary")
     if go_to_form:
         switch_page("Formulaire")
 
