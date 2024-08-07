@@ -11,19 +11,9 @@ def main():
     ### STYLE ###
 
 
-    if 'handler' not in st.session_state:
-        st.session_state.handler = []
-
-    if len(st.session_state.handler) > 0:
-        state = st.session_state.handler.pop(0)
-        st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state=state,
+    st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state="auto",
                            menu_items=None)
-        if len(st.session_state.handler) > 0:
-            # A little extra wait time as without it sometimes the backend moves "too fast" for the front
-            time.sleep(.1)
-            st.rerun()
 
-    st.button('Force Open', on_click=st.session_state.handler.extend, args=[['collapsed', 'expanded']])
 
     # Set the layout of the app
     style.set_app_layout(config.doodle)
