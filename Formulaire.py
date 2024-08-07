@@ -4,7 +4,6 @@ from utils import style, google_services, config, chatbot, form_handling
 from streamlit_float import *
 import time
 import streamlit.components.v1 as components
-from st_clickable_images import clickable_images
 
 
 # Main function
