@@ -63,7 +63,7 @@ def main():
             }
             </style>
             <div class="footer">
-                <img src="https://github.com/OthmanBensoudaKoraichi/agecap/blob/82db2d751f28fefe1089f4546e142a98cf371c53/files/chat_icon.png?raw=true" alt="Your Image">
+                <img src="https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/chat_icon.png?raw=true" alt="Your Image">
             </div>
             """,
             unsafe_allow_html=True
