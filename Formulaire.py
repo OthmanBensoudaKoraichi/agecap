@@ -1,7 +1,7 @@
 # Import libraries
 import streamlit as st
 from utils import style, google_services, config, chatbot, form_handling
-
+from streamlit_float import *
 
 # Main function
 def main():
@@ -10,17 +10,6 @@ def main():
     st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state="auto",
                        menu_items=None)
 
-    # CSS to hide the Streamlit footer
-    hide_streamlit_style = """
-    <style>
-    .css-15tx938.e1g8pov61 {
-        display: none;
-    }
-    </style>
-    """
-
-    # Inject the CSS into the Streamlit app
-    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
     # Set the layout of the app
     style.set_app_layout(config.doodle)
@@ -41,7 +30,42 @@ def main():
 
         style.display_important_message()
 
+##########
 
+    # Float feature initialization
+    float_init()
+
+    # Create footer container and add content
+    # Create a container for the footer
+    footer_container = st.container()
+
+    with footer_container:
+        # Embed an image using HTML
+        st.markdown(
+            """
+            <style>
+            .footer {
+                position: fixed;
+                right: 0;
+                bottom: 0;
+                background-color: white;
+                text-align: right;
+                z-index: 1000;
+            }
+            .footer img {
+                width: 20%; /* Adjust the percentage as needed */
+                height: auto; /* Maintain aspect ratio */
+                margin: 10px;
+            }
+            </style>
+            <div class="footer">
+                <img src="https://revenblob.blob.core.windows.net/announcement/1131/Photos/photo-1131-638508825831850133.jpeg" alt="Your Image">
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    ##########
 
     ### GOOGLE CREDENTIALS ###
     credentials_path = google_services.download_service_account_json(st.secrets["jsonkey_google"])
