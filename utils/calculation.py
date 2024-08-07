@@ -2,11 +2,19 @@ import datetime
 
 
 # Function to find the age group from an age
-def find_age_group(age, primes_df):
-    """Find the corresponding age group for a given age."""
-    for age_group in primes_df["age"]:
+def find_age_group(age, relation, primes_df):
+    """Find the corresponding age group for a given age and relation."""
+    # Map form relation types to dataset relation types
+    if relation.lower() == "enfant":
+        age_relation = "enfant"
+    else:
+        age_relation = "adulte"
+
+    for index, row in primes_df.iterrows():
+        age_group = row["age"]
+        row_relation = row["relation"]
         start, end = map(int, age_group.split("-"))
-        if start <= age <= end:
+        if start <= age <= end and row_relation == age_relation:
             return age_group
     return None
 
@@ -16,21 +24,22 @@ def calculate_age(dob):
     return age
 
 # Function to calculate each premium
-def calculate_family_premiums(family_dobs, primes_df, coefficients_df):
+def calculate_family_premiums(family_dobs, relation_types, primes_df, coefficients_df):
     family_premiums = []
     first_dob = True  # Flag to check if it's the first dob
 
-    for dob in family_dobs:
+    for dob, relation in zip(family_dobs, relation_types):
         age = calculate_age(dob)
-        age_group = find_age_group(age, primes_df)
+        age_group = find_age_group(age, relation, primes_df)
 
         if age_group:
-            premium_row = primes_df[primes_df["age"] == age_group].iloc[0]
+            premium_row = primes_df[(primes_df["age"] == age_group) & (primes_df["relation"] == relation)].iloc[0]
             deces_premium = premium_row['deces'] if first_dob else 0  # 'deces' for first dob only
 
             premiums = {
                 "age": age,
                 "age_group": age_group,
+                "relation": relation,
                 "premiums": {
                     "Annuel": {},
                     "Semestriel": {},
@@ -39,7 +48,7 @@ def calculate_family_premiums(family_dobs, primes_df, coefficients_df):
                 },
             }
 
-            for column in primes_df.columns[1:-1]:  # Skipping 'age' and 'deces'
+            for column in primes_df.columns[2:-1]:  # Skipping 'age', 'relation', and 'deces'
                 annual_premium = premium_row[column] + deces_premium  # Add 'deces' to annual premium
                 premiums["premiums"]["Annuel"][column] = annual_premium
                 premiums["premiums"]["Semestriel"][column] = (

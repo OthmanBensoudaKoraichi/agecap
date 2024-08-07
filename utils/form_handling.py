@@ -122,9 +122,9 @@ def process_form_submission(credentials,workbook):
                     family_details.append(("", "", dob, relation_type))
                 # Calculate age from dob and set flag if over 60
                 age = calculation.calculate_age(dob)
-                if age < 20:
+                if relation_type == "Enfant":
                     nb_enfants += 1
-                if age >= 20:
+                else:
                     nb_adultes += 1
                 if age >= 60:
                     member_over_60_found = True
@@ -249,7 +249,7 @@ def process_form_submission(credentials,workbook):
 
                     # Calculate premiums
                     family_premiums = calculation.calculate_family_premiums(
-                        family_dobs, primes, coefficients
+                        family_dobs,relation_types, primes, coefficients
                     )
 
                     # Sum premiums
