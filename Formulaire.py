@@ -3,7 +3,6 @@ import streamlit as st
 from utils import style, google_services, config, chatbot, form_handling
 from streamlit_float import *
 import time
-import streamlit.components.v1 as components
 
 
 # Main function
