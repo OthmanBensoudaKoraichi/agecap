@@ -2,12 +2,25 @@
 import streamlit as st
 from utils import style, google_services, config, chatbot, form_handling
 
+
 # Main function
 def main():
 
     ### STYLE ###
     st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state="auto",
                        menu_items=None)
+
+    # CSS to hide the Streamlit footer
+    hide_streamlit_style = """
+    <style>
+    .css-15tx938.e1g8pov61 {
+        display: none;
+    }
+    </style>
+    """
+
+    # Inject the CSS into the Streamlit app
+    st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
     # Set the layout of the app
     style.set_app_layout(config.doodle)
