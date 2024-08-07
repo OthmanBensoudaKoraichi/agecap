@@ -376,7 +376,7 @@ if st.session_state.quote_calculated == True:
 
 with st.container():
     # Set the style : Banner and hero
-    chatbot.set_chatbot_style()
+    # chatbot.set_chatbot_style()
     # Initialize the chatbot
     qa, vectorstore = chatbot.initialize_chatbot(openaikey = st.secrets["openaikey"], pineconekey = st.secrets["pineconekey"], index_name = "agecap")
 

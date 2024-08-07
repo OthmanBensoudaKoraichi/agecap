@@ -162,6 +162,20 @@ def display_intro_banner():
                         font-size: 24px;  /* Slightly larger font size for impact */
                         font-weight: 500;  /* Medium font weight */
                     }
+
+                    @media (max-width: 768px) {
+                        .banner {
+                            font-size: 20px;  /* Adjust font size for smaller screens */
+                            padding: 15px;  /* Adjust padding for smaller screens */
+                        }
+                    }
+
+                    @media (max-width: 480px) {
+                        .banner {
+                            font-size: 18px;  /* Further adjust font size for very small screens */
+                            padding: 10px;  /* Further adjust padding for very small screens */
+                        }
+                    }
                 </style>
                 <div class="banner">
                     Remplissez notre formulaire et obtenez un devis en 1 clic !  
@@ -186,8 +200,23 @@ def banner_questionnaire_medical():
                         font-size: 24px;  /* Taille de police légèrement plus grande pour l'impact */
                         font-weight: bold;  /* Poids de police en gras pour un impact maximal */
                     }
+
                     .banner-container {
                         text-align: center;  /* Centre la bannière dans le conteneur */
+                    }
+
+                    @media (max-width: 768px) {
+                        .banner {
+                            font-size: 20px;  /* Adjust font size for smaller screens */
+                            padding: 8px 16px;  /* Adjust padding for smaller screens */
+                        }
+                    }
+
+                    @media (max-width: 480px) {
+                        .banner {
+                            font-size: 18px;  /* Further adjust font size for very small screens */
+                            padding: 6px 12px;  /* Further adjust padding for very small screens */
+                        }
                     }
                 </style>
                 <div class="banner-container">
@@ -199,7 +228,32 @@ def banner_questionnaire_medical():
 
 def display_important_message():
     st.markdown("""
-        <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; margin-top: 10px; margin-bottom: 10px; color: #000; font-size: 14px;">
+        <style>
+            .important-message {
+                background-color: #f0f2f6; 
+                padding: 10px; 
+                border-radius: 5px; 
+                margin-top: 10px; 
+                margin-bottom: 10px; 
+                color: #000; 
+                font-size: 14px;
+            }
+
+            @media (max-width: 768px) {
+                .important-message {
+                    font-size: 13px;  /* Adjust font size for smaller screens */
+                    padding: 8px;  /* Adjust padding for smaller screens */
+                }
+            }
+
+            @media (max-width: 480px) {
+                .important-message {
+                    font-size: 12px;  /* Further adjust font size for very small screens */
+                    padding: 6px;  /* Further adjust padding for very small screens */
+                }
+            }
+        </style>
+        <div class="important-message">
             <strong>Note importante :</strong> La tarification de votre devis est précisément ajustée en fonction de la <strong>date de naissance</strong> de chaque membre de la famille. Il est donc essentiel de remplir ces champs avec exactitude pour assurer une estimation adéquate de votre devis.
         </div>
     """, unsafe_allow_html=True)

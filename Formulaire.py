@@ -4,6 +4,8 @@ from utils import style, google_services, config, chatbot, form_handling
 from streamlit_float import *
 import time
 import streamlit.components.v1 as components
+from st_clickable_images import clickable_images
+
 
 # Main function
 def main():
@@ -35,39 +37,35 @@ def main():
         style.display_important_message()
 
 ##########
+    # Initialize float feature/capability
+    #float_init()
 
-    # Float feature initialization
-    float_init()
+    # Create a container for left-aligned content
+   # container = st.container()
 
-    # Create footer container and add content
-    # Create a container for the footer
-    footer_container = st.container()
+    # # Align content to the left
+    # with container:
+    #     clicked = clickable_images(
+    #         [
+    #             "https://images.unsplash.com/photo-1565130838609-c3a86655db61?w=700",
+    #         ],
+    #         titles=[f"Image #{i}" for i in range(5)],
+    #         div_style={
+    #             "display": "flex",
+    #             "justify-content": "flex-start",  # Align images to the left
+    #             "align-items": "flex-end",  # Align content to the bottom
+    #             "flex-wrap": "wrap",
+    #             "height": "100vh",  # Full viewport height to push content to the bottom
+    #             "position": "relative",
+    #         },
+    #         img_style={"margin": "5px", "height": "200px"},
+    #     )
+    #
+    #     st.markdown(f"Image #{clicked} clicked" if clicked > -1 else "No image clicked")
 
-    with footer_container:
-        # Embed an image using HTML
-        st.markdown(
-            """
-            <style>
-            .footer {
-                position: fixed;
-                left: 0%; /* Adjust this percentage to move the image more towards the center */
-                bottom: 0;
-                background-color: none;
-                text-align: left;
-                z-index: 1000;
-            }
-            .footer img {
-                width: 20%; /* Adjust the percentage as needed */
-                height: auto; /* Maintain aspect ratio */
-                margin: 10px;
-            }
-            </style>
-            <div class="footer">
-                <img src="https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/chat_icon.png?raw=true" alt="Your Image">
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+   # container.float()
+
+
 
     ##########
 
@@ -81,14 +79,14 @@ def main():
 
     ### Chatbot ###
 
-    with st.container():
-        # Set the style : Banner and hero
-        #chatbot.set_chatbot_style()
-        # Initialize the chatbot
-        qa, vectorstore = chatbot.initialize_chatbot(openaikey = st.secrets["openaikey"], pineconekey = st.secrets["pineconekey"], index_name = "agecap")
 
-        # Handle chat interactions
-        chatbot.handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar, workbook)
+    # Set the style : Banner and hero
+    #chatbot.set_chatbot_style()
+    # Initialize the chatbot
+    qa, vectorstore = chatbot.initialize_chatbot(openaikey = st.secrets["openaikey"], pineconekey = st.secrets["pineconekey"], index_name = "agecap")
+
+    # Handle chat interactions
+    chatbot.handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar, workbook)
 
 if __name__ == "__main__":
     main()

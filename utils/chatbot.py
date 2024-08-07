@@ -22,29 +22,31 @@ def initialize_chatbot(openaikey,pineconekey,index_name):
     return qa, vectorstore
 
 def display_chat_history(user_avatar, bot_avatar):
-    with st.container(height = 300,border = True) :
-        # Iterate over the chat history in reverse order
-        for message in reversed(st.session_state.messages):
-            # Determine the alignment and background color based on the message role
-            if message["role"] == "Vous":
-                alignment = "left"
-                background_color = "#E1F5FE"  # Light blue background for the user messages
-                avatar = user_avatar
-            else:
-                alignment = "right"
-                background_color = "#C8E6C9"  # Light green background for bot messages
-                avatar = bot_avatar
+    with st.container():
+        with st.expander(label = "Ouvrir/Fermer le chat", expanded = True):
+            with st.container(height = 300,border = True) :
+                # Iterate over the chat history in reverse order
+                for message in st.session_state.messages:
+                    # Determine the alignment and background color based on the message role
+                    if message["role"] == "Vous":
+                        alignment = "left"
+                        background_color = "#E1F5FE"  # Light blue background for the user messages
+                        avatar = user_avatar
+                    else:
+                        alignment = "right"
+                        background_color = "#C8E6C9"  # Light green background for bot messages
+                        avatar = bot_avatar
 
-            # Use markdown to style the message box
-            message_box = f"""
-            <div style="display: flex; align-items: center; justify-content: {alignment}; margin-bottom: 10px;">
-                <div style="margin: 10px; padding: 10px; background-color: {background_color}; border-radius: 10px; max-width: 80%;">
-                    <img src="{avatar}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                    {message["content"]}
-                </div>
-            </div>
-            """
-            st.markdown(message_box, unsafe_allow_html=True)
+                    # Use markdown to style the message box
+                    message_box = f"""
+                    <div style="display: flex; align-items: center; justify-content: {alignment}; margin-bottom: 10px;">
+                        <div style="margin: 10px; padding: 10px; background-color: {background_color}; border-radius: 10px; max-width: 80%;">
+                            <img src="{avatar}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                            {message["content"]}
+                        </div>
+                    </div>
+                    """
+                    st.markdown(message_box, unsafe_allow_html=True)
 
 
 def get_chatbot_response(qa, vectorstore, context, query):
