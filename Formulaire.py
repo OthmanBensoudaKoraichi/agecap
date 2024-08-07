@@ -11,7 +11,7 @@ def main():
     ### STYLE ###
 
 
-    st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state="auto",
+    st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state="collapsed",
                            menu_items=None)
 
 
@@ -83,7 +83,7 @@ def main():
 
     with st.container():
         # Set the style : Banner and hero
-        chatbot.set_chatbot_style()
+        #chatbot.set_chatbot_style()
         # Initialize the chatbot
         qa, vectorstore = chatbot.initialize_chatbot(openaikey = st.secrets["openaikey"], pineconekey = st.secrets["pineconekey"], index_name = "agecap")
 

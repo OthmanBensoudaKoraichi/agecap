@@ -22,28 +22,29 @@ def initialize_chatbot(openaikey,pineconekey,index_name):
     return qa, vectorstore
 
 def display_chat_history(user_avatar, bot_avatar):
-    # Iterate over the chat history in reverse order
-    for message in reversed(st.session_state.messages):
-        # Determine the alignment and background color based on the message role
-        if message["role"] == "Vous":
-            alignment = "left"
-            background_color = "#E1F5FE"  # Light blue background for the user messages
-            avatar = user_avatar
-        else:
-            alignment = "right"
-            background_color = "#C8E6C9"  # Light green background for bot messages
-            avatar = bot_avatar
+    with st.container(height = 300,border = True) :
+        # Iterate over the chat history in reverse order
+        for message in reversed(st.session_state.messages):
+            # Determine the alignment and background color based on the message role
+            if message["role"] == "Vous":
+                alignment = "left"
+                background_color = "#E1F5FE"  # Light blue background for the user messages
+                avatar = user_avatar
+            else:
+                alignment = "right"
+                background_color = "#C8E6C9"  # Light green background for bot messages
+                avatar = bot_avatar
 
-        # Use markdown to style the message box
-        message_box = f"""
-        <div style="display: flex; align-items: center; justify-content: {alignment}; margin-bottom: 10px;">
-            <div style="margin: 10px; padding: 10px; background-color: {background_color}; border-radius: 10px; max-width: 80%;">
-                <img src="{avatar}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
-                {message["content"]}
+            # Use markdown to style the message box
+            message_box = f"""
+            <div style="display: flex; align-items: center; justify-content: {alignment}; margin-bottom: 10px;">
+                <div style="margin: 10px; padding: 10px; background-color: {background_color}; border-radius: 10px; max-width: 80%;">
+                    <img src="{avatar}" alt="Avatar" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+                    {message["content"]}
+                </div>
             </div>
-        </div>
-        """
-        st.markdown(message_box, unsafe_allow_html=True)
+            """
+            st.markdown(message_box, unsafe_allow_html=True)
 
 
 def get_chatbot_response(qa, vectorstore, context, query):
@@ -73,42 +74,41 @@ def append_chat_to_sheet(downloaded,sheet):
 def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, workbook):
     if 'id_devis' not in st.session_state:
         st.session_state.id_devis = None
-    # Use sidebar for chat interaction
-    with st.sidebar:
-        # Check if chat history exists in session state
-        if "messages" not in st.session_state:
-            st.session_state.messages = []
 
-        # Container to display messages
-        messages = st.container()
+    # Check if chat history exists in session state
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-        if len(st.session_state.messages) >= 20:
-            # Display a message to the user indicating the limit is reached
-            st.success("Nous sommes ravis que vous soyez intéressé(e) par notre produit ! Si vous avez plus de questions, n'hésitez pas à nous appeler au 05 22 22 41 80")
-        else:
+    # Container to display messages in the main layout
+    messages = st.container()
 
-            # Input from user
-            query = st.chat_input("Posez votre question", key="chatbot_input")
+    if len(st.session_state.messages) >= 20:
+        # Display a message to the user indicating the limit is reached
+        st.success("Nous sommes ravis que vous soyez intéressé(e) par notre produit ! Si vous avez plus de questions, n'hésitez pas à nous appeler au 05 22 22 41 80")
+    else:
+        # Input from user
+        query = st.chat_input("Posez votre question", key="chatbot_input")
 
-            if query:
-                # Append user query to chat history
-                st.session_state.messages.append({"role": "Vous", "content": query})
+        if query:
+            # Append user query to chat history
+            st.session_state.messages.append({"role": "Vous", "content": query})
 
-                # Get response from the chatbot
-                response = get_chatbot_response(qa, vectorstore, context, query)
+            # Get response from the chatbot
+            response = get_chatbot_response(qa, vectorstore, context, query)
+
+            # Append chatbot response to chat history
+            st.session_state.messages.append({"role": "Assistant Agecap", "content": response})
+
+            # Format the current interaction
+            current_interaction = f"Client: {query} ----- Assistant Agecap: {response}"
+
+            # Display chat history
+            display_chat_history(user_avatar, bot_avatar)
+
+            # Append chat history to the Google Sheet
+            google_services.append_data_to_sheet("chat", workbook.sheet1, num_devis=st.session_state.id_devis, data=current_interaction)
 
 
-                # Append chatbot response to chat history
-                st.session_state.messages.append({"role": "Assistant Agecap", "content": response})
-
-                # Format the current interaction
-                current_interaction = f"Client: {query} ----- Assistant Agecap: {response}"
-
-                # Display chat history
-                display_chat_history(user_avatar, bot_avatar)
-
-                # Append chat history to the Google Sheet
-                google_services.append_data_to_sheet("chat",workbook.sheet1,num_devis = st.session_state.id_devis , data= current_interaction)
 
 def set_chatbot_style():
     # This function now sets the style within the sidebar
