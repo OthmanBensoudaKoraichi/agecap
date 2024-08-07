@@ -79,8 +79,6 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    # Container to display messages in the main layout
-    messages = st.container()
 
     if len(st.session_state.messages) >= 20:
         # Display a message to the user indicating the limit is reached
