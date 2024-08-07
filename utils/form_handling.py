@@ -104,8 +104,8 @@ def process_form_submission(credentials,workbook):
                     member_over_70_found = True
 
                 # Button to remove this family member
-                if i > 0:
-                    if st.form_submit_button(f"Supprimer le membre {i}", type = "primary"):
+                if i == st.session_state["family_count"] - 1 and i > 0:
+                    if st.form_submit_button(f"Supprimer le dernier membre", type = "primary"):
                         remove_family_member(i)
                         st.rerun()
             # Display warning if the maximum number of family members is reached
