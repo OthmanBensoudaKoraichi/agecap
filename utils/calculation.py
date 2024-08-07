@@ -33,7 +33,8 @@ def calculate_family_premiums(family_dobs, relation_types, primes_df, coefficien
         age_group = find_age_group(age, relation, primes_df)
 
         if age_group:
-            premium_row = primes_df[(primes_df["age"] == age_group) & (primes_df["relation"] == relation)].iloc[0]
+            age_relation = relation.lower() if relation.lower() == "enfant" else "adulte"
+            premium_row = primes_df[(primes_df["age"] == age_group) & (primes_df["relation"] == age_relation)].iloc[0]
             deces_premium = premium_row['deces'] if first_dob else 0  # 'deces' for first dob only
 
             premiums = {
@@ -66,6 +67,7 @@ def calculate_family_premiums(family_dobs, relation_types, primes_df, coefficien
             first_dob = False  # Set flag to False after processing the first dob
 
     return family_premiums
+
 
 
 #  Function to sum the calculated premiums
