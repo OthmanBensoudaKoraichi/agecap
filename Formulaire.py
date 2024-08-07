@@ -34,57 +34,60 @@ def main():
 
         style.display_important_message()
 
-##########
-    # Initialize float feature/capability
-    #float_init()
-
-    # Create a container for left-aligned content
-   # container = st.container()
-
-    # # Align content to the left
-    # with container:
-    #     clicked = clickable_images(
-    #         [
-    #             "https://images.unsplash.com/photo-1565130838609-c3a86655db61?w=700",
-    #         ],
-    #         titles=[f"Image #{i}" for i in range(5)],
-    #         div_style={
-    #             "display": "flex",
-    #             "justify-content": "flex-start",  # Align images to the left
-    #             "align-items": "flex-end",  # Align content to the bottom
-    #             "flex-wrap": "wrap",
-    #             "height": "100vh",  # Full viewport height to push content to the bottom
-    #             "position": "relative",
-    #         },
-    #         img_style={"margin": "5px", "height": "200px"},
-    #     )
-    #
-    #     st.markdown(f"Image #{clicked} clicked" if clicked > -1 else "No image clicked")
-
-   # container.float()
-
-
-
-    ##########
-
-    ### GOOGLE CREDENTIALS ###
+        ### GOOGLE CREDENTIALS ###
     credentials_path = google_services.download_service_account_json(st.secrets["jsonkey_google"])
     if credentials_path:
-        workbook = google_services.setup_google_drive(credentials_path,"BDD clients opération commerciale")
+        workbook = google_services.setup_google_drive(credentials_path, "BDD clients opération commerciale")
 
     ### FORM ###
-    form_handling.process_form_submission(credentials = credentials_path, workbook = workbook)
+    form_handling.process_form_submission(credentials=credentials_path, workbook=workbook)
 
-    ### Chatbot ###
+    ### CHATBOT ###
 
 
-    # Set the style : Banner and hero
-    #chatbot.set_chatbot_style()
-    # Initialize the chatbot
-    qa, vectorstore = chatbot.initialize_chatbot(openaikey = st.secrets["openaikey"], pineconekey = st.secrets["pineconekey"], index_name = "agecap")
+    if 'show' not in st.session_state:
+        st.session_state.show = False
 
-    # Handle chat interactions
-    chatbot.handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar, workbook)
+
+    # Float feature initialization
+    float_init()
+
+    # Container with expand/collapse button
+    button_container = st.container()
+    with button_container:
+        if st.session_state.show:
+            if st.button("⭳Fermer le chat", type="primary"):
+                st.session_state.show = False
+
+                st.rerun()
+            # Set the style : Banner and hero
+            # chatbot.set_chatbot_style()
+            # Initialize the chatbot
+            qa, vectorstore = chatbot.initialize_chatbot(openaikey=st.secrets["openaikey"],
+                                                         pineconekey=st.secrets["pineconekey"], index_name="agecap")
+
+            # Handle chat interactions
+            chatbot.handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar,
+                                            workbook)
+
+        else:
+            if st.button("Chattez avec nous", type="primary"):
+                st.session_state.show = True
+                st.rerun()
+
+
+    # Alter CSS based on expand/collapse state
+    if st.session_state.show:
+        button_b_pos = "21rem"
+    else:
+        button_b_pos = "1rem"
+
+    button_css = float_css_helper(left="0rem", bottom=button_b_pos, transition=0)
+
+    # Float button container
+    button_container.float(button_css)
+
+
 
 if __name__ == "__main__":
     main()
