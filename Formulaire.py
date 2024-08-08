@@ -97,15 +97,18 @@ def main():
 
 
     # Container with expand/collapse button
-    button_whatsapp= st.container()
+    button_whatsapp = st.container()
     with button_whatsapp:
-        if st.button('Whatsapp 📞'):
-            js_code = f"""
-            <script>
-                window.open("https://api.whatsapp.com/send/?phone=212600202155", "_blank").focus();
-            </script>
-            """
-            st.components.v1.html(js_code)
+        try:
+            if st.button('Whatsapp 📞'):
+                js_code = """
+                <script>
+                    window.open("https://api.whatsapp.com/send/?phone=212600202155", "_blank").focus();
+                </script>
+                """
+                st.components.v1.html(js_code)
+        except Exception as e:
+            st.error(f"Une error inattendue est survenue.")
 
 
 
