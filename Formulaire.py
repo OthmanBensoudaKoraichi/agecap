@@ -26,7 +26,6 @@ def main():
             time.sleep(.1)
             st.rerun()
 
-    style.display_contact()
     # Set the layout of the app
     style.set_app_layout(config.doodle)
 
