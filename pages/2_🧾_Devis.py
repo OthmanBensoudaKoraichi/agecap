@@ -2,12 +2,21 @@ import streamlit as st
 from utils import config, style, chatbot, google_services
 import streamlit.components.v1 as components
 from streamlit_extras.switch_page_button import switch_page
+import time
 
+if 'handler' not in st.session_state:
+    st.session_state.handler = ['auto']
 
-# Set page config
-st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_state="auto",
-                   menu_items=None)
+if len(st.session_state.handler) > 0:
+    state = st.session_state.handler.pop(0)
+    st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_state=state,
+                       menu_items=None)
+    if len(st.session_state.handler) > 0:
+        # A little extra wait time as without it sometimes the backend moves "too fast" for the front
+        time.sleep(.1)
+        st.rerun()
 
+style.display_contact()
 # Set style
 # Set the layout of the app
 style.set_app_layout(config.doodle)
@@ -63,11 +72,4 @@ if credentials_path:
 
 ### Chatbot ###
 
-with st.container():
-    # Set the style : Banner and hero
-    #chatbot.set_chatbot_style()
-    # Initialize the chatbot
-    qa, vectorstore = chatbot.initialize_chatbot(openaikey = st.secrets["openaikey"], pineconekey = st.secrets["pineconekey"], index_name = "agecap")
-
-    # Handle chat interactions
-    chatbot.handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar, workbook)
+chatbot.display_chat_buttons(workbook = workbook)

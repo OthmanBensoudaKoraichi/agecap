@@ -4,20 +4,7 @@ from streamlit_extras.switch_page_button import switch_page
 import datetime
 import pandas as pd
 import tempfile
-
-# Set the layout of the app
-st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_state="auto",
-                   menu_items=None)
-style.set_app_layout(config.doodle)
-
-### GOOGLE CREDENTIALS ###
-credentials_path = google_services.download_service_account_json(st.secrets["jsonkey_google"])
-if credentials_path:
-    workbook = google_services.setup_google_drive(credentials_path,"BDD clients opération commerciale")
-
-
-
-### Program ###
+import time
 
 if 'quote_calculated' not in st.session_state:
     st.session_state.quote_calculated = False
@@ -30,6 +17,36 @@ if 'id_devis' not in st.session_state:
 
 if 'name_surname' not in st.session_state:
     st.session_state.name_surname = ""
+
+if 'handler' not in st.session_state:
+    st.session_state.handler = ['auto']
+
+if 'handler' not in st.session_state:
+    st.session_state.handler = ['auto']
+
+if len(st.session_state.handler) > 0:
+    state = st.session_state.handler.pop(0)
+    st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_state=state,
+                       menu_items=None)
+    if len(st.session_state.handler) > 0:
+        # A little extra wait time as without it sometimes the backend moves "too fast" for the front
+        time.sleep(.1)
+        st.rerun()
+
+style.display_contact()
+
+style.set_app_layout(config.doodle)
+
+### GOOGLE CREDENTIALS ###
+credentials_path = google_services.download_service_account_json(st.secrets["jsonkey_google"])
+if credentials_path:
+    workbook = google_services.setup_google_drive(credentials_path,"BDD clients opération commerciale")
+
+
+
+### Program ###
+
+
 
 
 # Formulaire pour entrer le numéro de devis si celui-ci n'a pas encore été calculé
@@ -383,11 +400,4 @@ if st.session_state.quote_calculated == True:
 
 ### Chatbot ###
 
-with st.container():
-    # Set the style : Banner and hero
-    # chatbot.set_chatbot_style()
-    # Initialize the chatbot
-    qa, vectorstore = chatbot.initialize_chatbot(openaikey = st.secrets["openaikey"], pineconekey = st.secrets["pineconekey"], index_name = "agecap")
-
-    # Handle chat interactions
-    chatbot.handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar, workbook)
+chatbot.display_chat_buttons(workbook = workbook)

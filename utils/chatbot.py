@@ -4,6 +4,7 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import Pinecone as lpn
 from pinecone import Pinecone as pn
+from streamlit_float import *
 
 # Initialize chatbot components
 def initialize_chatbot(openaikey,pineconekey,index_name):
@@ -202,3 +203,71 @@ def set_chatbot_style():
         """.format(hero_path=config.hero_path), unsafe_allow_html=True)
 
 
+def display_chat_buttons(workbook) :
+    float_init()
+    # Container with expand/collapse button
+    button_chat = st.container()
+    with button_chat:
+        if st.button('Chat instantané 👨🏻‍💻', on_click=st.session_state.handler.extend,
+                     args=[['collapsed', 'expanded']], type="secondary", key="blue-button"):
+            st.session_state.show = True
+            st.rerun()
+
+    st.markdown(
+        """
+        <style>
+        div[data-testid="stButton"] > button {
+            background-color: #C8E6C9 ;
+            color: white;
+            border: 2px solid white;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        div[data-testid="stButton"] > button:hover {
+            background-color: #C8E6C9;
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            color : white;
+            border: white;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    button_chat_css = float_css_helper(left="0.5rem", bottom="0.5rem", transition=0)
+
+    # Float button container
+    button_chat.float(button_chat_css)
+
+    # Container with expand/collapse button
+    button_whatsapp = st.container()
+    with button_whatsapp:
+        try:
+            if st.button('Whatsapp 📞'):
+                js_code = """
+                    <script>
+                        window.open("https://api.whatsapp.com/send/?phone=212600202155", "_blank").focus();
+                    </script>
+                    """
+                st.components.v1.html(js_code)
+        except Exception as e:
+            st.error(f"Une error inattendue est survenue.")
+
+    button_whatsapp_css = float_css_helper(left="10rem", bottom="0.5rem", transition=0)
+
+    # Float button container
+    button_whatsapp.float(button_whatsapp_css)
+
+    ### CHATBOT ###
+    with st.sidebar:
+        # Set the style : Banner and hero
+        set_chatbot_style()
+        # Initialize the chatbot
+        qa, vectorstore = initialize_chatbot(openaikey=st.secrets["openaikey"],
+                                                     pineconekey=st.secrets["pineconekey"], index_name="agecap")
+
+        # Handle chat interactions
+        handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar,
+                                        workbook)

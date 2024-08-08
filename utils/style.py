@@ -284,4 +284,8 @@ def initialize_language_selection():
     if st.button('العربية', type = "primary"):
         set_language("ar")
 
+def display_contact():
+    with st.container(border= True):
+        st.write("**Tel** : 05 22 22 41 80")
+        st.write("**Email : assistance.agecap@gmail.com**")
 
