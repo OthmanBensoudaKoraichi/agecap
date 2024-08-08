@@ -229,7 +229,7 @@ def display_chat_buttons(workbook,message_sent) :
         """
         <style>
         div[data-testid="stButton"] > button {
-            background-color: #C8E6C9 ;
+            background-color: #235347 ;
             color: white;
             border: 2px solid white;
             font-family: Arial, sans-serif;
@@ -237,7 +237,7 @@ def display_chat_buttons(workbook,message_sent) :
             transition: transform 0.3s, box-shadow 0.3s;
         }
         div[data-testid="stButton"] > button:hover {
-            background-color: #C8E6C9;
+            background-color: #235347;
             transform: scale(1.05);
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
             color : white;

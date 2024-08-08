@@ -5,7 +5,7 @@ from streamlit_extras.switch_page_button import switch_page
 import time
 
 if 'handler' not in st.session_state:
-    st.session_state.handler = ['auto']
+    st.session_state.handler = ['collapsed']
 
 if 'message_sent' not in st.session_state:
     st.session_state.message_sent = False
