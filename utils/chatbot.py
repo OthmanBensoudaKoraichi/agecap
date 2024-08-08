@@ -190,14 +190,14 @@ def set_chatbot_style():
                     }
                 }
             </style>
-            <div class="chat-banner">Chattez avec nous !</div>
+            <div class="chat-banner">Chat instantané</div>
             """, unsafe_allow_html=True)
 
         st.markdown("""
             <div class="flex-container">
                 <img src="{hero_path}" width="100" />
                 <div class="speech-bubble">
-                    Posez une question sur notre assurance maladie complémentaire et recevez une réponse instantanément.
+                    Posez une question sur notre assurance maladie complémentaire.
                 </div>
             </div>
         """.format(hero_path=config.hero_path), unsafe_allow_html=True)
