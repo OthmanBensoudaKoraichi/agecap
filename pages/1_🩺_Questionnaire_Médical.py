@@ -19,7 +19,7 @@ if 'name_surname' not in st.session_state:
     st.session_state.name_surname = ""
 
 if 'handler' not in st.session_state:
-    st.session_state.handler = ['collapsed']
+    st.session_state.handler = ['auto']
 
 
 if 'message_sent' not in st.session_state:
