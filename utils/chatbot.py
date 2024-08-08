@@ -220,57 +220,128 @@ def display_chat_buttons(workbook,message_sent) :
     # Container with expand/collapse button
     button_chat = st.container()
     with button_chat:
-        if st.button('👨🏻‍💻 Chatter', on_click=st.session_state.handler.extend,
+        # Add a unique CSS class to the button
+        if st.button('👨🏻‍💻 Web chat', on_click=st.session_state.handler.extend,
                      args=[['collapsed', 'expanded']], type="secondary", key="blue-button"):
             st.session_state.show = True
             st.rerun()
 
-    st.markdown(
-        """
-        <style>
-        div[data-testid="stButton"] > button {
-            background-color: #235347 ;
-            color: white;
-            border: 2px solid white;
-            font-family: Arial, sans-serif;
-            font-size: 16px;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        div[data-testid="stButton"] > button:hover {
-            background-color: #235347;
-            transform: scale(1.05);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            color : white;
-            border: white;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+        # Add your custom CSS
+        st.markdown(
+            """
+            <style>
+            .st-emotion-cache-qomobe.ef3psqc12 {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 6px 12px; /* Adjusted button size */
+                font-size: 15px; /* Font size */
+                cursor: pointer;
+                background-color: #ff5733; 
+                color: white; /* Text color */
+                border: 2px solid white; /* White border */
+                border-radius: 50px; /* Rounded button */
+                text-align: center;
+                text-decoration: none;
+                font-family: Arial, sans-serif;
+                margin: 10px 2px;
+                transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+                position: fixed; /* Adjust position as needed */
+                bottom: 0rem; /* Position at the bottom */
+                left: 0.5rem; /* Adjust left position */
+            }
 
-    button_chat_css = float_css_helper(left="0.5rem", bottom="0.5rem", transition=0)
+            .st-emotion-cache-qomobe.ef3psqc12:hover {
+                background-color: #1EBE53; /* Slightly darker color on hover */
+                transform: scale(1.05);
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+                color: white;
+            }
+
+            .st-emotion-cache-qomobe.ef3psqc12:link, .st-emotion-cache-qomobe.ef3psqc12:visited, .st-emotion-cache-qomobe.ef3psqc12:hover, .st-emotion-cache-qomobe.ef3psqc12:active {
+                color: white;
+                text-decoration: none;
+            }
+
+            .st-emotion-cache-qomobe.ef3psqc12 img {
+                width: 20px; /* Image width */
+                height: 20px; /* Image height */
+                margin-right: 8px; /* Space between image and text */
+            }
+            </style>
+            """,
+            unsafe_allow_html=True
+        )
+
 
     # Float button container
-    button_chat.float(button_chat_css)
+    button_chat.float()
 
-    # Container with expand/collapse button
+    # Define the style for the WhatsApp button
+    button_style = """
+    <style>
+        .whatsapp-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 12px; /* Taille du bouton ajustée */
+            font-size: 15px; /* Taille de la police */
+            cursor: pointer;
+            background-color: #25D366; /* Couleur de fond similaire au logo WhatsApp */
+            color: white; /* Couleur du texte */
+            border: 2px solid white; /* Bordure blanche */
+            border-radius: 50px; /* Pour rendre le bouton rond */
+            text-align: center;
+            text-decoration: none;
+            font-family: Arial, sans-serif;
+            margin: 10px 2px;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            position: fixed;
+            left: 8rem;
+            bottom: 0rem;
+        }
+
+        .whatsapp-button:hover {
+            background-color: #1EBE53; /* Couleur légèrement plus foncée au survol */
+            transform: scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        .whatsapp-button:link, .whatsapp-button:visited, .whatsapp-button:hover, .whatsapp-button:active {
+            color: white;
+            text-decoration: none;
+        }
+
+        .whatsapp-button img {
+            width: 20px; /* Largeur de l'image */
+            height: 20px; /* Hauteur de l'image */
+            margin-right: 8px; /* Espace entre l'image et le texte */
+        }
+    </style>
+    """
+
+    # Use st.markdown to render the style
+    st.markdown(button_style, unsafe_allow_html=True)
+
+    # Container for the WhatsApp button
     button_whatsapp = st.container()
     with button_whatsapp:
         try:
-            if st.button('📞 Whatsapp '):
-                js_code = """
-                    <script>
-                        window.open("https://api.whatsapp.com/send/?phone=212761080096", "_blank").focus();
-                    </script>
-                    """
-                st.components.v1.html(js_code)
+            # Use a hyperlink to open WhatsApp in a new tab with the defined style
+            st.markdown(
+                """
+                <a href="https://api.whatsapp.com/send/?phone=212761080096" target="_blank" class="whatsapp-button">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp">
+                    WhatsApp
+                </a>
+                """,
+                unsafe_allow_html=True
+            )
         except Exception as e:
-            st.error(f"Une error inattendue est survenue.")
-
-    button_whatsapp_css = float_css_helper(left="8rem", bottom="0.5rem", transition=0)
-
+            st.error(f"Une erreur inattendue est survenue : {str(e)}")
     # Float button container
-    button_whatsapp.float(button_whatsapp_css)
+    button_whatsapp.float()
 
     ### CHATBOT ###
     with st.sidebar:
