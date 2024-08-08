@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulation</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px; /* Adjusted margin for better mobile view */
+    }
+    .responsive-table {
+        overflow-x: auto; /* Enables horizontal scrolling for the table */
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        table-layout: auto; /* Allows table to adjust column width based on content */
+    }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: center;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    h2, h3 {
+        color: #00008B; /* Dark blue titles */
+    }
+    .dark-blue {
+        color: #00008B;
+        font-weight: bold; /* Dark blue and bold text */
+    }
+    .center {
+        text-align: center; /* Center content */
+    }
+    img {
+        max-width: 100%; /* Makes images responsive */
+        height: auto; /* Maintain aspect ratio */
+    }
+    @media screen and (max-width: 768px) {
+        body {
+            margin: 10px; /* Smaller margin for smaller screens */
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="center">
+    <img src="https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecaplogo.png?raw=true" alt="Agecap Logo">
+</div>
+
+<h2>Offre</h2>
+<div class="responsive-table"> <!-- Wrap table in div for horizontal scrolling -->
+<table>
+<thead>
+<tr>
+<th class="dark-blue">Offre</th>
+<th class="dark-blue">Type de contrat</th>
+<th class="dark-blue">N° devis</th>
+<th class="dark-blue">Émis le</th>
+<th class="dark-blue">Valide jusqu’au</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+    <td>Maladie</td>
+    <td>AMC CNSS Individuelle</td>
+    <td id="devis-number">Placeholder</td>
+    <td id="issued-date">Placeholder</td>
+    <td id="valid-until-date">Placeholder</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<h2>Votre devis personnalisé</h2>
+<p>Monsieur/Madame <span id="full_name">Placeholder</span></p> <!-- Changed td to span for correctness -->
+
+<p>Nous vous remercions pour votre confiance et vous prions de trouver ci-dessous nos propositions d'offres et de tarifs tenant compte des informations communiquées par vos soins.</p>
+
+<h3>Bénéficiaire</h3>
+<div class="responsive-table"> <!-- Wrap table in div for horizontal scrolling -->
+<table>
+<thead>
+<tr>
+<th class="dark-blue">Relation au souscripteur</th>
+<th class="dark-blue">Date de naissance</th>
+</tr>
+</thead>
+<tbody>
+<!-- Placeholder for Members Information -->
+</tbody>
+</table>
+</div>
+
+<h3>Votre prime d'assurance (Montant en dirhams)</h3>
+<h4>Les tarifs sont divisés en 3 offres : Essentielle, Optimale, Intégrale. Vous pouvez consulter les détails de chaque offre dans le tableau à la fin du document.</h4>
+<div class="responsive-table"> <!-- Wrap table in div for horizontal scrolling -->
+<table>
+<thead>
+<tr>
+<th class="dark-blue">Options</th>
+<th class="dark-blue" colspan="3">ESSENTIELLE</th>
+<th class="dark-blue" colspan="3">OPTIMALE</th>
+<th class="dark-blue" colspan="3">INTEGRALE</th>
+</tr>
+<tr>
+<td class="dark-blue"><strong>Taux de remboursement</strong></td>
+<td class="dark-blue">80%</td>
+<td class="dark-blue">90%</td>
+<td class="dark-blue">95%</td>
+<td class="dark-blue">80%</td>
+<td class="dark-blue">90%</td>
+<td class="dark-blue">95%</td>
+<td class="dark-blue">80%</td>
+<td class="dark-blue">90%</td>
+<td class="dark-blue">95%</td>
+</tr>
+</thead>
+<tbody>
+<!-- Placeholder for Premiums Information -->
+</tbody>
+</table>
+</div>
+
+<p>Par ailleurs, nous vous rappelons qu’en cas de réalisation de cette couverture :</p>
+<ul>
+<li>Toute modification dans les éléments ayant servi de base pour la tarification, donnera lieu à de nouvelles conditions tarifaires.</li>
+<li>Cette tarification sera concrétisée sous réserve d'un questionnaire médical dument complété par vos soins n'appelant aucune remarque de notre part ainsi que de l'ouverture de vos droits auprès de la Caisse Nationale de Sécurité Sociale (CNSS).</li>
+<li>Ce devis ne constitue nullement une note de couverture ni un contrat.</li>
+</ul>
+
+<h3>Garantie Maladie - Maternité</h3>
+
+<div class="center"> <!-- Center the image container -->
+    <img src="https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/garanties.png?raw=true" alt="Garanties" style="max-width:100%; height:auto;">
+</div>
+
+</body>
+</html>

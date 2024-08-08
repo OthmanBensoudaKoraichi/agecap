@@ -92,8 +92,6 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
         query = st.chat_input("Posez votre question", key="chatbot_input")
 
         if query:
-            # Append user query to chat history
-            st.session_state.message_sent = True
             st.session_state.messages.append({"role": "Vous", "content": query})
 
             # Get response from the chatbot
@@ -109,8 +107,6 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
             # Append chat history to the Google Sheet
             google_services.append_data_to_sheet("chat", workbook.sheet1, num_devis=st.session_state.id_devis, data=current_interaction)
 
-            # Set a flag to indicate that a message was sent
-            st.session_state.message_sent = True
 
     # Display chat history
     display_chat_history(user_avatar, bot_avatar)
@@ -118,97 +114,97 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
 
 
 def set_chatbot_style(message_sent):
-    if message_sent == False:
-        # This function now sets the style within the sidebar
-        with st.sidebar:
-            # Bannière avec gradient, bords arrondis, et ombre pour un look sophistiqué
-            st.markdown("""
-                <style>
+
+    # This function now sets the style within the sidebar
+    with st.sidebar:
+        # Bannière avec gradient, bords arrondis, et ombre pour un look sophistiqué
+        st.markdown("""
+            <style>
+                .chat-banner {
+                    color: #fff;  /* White text color */
+                    padding: 10px;  /* Padding inside the banner for spacing */
+                    border-radius: 10px;  /* Rounded corners for a softer look */
+                    background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Gradient background */
+                    margin-bottom: 20px;  /* Margin at the bottom */
+                    text-align: center;  /* Center the text */
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Modern, readable font */
+                    font-size: 20px;  /* Smaller font size */
+                    font-weight: bold;  /* Medium font weight */
+                }
+                .speech-bubble {
+                    position: relative;
+                    background: #6CB2E4;
+                    border-radius: .4em;
+                    color: #fff;
+                    padding: 10px;
+                    text-align: center;
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                    font-size: 14px;
+                    font-weight: 500;
+                    margin-bottom: 10px;
+                }
+                .speech-bubble:after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: -20px;
+                    width: 0;
+                    height: 0;
+                    border: 10px solid transparent;
+                    border-right-color: #6CB2E4;
+                    border-left: 0;
+                    border-top: 0;
+                    margin-top: 5px;
+                    margin-left: -10px;
+                }
+
+                .flex-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                }
+
+                /* Responsive Styles */
+                @media (max-width: 768px) {
                     .chat-banner {
-                        color: #fff;  /* White text color */
-                        padding: 10px;  /* Padding inside the banner for spacing */
-                        border-radius: 10px;  /* Rounded corners for a softer look */
-                        background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Gradient background */
-                        margin-bottom: 20px;  /* Margin at the bottom */
-                        text-align: center;  /* Center the text */
-                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Modern, readable font */
-                        font-size: 20px;  /* Smaller font size */
-                        font-weight: bold;  /* Medium font weight */
+                        font-size: 18px;  /* Smaller font size for smaller screens */
+                        padding: 8px;  /* Less padding for smaller screens */
                     }
                     .speech-bubble {
-                        position: relative;
-                        background: #6CB2E4;
-                        border-radius: .4em;
-                        color: #fff;
-                        padding: 10px;
-                        text-align: center;
-                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                        font-size: 14px;
-                        font-weight: 500;
-                        margin-bottom: 10px;
+                        font-size: 12px;  /* Smaller font size for smaller screens */
+                        padding: 8px;  /* Less padding for smaller screens */
                     }
-                    .speech-bubble:after {
-                        content: '';
-                        position: absolute;
-                        top: 0;
-                        left: -20px;
-                        width: 0;
-                        height: 0;
-                        border: 10px solid transparent;
-                        border-right-color: #6CB2E4;
-                        border-left: 0;
-                        border-top: 0;
-                        margin-top: 5px;
-                        margin-left: -10px;
-                    }
-    
                     .flex-container {
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        gap: 10px;
+                        flex-direction: column;
                     }
-    
-                    /* Responsive Styles */
-                    @media (max-width: 768px) {
-                        .chat-banner {
-                            font-size: 18px;  /* Smaller font size for smaller screens */
-                            padding: 8px;  /* Less padding for smaller screens */
-                        }
-                        .speech-bubble {
-                            font-size: 12px;  /* Smaller font size for smaller screens */
-                            padding: 8px;  /* Less padding for smaller screens */
-                        }
-                        .flex-container {
-                            flex-direction: column;
-                        }
-                    }
-    
-                    @media (max-width: 480px) {
-                        .chat-banner {
-                            font-size: 16px;  /* Even smaller font size for very small screens */
-                            padding: 5px;  /* Even less padding for very small screens */
-                        }
-                        .speech-bubble {
-                            font-size: 10px;  /* Even smaller font size for very small screens */
-                            padding: 5px;  /* Even less padding for very small screens */
-                        }
-                        .flex-container {
-                            flex-direction: column;
-                        }
-                    }
-                </style>
-                <div class="chat-banner">Chat instantané</div>
-                """, unsafe_allow_html=True)
+                }
 
-            st.markdown("""
-                <div class="flex-container">
-                    <img src="{hero_path}" width="100" />
-                    <div class="speech-bubble">
-                        Posez une question sur notre assurance maladie complémentaire.
-                    </div>
+                @media (max-width: 480px) {
+                    .chat-banner {
+                        font-size: 16px;  /* Even smaller font size for very small screens */
+                        padding: 5px;  /* Even less padding for very small screens */
+                    }
+                    .speech-bubble {
+                        font-size: 10px;  /* Even smaller font size for very small screens */
+                        padding: 5px;  /* Even less padding for very small screens */
+                    }
+                    .flex-container {
+                        flex-direction: column;
+                    }
+                }
+            </style>
+            <div class="chat-banner">Chat instantané</div>
+            """, unsafe_allow_html=True)
+
+        st.markdown("""
+            <div class="flex-container">
+                <img src="{hero_path}" width="100" />
+                <div class="speech-bubble">
+                    Posez une question sur notre assurance maladie complémentaire.
                 </div>
-            """.format(hero_path=config.hero_path), unsafe_allow_html=True)
+            </div>
+        """.format(hero_path=config.hero_path), unsafe_allow_html=True)
 
 
 def display_chat_buttons(workbook,message_sent) :

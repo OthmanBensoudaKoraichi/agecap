@@ -66,10 +66,14 @@ def append_data_to_sheet(type,sheet, data,num_devis = None,quote_calculated = Fa
     # Get last row filled
     last_filled_row = get_last_filled_row(sheet,num_devis)
 
+    ### Modify this if you change the database columns ###
+    first_col = 'A'
+    last_col = 'O'
+
 
     if type == "form":
         try:
-            range_to_update = f'A{last_filled_row }:N{last_filled_row}'
+            range_to_update = f'{first_col}{last_filled_row }:{last_col}{last_filled_row}'
             sheet.update(range_to_update, data)
             print("Data appended successfully.")
         except Exception as e:
@@ -88,9 +92,9 @@ def append_data_to_sheet(type,sheet, data,num_devis = None,quote_calculated = Fa
             if quote_calculated == False:
 
                 ascii_value = ord(
-                    'O') + number_of_interactions - 1
+                    last_col) + number_of_interactions
             else:
-                ascii_value =  ord('O') + last_filled_column - 1
+                ascii_value =  ord(last_col) + last_filled_column
 
             column_letter = chr(ascii_value)
 
