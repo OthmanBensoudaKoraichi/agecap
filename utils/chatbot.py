@@ -23,7 +23,7 @@ def initialize_chatbot(openaikey,pineconekey,index_name):
     return qa, vectorstore
 
 def display_chat_history(user_avatar, bot_avatar):
-        with st.container(height = 500, border = True) :
+        with st.container(border = True) :
             # Iterate over the chat history in reverse order
             for message in reversed(st.session_state.messages):
                 # Determine the alignment and background color based on the message role
