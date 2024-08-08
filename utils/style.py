@@ -154,8 +154,7 @@ def display_intro_banner():
                         color: #fff;  /* White text color */
                         padding: 20px;  /* Padding inside the banner for spacing */
                         border-radius: 10px;  /* Rounded corners for a softer look */
-                        background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Gradient background */
-                        box-shadow: 0 4px 6px 0 rgba(0,0,0,0.2);  /* Subtle shadow for depth */
+                        background: #6CB2E4;  /* Gradient background */
                         margin-top: 20px;  /* Margin at the top */
                         text-align: center;  /* Center the text */
                         font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Modern, readable font */
@@ -178,7 +177,7 @@ def display_intro_banner():
                     }
                 </style>
                 <div class="banner">
-                    Remplissez notre formulaire et obtenez un devis en 1 clic !  
+                    Remplissez le formulaire ci-dessous en 1 minute et obtenez un devis instantanément ! 
                 </div>
             """, unsafe_allow_html=True)
 

@@ -4,7 +4,6 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import Pinecone as lpn
 from pinecone import Pinecone as pn
-from streamlit_float import *
 
 # Initialize chatbot components
 def initialize_chatbot(openaikey,pineconekey,index_name):
@@ -23,7 +22,7 @@ def initialize_chatbot(openaikey,pineconekey,index_name):
     return qa, vectorstore
 
 def display_chat_history(user_avatar, bot_avatar):
-        with st.container(height = 300,border = True) :
+        with st.container(height = 500, border = True) :
             # Iterate over the chat history in reverse order
             for message in reversed(st.session_state.messages):
                 # Determine the alignment and background color based on the message role
@@ -85,28 +84,28 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
         # Display a message to the user indicating the limit is reached
         st.success("Nous sommes ravis que vous soyez intéressé(e) par notre produit ! Si vous avez plus de questions, n'hésitez pas à nous appeler au 05 22 22 41 80")
     else:
-        with st.container(border = True):
-            # Input from user
-            query = st.chat_input("Posez votre question", key="chatbot_input")
 
-            if query:
-                # Append user query to chat history
-                st.session_state.messages.append({"role": "Vous", "content": query})
+        # Input from user
+        query = st.chat_input("Posez votre question", key="chatbot_input")
 
-                # Get response from the chatbot
-                response = get_chatbot_response(qa, vectorstore, context, query)
+        if query:
+            # Append user query to chat history
+            st.session_state.messages.append({"role": "Vous", "content": query})
 
-                # Append chatbot response to chat history
-                st.session_state.messages.append({"role": "Assistant Agecap", "content": response})
+            # Get response from the chatbot
+            response = get_chatbot_response(qa, vectorstore, context, query)
 
-                # Format the current interaction
-                current_interaction = f"Client: {query} ----- Assistant Agecap: {response}"
+            # Append chatbot response to chat history
+            st.session_state.messages.append({"role": "Assistant Agecap", "content": response})
 
-                # Display chat history
-                display_chat_history(user_avatar, bot_avatar)
+            # Format the current interaction
+            current_interaction = f"Client: {query} ----- Assistant Agecap: {response}"
 
-                # Append chat history to the Google Sheet
-                google_services.append_data_to_sheet("chat", workbook.sheet1, num_devis=st.session_state.id_devis, data=current_interaction)
+            # Display chat history
+            display_chat_history(user_avatar, bot_avatar)
+
+            # Append chat history to the Google Sheet
+            google_services.append_data_to_sheet("chat", workbook.sheet1, num_devis=st.session_state.id_devis, data=current_interaction)
 
 
 
@@ -124,7 +123,7 @@ def set_chatbot_style():
                     margin-bottom: 20px;  /* Margin at the bottom */
                     text-align: center;  /* Center the text */
                     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Modern, readable font */
-                    font-size: 24px;  /* Slightly larger font size for impact */
+                    font-size: 20px;  /* Smaller font size */
                     font-weight: bold;  /* Medium font weight */
                 }
                 .speech-bubble {
@@ -132,12 +131,12 @@ def set_chatbot_style():
                     background: #6CB2E4;
                     border-radius: .4em;
                     color: #fff;
-                    padding: 20px;
+                    padding: 10px;
                     text-align: center;
                     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                    font-size: 18px;
+                    font-size: 14px;
                     font-weight: 500;
-                    margin-bottom: 20px;
+                    margin-bottom: 10px;
                 }
                 .speech-bubble:after {
                     content: '';
@@ -153,19 +152,53 @@ def set_chatbot_style():
                     margin-top: 5px;
                     margin-left: -10px;
                 }
+
+                .flex-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 10px;
+                }
+
+                /* Responsive Styles */
+                @media (max-width: 768px) {
+                    .chat-banner {
+                        font-size: 18px;  /* Smaller font size for smaller screens */
+                        padding: 8px;  /* Less padding for smaller screens */
+                    }
+                    .speech-bubble {
+                        font-size: 12px;  /* Smaller font size for smaller screens */
+                        padding: 8px;  /* Less padding for smaller screens */
+                    }
+                    .flex-container {
+                        flex-direction: column;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    .chat-banner {
+                        font-size: 16px;  /* Even smaller font size for very small screens */
+                        padding: 5px;  /* Even less padding for very small screens */
+                    }
+                    .speech-bubble {
+                        font-size: 10px;  /* Even smaller font size for very small screens */
+                        padding: 5px;  /* Even less padding for very small screens */
+                    }
+                    .flex-container {
+                        flex-direction: column;
+                    }
+                }
             </style>
             <div class="chat-banner">Chattez avec nous !</div>
             """, unsafe_allow_html=True)
 
-        colbot1, colbot2 = st.columns([1, 3], gap='small')
-
-        with colbot1:
-            st.image(config.hero_path, width=150)
-
-        with colbot2:
-            st.markdown("""
+        st.markdown("""
+            <div class="flex-container">
+                <img src="{hero_path}" width="100" />
                 <div class="speech-bubble">
                     Posez une question sur notre assurance maladie complémentaire et recevez une réponse instantanément.
                 </div>
-            """, unsafe_allow_html=True)
+            </div>
+        """.format(hero_path=config.hero_path), unsafe_allow_html=True)
+
 

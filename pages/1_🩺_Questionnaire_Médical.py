@@ -60,12 +60,21 @@ if st.session_state.quote_calculated == False:
                 "Numéro de devis introuvable. Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question.")
 
 
+if st.session_state.quote_calculated == False :
+    st.info("Si vous n'avez pas accès à votre numéro de devis ou que vous voulez obtenir un nouveau devis, cliquez sur le bouton suivant : ")
+    make_new_quote = st.button(label="Demander un nouveau devis", type = "primary")
+    if make_new_quote:
+        switch_page("Devis")
+
 # Si le devis a été calculé ou après la soumission du formulaire de devis, exécutez le reste
 if st.session_state.quote_calculated == True:
     # Boutons pour changer de page
     go_to_quote = st.button(label="Retourner au devis", type = "primary")
     if go_to_quote:
-        switch_page("Devis")
+        switch_page("Formulaire")
+
+
+
 
     # Style
     style.banner_questionnaire_medical()
