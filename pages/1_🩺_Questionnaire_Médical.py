@@ -33,8 +33,6 @@ if len(st.session_state.handler) > 0:
         time.sleep(.1)
         st.rerun()
 
-style.display_contact()
-
 style.set_app_layout(config.doodle)
 
 ### GOOGLE CREDENTIALS ###
