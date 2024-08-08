@@ -252,7 +252,7 @@ def display_chat_buttons(workbook,message_sent) :
             }
 
             .st-emotion-cache-qomobe.ef3psqc12:hover {
-                background-color: #1EBE53; /* Slightly darker color on hover */
+                background-color: #ff5733; /* Slightly darker color on hover */
                 transform: scale(1.05);
                 box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
                 color: white;
