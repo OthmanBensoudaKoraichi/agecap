@@ -24,6 +24,9 @@ if 'handler' not in st.session_state:
 if 'handler' not in st.session_state:
     st.session_state.handler = ['auto']
 
+if 'message_sent' not in st.session_state:
+    st.session_state.message_sent = False
+
 if len(st.session_state.handler) > 0:
     state = st.session_state.handler.pop(0)
     st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_state=state,
@@ -398,4 +401,4 @@ if st.session_state.quote_calculated == True:
 
 ### Chatbot ###
 
-chatbot.display_chat_buttons(workbook = workbook)
+chatbot.display_chat_buttons(workbook = workbook, message_sent= st.session_state.message_sent)

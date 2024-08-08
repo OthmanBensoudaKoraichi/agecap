@@ -46,6 +46,7 @@ def display_chat_history(user_avatar, bot_avatar):
                 </div>
                 """
                 st.markdown(message_box, unsafe_allow_html=True)
+        return True
 
 
 def get_chatbot_response(qa, vectorstore, context, query):
@@ -76,21 +77,23 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
     if 'id_devis' not in st.session_state:
         st.session_state.id_devis = None
 
+    if 'message_sent' not in st.session_state:
+        st.session_state.message_sent = False
+
     # Check if chat history exists in session state
     if "messages" not in st.session_state:
         st.session_state.messages = []
-
 
     if len(st.session_state.messages) >= 20:
         # Display a message to the user indicating the limit is reached
         st.success("Nous sommes ravis que vous soyez intéressé(e) par notre produit ! Si vous avez plus de questions, n'hésitez pas à nous appeler au 05 22 22 41 80")
     else:
-
         # Input from user
         query = st.chat_input("Posez votre question", key="chatbot_input")
 
         if query:
             # Append user query to chat history
+            st.session_state.message_sent = True
             st.session_state.messages.append({"role": "Vous", "content": query})
 
             # Get response from the chatbot
@@ -102,108 +105,117 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
             # Format the current interaction
             current_interaction = f"Client: {query} ----- Assistant Agecap: {response}"
 
-            # Display chat history
-            display_chat_history(user_avatar, bot_avatar)
-
             # Append chat history to the Google Sheet
             google_services.append_data_to_sheet("chat", workbook.sheet1, num_devis=st.session_state.id_devis, data=current_interaction)
 
+            # Set a flag to indicate that a message was sent
+            st.session_state.message_sent = True
+
+            # Trigger rerun to update the UI
+            st.rerun()
+
+    # Display chat history
+    display_chat_history(user_avatar, bot_avatar)
 
 
-def set_chatbot_style():
-    # This function now sets the style within the sidebar
-    with st.sidebar:
-        # Bannière avec gradient, bords arrondis, et ombre pour un look sophistiqué
-        st.markdown("""
-            <style>
-                .chat-banner {
-                    color: #fff;  /* White text color */
-                    padding: 10px;  /* Padding inside the banner for spacing */
-                    border-radius: 10px;  /* Rounded corners for a softer look */
-                    background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Gradient background */
-                    margin-bottom: 20px;  /* Margin at the bottom */
-                    text-align: center;  /* Center the text */
-                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Modern, readable font */
-                    font-size: 20px;  /* Smaller font size */
-                    font-weight: bold;  /* Medium font weight */
-                }
-                .speech-bubble {
-                    position: relative;
-                    background: #6CB2E4;
-                    border-radius: .4em;
-                    color: #fff;
-                    padding: 10px;
-                    text-align: center;
-                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-                    font-size: 14px;
-                    font-weight: 500;
-                    margin-bottom: 10px;
-                }
-                .speech-bubble:after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: -20px;
-                    width: 0;
-                    height: 0;
-                    border: 10px solid transparent;
-                    border-right-color: #6CB2E4;
-                    border-left: 0;
-                    border-top: 0;
-                    margin-top: 5px;
-                    margin-left: -10px;
-                }
 
-                .flex-container {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                }
-
-                /* Responsive Styles */
-                @media (max-width: 768px) {
+def set_chatbot_style(message_sent):
+    if message_sent == False:
+        # This function now sets the style within the sidebar
+        with st.sidebar:
+            # Bannière avec gradient, bords arrondis, et ombre pour un look sophistiqué
+            st.markdown("""
+                <style>
                     .chat-banner {
-                        font-size: 18px;  /* Smaller font size for smaller screens */
-                        padding: 8px;  /* Less padding for smaller screens */
+                        color: #fff;  /* White text color */
+                        padding: 10px;  /* Padding inside the banner for spacing */
+                        border-radius: 10px;  /* Rounded corners for a softer look */
+                        background: linear-gradient(120deg, #6CB2E4 0%, #012B5C 100%);  /* Gradient background */
+                        margin-bottom: 20px;  /* Margin at the bottom */
+                        text-align: center;  /* Center the text */
+                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;  /* Modern, readable font */
+                        font-size: 20px;  /* Smaller font size */
+                        font-weight: bold;  /* Medium font weight */
                     }
                     .speech-bubble {
-                        font-size: 12px;  /* Smaller font size for smaller screens */
-                        padding: 8px;  /* Less padding for smaller screens */
+                        position: relative;
+                        background: #6CB2E4;
+                        border-radius: .4em;
+                        color: #fff;
+                        padding: 10px;
+                        text-align: center;
+                        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                        font-size: 14px;
+                        font-weight: 500;
+                        margin-bottom: 10px;
                     }
+                    .speech-bubble:after {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: -20px;
+                        width: 0;
+                        height: 0;
+                        border: 10px solid transparent;
+                        border-right-color: #6CB2E4;
+                        border-left: 0;
+                        border-top: 0;
+                        margin-top: 5px;
+                        margin-left: -10px;
+                    }
+    
                     .flex-container {
-                        flex-direction: column;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
                     }
-                }
+    
+                    /* Responsive Styles */
+                    @media (max-width: 768px) {
+                        .chat-banner {
+                            font-size: 18px;  /* Smaller font size for smaller screens */
+                            padding: 8px;  /* Less padding for smaller screens */
+                        }
+                        .speech-bubble {
+                            font-size: 12px;  /* Smaller font size for smaller screens */
+                            padding: 8px;  /* Less padding for smaller screens */
+                        }
+                        .flex-container {
+                            flex-direction: column;
+                        }
+                    }
+    
+                    @media (max-width: 480px) {
+                        .chat-banner {
+                            font-size: 16px;  /* Even smaller font size for very small screens */
+                            padding: 5px;  /* Even less padding for very small screens */
+                        }
+                        .speech-bubble {
+                            font-size: 10px;  /* Even smaller font size for very small screens */
+                            padding: 5px;  /* Even less padding for very small screens */
+                        }
+                        .flex-container {
+                            flex-direction: column;
+                        }
+                    }
+                </style>
+                <div class="chat-banner">Chat instantané</div>
+                """, unsafe_allow_html=True)
 
-                @media (max-width: 480px) {
-                    .chat-banner {
-                        font-size: 16px;  /* Even smaller font size for very small screens */
-                        padding: 5px;  /* Even less padding for very small screens */
-                    }
-                    .speech-bubble {
-                        font-size: 10px;  /* Even smaller font size for very small screens */
-                        padding: 5px;  /* Even less padding for very small screens */
-                    }
-                    .flex-container {
-                        flex-direction: column;
-                    }
-                }
-            </style>
-            <div class="chat-banner">Chat instantané</div>
-            """, unsafe_allow_html=True)
-
-        st.markdown("""
-            <div class="flex-container">
-                <img src="{hero_path}" width="100" />
-                <div class="speech-bubble">
-                    Posez une question sur notre assurance maladie complémentaire.
+            st.markdown("""
+                <div class="flex-container">
+                    <img src="{hero_path}" width="100" />
+                    <div class="speech-bubble">
+                        Posez une question sur notre assurance maladie complémentaire.
+                    </div>
                 </div>
-            </div>
-        """.format(hero_path=config.hero_path), unsafe_allow_html=True)
+            """.format(hero_path=config.hero_path), unsafe_allow_html=True)
+    else:
+        pass
 
 
-def display_chat_buttons(workbook) :
+def display_chat_buttons(workbook,message_sent) :
     float_init()
     # Container with expand/collapse button
     button_chat = st.container()
@@ -263,7 +275,7 @@ def display_chat_buttons(workbook) :
     ### CHATBOT ###
     with st.sidebar:
         # Set the style : Banner and hero
-        set_chatbot_style()
+        set_chatbot_style(message_sent=message_sent)
         # Initialize the chatbot
         qa, vectorstore = initialize_chatbot(openaikey=st.secrets["openaikey"],
                                                      pineconekey=st.secrets["pineconekey"], index_name="agecap")

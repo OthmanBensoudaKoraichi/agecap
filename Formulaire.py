@@ -14,6 +14,9 @@ def main():
     if 'handler' not in st.session_state:
         st.session_state.handler = ['auto']
 
+    if 'message_sent' not in st.session_state:
+        st.session_state.message_sent = False
+
     if len(st.session_state.handler) > 0:
         state = st.session_state.handler.pop(0)
         st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state=state,
@@ -53,7 +56,7 @@ def main():
     ### FORM ###
     form_handling.process_form_submission(credentials=credentials_path, workbook=workbook)
 
-    chatbot.display_chat_buttons(workbook = workbook)
+    chatbot.display_chat_buttons(workbook = workbook,message_sent = st.session_state.message_sent)
 
 
 
