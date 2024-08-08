@@ -41,9 +41,8 @@ def main():
 
     with st.container():
         # Display a stylish and sophisticated banner
-        style.embed_vimeo_video(config.video_url, width=672, height=378)
-
         style.display_intro_banner()
+        style.embed_vimeo_video(config.video_url, width=672, height=378)
 
         style.display_important_message()
 
