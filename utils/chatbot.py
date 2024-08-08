@@ -99,6 +99,7 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
             # Get response from the chatbot
             response = get_chatbot_response(qa, vectorstore, context, query)
 
+
             # Append chatbot response to chat history
             st.session_state.messages.append({"role": "Assistant Agecap", "content": response})
 
@@ -110,9 +111,6 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
 
             # Set a flag to indicate that a message was sent
             st.session_state.message_sent = True
-
-            # Trigger rerun to update the UI
-            st.rerun()
 
     # Display chat history
     display_chat_history(user_avatar, bot_avatar)
@@ -211,8 +209,6 @@ def set_chatbot_style(message_sent):
                     </div>
                 </div>
             """.format(hero_path=config.hero_path), unsafe_allow_html=True)
-    else:
-        pass
 
 
 def display_chat_buttons(workbook,message_sent) :
