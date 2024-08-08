@@ -208,7 +208,7 @@ def display_chat_buttons(workbook) :
     # Container with expand/collapse button
     button_chat = st.container()
     with button_chat:
-        if st.button('Chat instantané 👨🏻‍💻', on_click=st.session_state.handler.extend,
+        if st.button('Chatter 👨🏻‍💻', on_click=st.session_state.handler.extend,
                      args=[['collapsed', 'expanded']], type="secondary", key="blue-button"):
             st.session_state.show = True
             st.rerun()
