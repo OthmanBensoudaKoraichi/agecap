@@ -260,7 +260,7 @@ def display_chat_buttons(workbook,message_sent) :
             if st.button('Whatsapp 📞'):
                 js_code = """
                     <script>
-                        window.open("https://api.whatsapp.com/send/?phone=212600202155", "_blank").focus();
+                        window.open("https://api.whatsapp.com/send/?phone=212761080096", "_blank").focus();
                     </script>
                     """
                 st.components.v1.html(js_code)
