@@ -220,7 +220,7 @@ def display_chat_buttons(workbook,message_sent) :
     # Container with expand/collapse button
     button_chat = st.container()
     with button_chat:
-        if st.button('Chatter 👨🏻‍💻', on_click=st.session_state.handler.extend,
+        if st.button('👨🏻‍💻 Chatter', on_click=st.session_state.handler.extend,
                      args=[['collapsed', 'expanded']], type="secondary", key="blue-button"):
             st.session_state.show = True
             st.rerun()
@@ -257,7 +257,7 @@ def display_chat_buttons(workbook,message_sent) :
     button_whatsapp = st.container()
     with button_whatsapp:
         try:
-            if st.button('Whatsapp 📞'):
+            if st.button('📞 Whatsapp '):
                 js_code = """
                     <script>
                         window.open("https://api.whatsapp.com/send/?phone=212761080096", "_blank").focus();
