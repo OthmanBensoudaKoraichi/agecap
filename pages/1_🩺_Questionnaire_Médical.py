@@ -27,7 +27,7 @@ if 'message_sent' not in st.session_state:
 
 if len(st.session_state.handler) > 0:
     state = st.session_state.handler.pop(0)
-    st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_state=state,
+    st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state=state,
                        menu_items=None)
     if len(st.session_state.handler) > 0:
         # A little extra wait time as without it sometimes the backend moves "too fast" for the front
@@ -87,9 +87,7 @@ if st.session_state.quote_calculated == True:
     # Boutons pour changer de page
     go_to_quote = st.button(label="Retourner au devis", type = "primary")
     if go_to_quote:
-        switch_page("Formulaire")
-
-
+        switch_page("Devis")
 
 
     # Style

@@ -12,7 +12,7 @@ if 'message_sent' not in st.session_state:
 
 if len(st.session_state.handler) > 0:
     state = st.session_state.handler.pop(0)
-    st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_state=state,
+    st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state=state,
                        menu_items=None)
     if len(st.session_state.handler) > 0:
         # A little extra wait time as without it sometimes the backend moves "too fast" for the front
@@ -29,6 +29,7 @@ style.set_app_layout(config.doodle)
 if 'file_ready_for_download' in st.session_state and st.session_state['file_ready_for_download']:
 
 
+
    # if 'temp_file_path' in st.session_state:
         # Create a download button for the HTML file
       #  with open(st.session_state['temp_file_path'], 'rb') as file:
@@ -40,15 +41,20 @@ if 'file_ready_for_download' in st.session_state and st.session_state['file_read
                # type = "primary"
           #  )
 
-    # Write next steps
+   # Write next steps
+    precedent = st.button("<< Précédent", type="primary")
+    if precedent:
+        switch_page("Formulaire")
+
     message = ("Votre devis est prêt. Vous pouvez le consulter sur cette page et vous avez reçu une copie par email.\n"
                "Pour continuer, veuillez remplir notre court questionnaire médical de 5 minutes. Vous avez également reçu une copie par email si vous souhaitez continuer la procédure ultérieurement (vérifiez dans votre boite de spams).")
 
     st.success(message)
 
-    questionnaire_medical = st.button("Accéder au questionnaire médical",type = "primary")
+    questionnaire_medical = st.button(">> Accéder au questionnaire médical",type = "primary")
     if questionnaire_medical:
         switch_page("questionnaire médical")
+
     contact = "Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question."
     st.info(contact)
 
