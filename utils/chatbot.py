@@ -267,7 +267,7 @@ def display_chat_buttons(workbook,message_sent) :
         except Exception as e:
             st.error(f"Une error inattendue est survenue.")
 
-    button_whatsapp_css = float_css_helper(left="10rem", bottom="0.5rem", transition=0)
+    button_whatsapp_css = float_css_helper(left="8rem", bottom="0.5rem", transition=0)
 
     # Float button container
     button_whatsapp.float(button_whatsapp_css)
