@@ -26,7 +26,6 @@ def remove_family_member(index):
 
 def process_form_submission(credentials,workbook):
 
-    primes, coefficients = data_loaders.load_excel_data(config.primes_and_coef, config.primes_and_coef)
     # Initialize session state for family members count
     if "family_count" not in st.session_state:
         st.session_state["family_count"] = 1
@@ -43,8 +42,6 @@ def process_form_submission(credentials,workbook):
     if 'conjoint_70_detected' not in st.session_state:
         st.session_state.conjoint_70_detected = False
 
-    if 'compagnie' not in st.session_state:
-        st.session_state.compagnie = "AXA"
 
 
 
@@ -220,7 +217,11 @@ def process_form_submission(credentials,workbook):
 
 
         if submit_button:
-            st.write(souscripteur_age, member_over_60_found, member_over_70_found, st.session_state.compagnie)
+            if member_over_60_found == True and member_over_70_found == False:
+                compagnie = "SANAD"
+            else:
+                compagnie = "AXA"
+            st.write(souscripteur_age, member_over_60_found, member_over_70_found, compagnie)
 
             with st.spinner("Calcul du devis en cours. Veuillez patienter quelques secondes."):
                 if 'id_devis' not in st.session_state:
@@ -233,11 +234,6 @@ def process_form_submission(credentials,workbook):
                     st.error("Format du numéro de téléphone invalide")
                 if email_valid == False:
                     st.error("Format de l'adresse email invalide")
-
-                if member_over_60_found == True and member_over_70_found == False :
-                    st.session_state.compagnie = "SANAD"
-                else :
-                    st.session_state.compagnie = "AXA"
 
 
 
@@ -282,11 +278,11 @@ def process_form_submission(credentials,workbook):
                         st.error("Une date de naissance entrée n'est pas conforme. Veuillez vérifier les dates de naissance saisies.")
                         break  # Exit loop after finding the first future date, optional based on your needs
 
-                if phone_valid and email_valid and not member_over_60_found and all_fields_filled and dates_naissance_conforme:
+                if phone_valid and email_valid and souscripteur_age < 70 and all_fields_filled and dates_naissance_conforme:
                     st.session_state['file_ready_for_download'] = True
 
                     # Assuming `config.devis_html` holds the URL to the HTML template
-                    response = requests.get(config.devis_html[st.session_state.compagnie])
+                    response = requests.get(config.devis_html[compagnie])
                     if response.status_code == 200:
                         with tempfile.NamedTemporaryFile(delete=False, suffix='.html') as tmp_file:
                             tmp_file.write(response.content)
@@ -301,14 +297,23 @@ def process_form_submission(credentials,workbook):
                     family_dobs = [dob for _, _, dob, _ in family_details]
                     relation_types = [relation_type for _, _, _, relation_type in family_details]
 
-                    # Calculate premiums
-                    family_premiums = calculation.calculate_family_premiums(
-                        family_dobs,relation_types, primes, coefficients, st.session_state.compagnie
-                    )
+                    if compagnie == "AXA":
+                        primes, coefficients = data_loaders.load_excel_data(config.primes_and_coef["AXA"], config.primes_and_coef["AXA"])
+                        # Calculate premiums
+                        family_premiums = calculation.calculate_family_premiums(
+                            family_dobs,relation_types, primes, coefficients, compagnie
+                        )
+
+                    if compagnie == "SANAD":
+                        primes = pd.read_excel(config.primes_and_coef["SANAD"], sheet_name="primes")
+                        # Calculate premiums
+                        family_premiums = calculation.calculate_family_premiums(
+                            family_dobs,relation_types, primes, compagnie
+                        )
 
                     # Sum premiums
                     total_family_premiums = pd.DataFrame.from_dict(
-                        calculation.sum_family_premiums(family_premiums, st.session_state.compagnie)
+                        calculation.sum_family_premiums(family_premiums, compagnie)
                     ).T
 
                     # Generate the modified HTML content
@@ -317,7 +322,7 @@ def process_form_submission(credentials,workbook):
                         family_details,
                         total_family_premiums,
                         id_devis,
-                        st.session_state.compagnie
+                        compagnie
                     )
 
                     # Save the modified HTML to a temporary file
@@ -331,7 +336,7 @@ def process_form_submission(credentials,workbook):
                     st.session_state.quote_calculated = True
                     data_append_validated = [
                         [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                         medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", amo, st.session_state.compagnie]]
+                         medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", amo, compagnie]]
                     google_services.append_data_to_sheet("form", workbook.sheet1,
                                                          data_append_validated)
                     # Use the path to your service account key file

@@ -76,8 +76,9 @@ def calculate_family_premiums(family_dobs, relation_types, primes_df, coefficien
 
                 first_dob = False  # Set flag to False after processing the first dob
 
+        return family_premiums
+
     if compagnie == "SANAD":
-        def calculate_family_premiums(family_dobs, primes_df, compagnie="AXA"):
             family_premiums = []
             first_dob = True  # Flag to check if it's the first dob
 
@@ -103,8 +104,7 @@ def calculate_family_premiums(family_dobs, relation_types, primes_df, coefficien
 
                     first_dob = False  # Set flag to False after processing the first dob
 
-
-    return family_premiums
+            return family_premiums
 
 
 

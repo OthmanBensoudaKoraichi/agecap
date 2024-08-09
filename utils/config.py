@@ -3,7 +3,7 @@ import streamlit as st
 # Setting all variables used in main
 agecap_logo = "https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecaplogo.png?raw=true"
 doodle = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/doodle.png"
-primes_and_coef = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/sehassur_devis.xlsx"
+primes_and_coef = {"AXA": "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/sehassur_devis.xlsx", "SANAD" : "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/sanad_devis.xlsx"}
 devis_doc = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/devis_agecap.docx"
 hero_path = "https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecap_hero.png?raw=true"
 user_avatar = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/user_avatar.png?raw=true'
