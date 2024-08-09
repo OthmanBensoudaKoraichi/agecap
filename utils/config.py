@@ -11,7 +11,8 @@ bot_avatar = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files
 video_url = "https://vimeo.com/913774763?share=copy"
 favicon = 'https://github.com/OthmanBensoudaKoraichi/agecap/blob/master/files/agecap_favicon.png?raw=true'
 folder_id = '1jzqRv_SvUz1EkeV0AnlgY00PaTKhXjm4'
-devis_html = "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/devis_agecap.html"
+devis_html = {"AXA" : "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/devis_agecap.html", "SANAD" : "https://raw.githubusercontent.com/OthmanBensoudaKoraichi/agecap/master/files/devis_sanad.html"}
+
 months = {
     'Janvier': 1,
     'Février': 2,

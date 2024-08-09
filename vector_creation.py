@@ -32,7 +32,7 @@ text_splitter = RecursiveCharacterTextSplitter(
 pc = Pinecone(api_key=st.secrets["pineconekey"])
 
 pc.create_index(
-    name="agecap",
+    name="sanad",
     dimension=3072, # Replace with your model dimensions
     metric="cosine", # Replace with your model metric
     spec=ServerlessSpec(
@@ -42,7 +42,7 @@ pc.create_index(
 )
 
 # Set the Pinecone index to "agecap"
-index = pc.Index("agecap")
+index = pc.Index("sanad")
 
 # Initialize OpenAI Embeddings
 embed = OpenAIEmbeddings(
@@ -52,11 +52,9 @@ embed = OpenAIEmbeddings(
 
 # Define paths to your PDF files
 pdf_paths = [
-    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/agecap_infos.pdf",
-    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/87-CG SEHASSUR.pdf",
-    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/Argumentaire de vente SEHASSUR.pdf",
-    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/Fiche produit SEHASSUR.pdf",
-    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/devis_agecap.pdf"
+    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/sanad_conditions.pdf",
+    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/sanad_fiche_produit.pdf",
+    "/Users/othmanbensouda/PycharmProjects/Agecap Automatic Forms/files/sanad_notice.pdf",
 ]
 
 # Function to process a batch of texts and metadatas

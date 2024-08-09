@@ -7,12 +7,22 @@ import time
 if 'handler' not in st.session_state:
     st.session_state.handler = ['auto']
 
-if 'message_sent' not in st.session_state:
-    st.session_state.message_sent = False
+if 'enfant_25_detected' not in st.session_state:
+    st.session_state.enfant_25_detected = False
+
+if 'conjoint_70_detected' not in st.session_state:
+    st.session_state.conjoint_70_detected = False
+
+if 'index' not in st.session_state:
+    st.session_state.index = "agecap"
+
+
+
+
 
 if len(st.session_state.handler) > 0:
     state = st.session_state.handler.pop(0)
-    st.set_page_config(page_icon=config.favicon, layout="centered", initial_sidebar_state=state,
+    st.set_page_config(page_icon=config.favicon, layout="wide", initial_sidebar_state=state,
                        menu_items=None)
     if len(st.session_state.handler) > 0:
         # A little extra wait time as without it sometimes the backend moves "too fast" for the front
@@ -42,8 +52,12 @@ if 'file_ready_for_download' in st.session_state and st.session_state['file_read
           #  )
 
    # Write next steps
+
     precedent = st.button("<< Précédent", type="primary")
     if precedent:
+        # Delete all session states
+        for key in st.session_state.keys():
+            del st.session_state[key]
         switch_page("Formulaire")
 
     message = ("Votre devis est prêt. Vous pouvez le consulter sur cette page et vous avez reçu une copie par email.\n"
@@ -51,12 +65,18 @@ if 'file_ready_for_download' in st.session_state and st.session_state['file_read
 
     st.success(message)
 
-    questionnaire_medical = st.button(">> Accéder au questionnaire médical",type = "primary")
+    questionnaire_medical = st.button("Accéder au questionnaire médical >>",type = "primary")
     if questionnaire_medical:
         switch_page("questionnaire médical")
 
-    contact = "Contactez-nous par téléphone au 05 22 22 41 80 ou sur l'adresse email assistance.agecap@gmail.com pour toute question."
-    st.info(contact)
+
+    if st.session_state.enfant_25_detected == True:
+        st.warning(
+            "Les enfants de plus de 25 ans sont considérés comme adultes et ont donc été exclus du devis. Ils doivent souscrire à une assurance de manière indépendante. Merci de votre compréhension.")
+
+    if st.session_state.conjoint_70_detected== True:
+        st.info(
+            "Les conjoints de plus de 70 ans ont été exclus du devis car l'offre n'est pas adaptée à cette tranche d'âge. Merci de votre compréhension.")
 
 if ('quote_calculated' and 'html_file') in st.session_state:
     # If a quote has been calculated and an HTML file exists in the session state, display it
@@ -80,4 +100,4 @@ if credentials_path:
 
 ### Chatbot ###
 
-chatbot.display_chat_buttons(workbook = workbook,message_sent = st.session_state.message_sent)
+chatbot.display_chat_buttons(workbook = workbook, index = st.session_state.index)

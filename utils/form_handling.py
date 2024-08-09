@@ -37,6 +37,16 @@ def process_form_submission(credentials,workbook):
     if 'name_surname' not in st.session_state:
         st.session_state.name_surname = ""
 
+    if 'enfant_25_detected' not in st.session_state:
+        st.session_state.enfant_25_detected = False
+
+    if 'conjoint_70_detected' not in st.session_state:
+        st.session_state.conjoint_70_detected = False
+
+    if 'compagnie' not in st.session_state:
+        st.session_state.compagnie = "AXA"
+
+
 
     with st.form("insurance_form"):
 
@@ -50,6 +60,8 @@ def process_form_submission(credentials,workbook):
         nb_adultes = 0
         nb_enfants = 0
         dates_naissance_conforme = True
+        conjointe_age = 0
+        souscripteur_age = 0
 
 
         for i in range(st.session_state["family_count"]):
@@ -113,23 +125,38 @@ def process_form_submission(credentials,workbook):
 
                 # Constructing the datetime object for the date of birth
                 dob = datetime.datetime(year=selected_year, month=month_options[selected_month], day=selected_day)
-
-                # Append the details to the family_details list
-                if i == 0:
-                    family_details.append((first_name, surname, dob, relation_type))
-                else:
-                    # For additional family members where first_name and surname may not be defined
-                    family_details.append(("", "", dob, relation_type))
                 # Calculate age from dob and set flag if over 60
                 age = calculation.calculate_age(dob)
-                if relation_type == "Enfant":
+
+                if relation_type == "Enfant" and age < 25:
                     nb_enfants += 1
-                else:
+                if not (relation_type == "Conjoint(e)" and age >= 70):
                     nb_adultes += 1
                 if age >= 60:
                     member_over_60_found = True
                 if age >= 70:
                     member_over_70_found = True
+
+                if conjointe_age >= 60 and souscripteur_age >=60:
+                    both_sixty = True
+
+                # Append the details to the family_details list
+                if i == 0:
+                    family_details.append((first_name, surname, dob, relation_type))
+                    souscripteur_age = age
+
+                else:
+                    if relation_type == "Conjoint(e)":
+                        conjointe_age = age
+                        if conjointe_age >= 70:
+                            st.session_state.conjoint_70_detected = True
+
+                    if relation_type == "Enfant" and age >= 25:
+                        st.session_state.enfant_25_detected = True
+
+                    if not ((relation_type == "Enfant" and age >= 25) or (relation_type == "Conjoint(e)" and age >= 70)):
+                        family_details.append(("", "", dob, relation_type))
+
 
                 # Button to remove this family member
                 if i > 0:
@@ -193,6 +220,8 @@ def process_form_submission(credentials,workbook):
 
 
         if submit_button:
+            st.write(souscripteur_age, member_over_60_found, member_over_70_found, st.session_state.compagnie)
+
             with st.spinner("Calcul du devis en cours. Veuillez patienter quelques secondes."):
                 if 'id_devis' not in st.session_state:
                     st.session_state.id_devis = ''
@@ -205,17 +234,42 @@ def process_form_submission(credentials,workbook):
                 if email_valid == False:
                     st.error("Format de l'adresse email invalide")
 
-                if member_over_60_found and not member_over_70_found :
-                    pass # go to excel of second company
+                if member_over_60_found == True and member_over_70_found == False :
+                    st.session_state.compagnie = "SANAD"
+                else :
+                    st.session_state.compagnie = "AXA"
+
+
 
                 # Final submit button is only enabled if all family members are below 60
-                if member_over_70_found and all_fields_filled:
+
+                if souscripteur_age >= 70 and all_fields_filled:
                     data_append_old = [
                         [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                         medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non"]]
+                         medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", amo, "Aucune"]]
                     google_services.append_data_to_sheet("form" ,workbook.sheet1,
                                                          data_append_old)
-                    st.warning("Merci pour votre intérêt. Étant donné que ce produit est conçu pour des personnes de moins de 60 ans, nous vous recontacterons très bientôt avec une offre parfaitement adaptée à vos besoins.")
+                    # Delete all session states
+                    for key in st.session_state.keys():
+                        del st.session_state[key]
+                    st.warning("Merci pour votre intérêt. Étant donné que ce produit est conçu pour des personnes de moins de 70 ans, nous vous recontacterons très bientôt avec une offre parfaitement adaptée à vos besoins.")
+
+                if souscripteur_age < 18 and all_fields_filled:
+                    data_append_young = [
+                        [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"),
+                         email_address, phone_number,
+                         medium, "Pas de devis", datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"),
+                         "Oui" if st.session_state.quote_calculated else "Non", nb_adultes, nb_enfants, "FR", "Non",
+                         amo, "Aucune"]]
+                    google_services.append_data_to_sheet("form", workbook.sheet1,
+                                                         data_append_young)
+                    # Delete all session states
+                    for key in st.session_state.keys():
+                        del st.session_state[key]
+                    st.warning(
+                        "Merci pour votre intérêt. Étant donné que ce produit est conçu pour des personnes de plus de 18 ans, nous vous recontacterons très bientôt avec une offre parfaitement adaptée à vos besoins.")
+
+
 
                 if not all_fields_filled:
                     st.error("Veuillez remplir tous les champs obligatoires, qui sont suivis d'un astérisque (*)")
@@ -232,7 +286,7 @@ def process_form_submission(credentials,workbook):
                     st.session_state['file_ready_for_download'] = True
 
                     # Assuming `config.devis_html` holds the URL to the HTML template
-                    response = requests.get(config.devis_html)
+                    response = requests.get(config.devis_html[st.session_state.compagnie])
                     if response.status_code == 200:
                         with tempfile.NamedTemporaryFile(delete=False, suffix='.html') as tmp_file:
                             tmp_file.write(response.content)
@@ -249,12 +303,12 @@ def process_form_submission(credentials,workbook):
 
                     # Calculate premiums
                     family_premiums = calculation.calculate_family_premiums(
-                        family_dobs,relation_types, primes, coefficients
+                        family_dobs,relation_types, primes, coefficients, st.session_state.compagnie
                     )
 
                     # Sum premiums
                     total_family_premiums = pd.DataFrame.from_dict(
-                        calculation.sum_family_premiums(family_premiums)
+                        calculation.sum_family_premiums(family_premiums, st.session_state.compagnie)
                     ).T
 
                     # Generate the modified HTML content
@@ -262,7 +316,8 @@ def process_form_submission(credentials,workbook):
                         html_template,
                         family_details,
                         total_family_premiums,
-                        id_devis
+                        id_devis,
+                        st.session_state.compagnie
                     )
 
                     # Save the modified HTML to a temporary file
@@ -276,7 +331,7 @@ def process_form_submission(credentials,workbook):
                     st.session_state.quote_calculated = True
                     data_append_validated = [
                         [family_details[0][0], family_details[0][1], family_details[0][2].strftime("%d-%m-%Y"), email_address, phone_number,
-                         medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", amo]]
+                         medium, id_devis, datetime.datetime.today().strftime("%d-%m-%Y %H:%M:%S"), "Oui" if st.session_state.quote_calculated else "Non",nb_adultes,nb_enfants,"FR", "Non", amo, st.session_state.compagnie]]
                     google_services.append_data_to_sheet("form", workbook.sheet1,
                                                          data_append_validated)
                     # Use the path to your service account key file

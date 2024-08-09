@@ -75,96 +75,94 @@ def insert_into_word_doc(doc_path, list_members, df_premiums,id_devis):
 
     return docx_path
 
-def insert_into_html(html_code, list_members, df_premiums, id_devis):
-    # Format today's date and the date 30 days from now
-    today_date = datetime.datetime.today().strftime("%d-%m-%Y")
-    valid_until_date = (datetime.datetime.today() + datetime.timedelta(days=30)).strftime("%d-%m-%Y")
 
-    # Insert `id_devis`, today's date, and the valid until date into the HTML
-    html_code = html_code.replace('<td id="full_name">Placeholder</td>', f'<td id="full_name">{list_members[0][0].capitalize() + " " + list_members[0][1].capitalize() }</td>')
-    html_code = html_code.replace('<td id="devis-number">Placeholder</td>', f'<td id="devis-number">{id_devis}</td>')
-    html_code = html_code.replace('<td id="issued-date">Placeholder</td>', f'<td id="issued-date">{today_date}</td>')
-    html_code = html_code.replace('<td id="valid-until-date">Placeholder</td>', f'<td id="valid-until-date">{valid_until_date}</td>')
 
-    # Insert family members' information
-    members_html = ''
-    for i, member in enumerate(list_members):
-        year, month, day = str(member[2]).split("-")
-        date_reformatted = f"{day[:2]}-{month}-{year}"
-        relation = member[3]
-        members_html += f'<tr><td>{relation}</td><td>{date_reformatted}</td></tr>'
+def insert_into_html(html_code, list_members, df_premiums, id_devis,compagnie = "AXA"):
+    if compagnie == "AXA":
+        # Format today's date and the date 30 days from now
+        today_date = datetime.datetime.today().strftime("%d-%m-%Y")
+        valid_until_date = (datetime.datetime.today() + datetime.timedelta(days=30)).strftime("%d-%m-%Y")
 
-    # Use the new placeholder comment for members
-    html_code = html_code.replace('<!-- Placeholder for Members Information -->', members_html)
+        # Correctly replace the placeholder for full name
+        html_code = html_code.replace('id="full_name">Placeholder</span>', f'id="full_name">{list_members[0][0].capitalize() + " " + list_members[0][1].capitalize()}</span>')
+        html_code = html_code.replace('<td id="devis-number">Placeholder</td>', f'<td id="devis-number">{id_devis}</td>')
+        html_code = html_code.replace('<td id="issued-date">Placeholder</td>', f'<td id="issued-date">{today_date}</td>')
+        html_code = html_code.replace('<td id="valid-until-date">Placeholder</td>', f'<td id="valid-until-date">{valid_until_date}</td>')
 
-    labels = [
-        "Montant TTC annuel",
-        "Montant TTC semestriel",
-        "Montant TTC trimestriel",
-        "Montant TTC mensuel"
-    ]
+        # Insert family members' information
+        members_html = ''
+        for i, member in enumerate(list_members):
+            year, month, day = str(member[2]).split("-")
+            date_reformatted = f"{day[:2]}-{month}-{year}"
+            relation = member[3]
+            members_html += f'<tr><td>{relation}</td><td>{date_reformatted}</td></tr>'
 
-    premiums_html = ''
-    for i in range(df_premiums.shape[0]):
-        # Start the row with the label in the first cell, in bold and dark blue
-        row_html = f'<tr><td class="dark-blue"><strong>{labels[i]}</strong></td>'
-        # Append the data cells for this row
-        for j in range(df_premiums.shape[1]):
-            cell_value = df_premiums.iloc[i, j]
-            row_html += f'<td>{cell_value}</td>'
-        row_html += '</tr>'
-        premiums_html += row_html
+        html_code = html_code.replace('<!-- Placeholder for Members Information -->', members_html)
 
-    # Use the new placeholder comment for premiums
-    html_code = html_code.replace('<!-- Placeholder for Premiums Information -->', premiums_html)
+        # Define labels for the premium options
+        labels = [
+            "Montant TTC annuel",
+            "Montant TTC semestriel",
+            "Montant TTC trimestriel",
+            "Montant TTC mensuel"
+        ]
 
-    return html_code
+        premiums_html = ''
+        for i in range(df_premiums.shape[0]):
+            row_html = f'<tr><td class="dark-blue"><strong>{labels[i]}</strong></td>'
+            for j in range(df_premiums.shape[1]):
+                cell_value = df_premiums.iloc[i, j]
+                # Apply dark blue to specific percentages
+                if cell_value in ["80%", "90%"]:  # Assuming you want to add "85%" if it exists
+                    row_html += f'<td class="dark-blue">{cell_value}</td>'
+                else:
+                    row_html += f'<td>{cell_value}</td>'
+            row_html += '</tr>'
+            premiums_html += row_html
 
-import datetime
+        html_code = html_code.replace('<!-- Placeholder for Premiums Information -->', premiums_html)
 
-def insert_into_html(html_code, list_members, df_premiums, id_devis):
-    # Format today's date and the date 30 days from now
-    today_date = datetime.datetime.today().strftime("%d-%m-%Y")
-    valid_until_date = (datetime.datetime.today() + datetime.timedelta(days=30)).strftime("%d-%m-%Y")
+    if compagnie == "SANAD":
+        # Format today's date and the date 30 days from now
+        today_date = datetime.datetime.today().strftime("%d-%m-%Y")
+        valid_until_date = (datetime.datetime.today() + datetime.timedelta(days=30)).strftime("%d-%m-%Y")
 
-    # Correctly replace the placeholder for full name
-    html_code = html_code.replace('id="full_name">Placeholder</span>', f'id="full_name">{list_members[0][0].capitalize() + " " + list_members[0][1].capitalize()}</span>')
-    html_code = html_code.replace('<td id="devis-number">Placeholder</td>', f'<td id="devis-number">{id_devis}</td>')
-    html_code = html_code.replace('<td id="issued-date">Placeholder</td>', f'<td id="issued-date">{today_date}</td>')
-    html_code = html_code.replace('<td id="valid-until-date">Placeholder</td>', f'<td id="valid-until-date">{valid_until_date}</td>')
+        # Correctly replace the placeholder for full name
+        html_code = html_code.replace('id="full_name">Placeholder</span>',
+                                      f'id="full_name">{list_members[0][0].capitalize()} {list_members[0][1].capitalize()}</span>')
+        html_code = html_code.replace('<td id="devis-number">Placeholder</td>',
+                                      f'<td id="devis-number">{id_devis}</td>')
+        html_code = html_code.replace('<td id="issued-date">Placeholder</td>',
+                                      f'<td id="issued-date">{today_date}</td>')
+        html_code = html_code.replace('<td id="valid-until-date">Placeholder</td>',
+                                      f'<td id="valid-until-date">{valid_until_date}</td>')
 
-    # Insert family members' information
-    members_html = ''
-    for i, member in enumerate(list_members):
-        year, month, day = str(member[2]).split("-")
-        date_reformatted = f"{day[:2]}-{month}-{year}"
-        relation = member[3]
-        members_html += f'<tr><td>{relation}</td><td>{date_reformatted}</td></tr>'
+        # Insert family members' information
+        members_html = ''
+        for i, member in enumerate(list_members):
+            year, month, day = str(member[2]).split("-")
+            date_reformatted = f"{day[:2]}-{month}-{year}"
+            relation = member[3]
+            members_html += f'<tr><td>{relation}</td><td>{date_reformatted}</td></tr>'
 
-    html_code = html_code.replace('<!-- Placeholder for Members Information -->', members_html)
+        html_code = html_code.replace('<!-- Placeholder for Members Information -->', members_html)
 
-    # Define labels for the premium options
-    labels = [
-        "Montant TTC annuel",
-        "Montant TTC semestriel",
-        "Montant TTC trimestriel",
-        "Montant TTC mensuel"
-    ]
+        # Define labels for the SANAD premium options
+        labels = [
+            "Montant TTC annuel - Max 50 000DH",
+            "Montant TTC annuel - Max 100 000DH"
+        ]
 
-    premiums_html = ''
-    for i in range(df_premiums.shape[0]):
-        row_html = f'<tr><td class="dark-blue"><strong>{labels[i]}</strong></td>'
-        for j in range(df_premiums.shape[1]):
-            cell_value = df_premiums.iloc[i, j]
-            # Apply dark blue to specific percentages
-            if cell_value in ["80%", "90%"]:  # Assuming you want to add "85%" if it exists
-                row_html += f'<td class="dark-blue">{cell_value}</td>'
-            else:
+        premiums_html = ''
+        for i in range(df_premiums.shape[0]):
+            row_html = f'<tr><td class="dark-blue"><strong>{labels[i]}</strong></td>'
+            for j in range(df_premiums.shape[1]):
+                cell_value = df_premiums.iloc[i, j]
                 row_html += f'<td>{cell_value}</td>'
-        row_html += '</tr>'
-        premiums_html += row_html
+            row_html += '</tr>'
+            premiums_html += row_html
 
-    html_code = html_code.replace('<!-- Placeholder for Premiums Information -->', premiums_html)
+        html_code = html_code.replace('<!-- Placeholder for Premiums Information -->', premiums_html)
 
     return html_code
 

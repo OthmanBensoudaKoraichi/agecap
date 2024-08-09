@@ -14,8 +14,8 @@ def main():
     if 'handler' not in st.session_state:
         st.session_state.handler = ['auto']
 
-    if 'message_sent' not in st.session_state:
-        st.session_state.message_sent = False
+    if 'index' not in st.session_state:
+        st.session_state.index = "agecap"
 
     if len(st.session_state.handler) > 0:
         state = st.session_state.handler.pop(0)
@@ -54,7 +54,7 @@ def main():
     ### FORM ###
     form_handling.process_form_submission(credentials=credentials_path, workbook=workbook)
 
-    chatbot.display_chat_buttons(workbook = workbook,message_sent = st.session_state.message_sent)
+    chatbot.display_chat_buttons(workbook = workbook, index = st.session_state.index)
 
 
 

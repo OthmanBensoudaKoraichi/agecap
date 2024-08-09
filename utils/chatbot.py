@@ -77,8 +77,6 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
     if 'id_devis' not in st.session_state:
         st.session_state.id_devis = None
 
-    if 'message_sent' not in st.session_state:
-        st.session_state.message_sent = False
 
     # Check if chat history exists in session state
     if "messages" not in st.session_state:
@@ -113,7 +111,7 @@ def handle_chat_interaction(qa, vectorstore, context, bot_avatar, user_avatar, w
 
 
 
-def set_chatbot_style(message_sent):
+def set_chatbot_style():
 
     # This function now sets the style within the sidebar
     with st.sidebar:
@@ -207,7 +205,8 @@ def set_chatbot_style(message_sent):
         """.format(hero_path=config.hero_path), unsafe_allow_html=True)
 
 
-def display_chat_buttons(workbook,message_sent) :
+
+def display_chat_buttons(workbook,index = "agecap") :
     float_init()
     # Container with expand/collapse button
     button_chat = st.container()
@@ -337,12 +336,43 @@ def display_chat_buttons(workbook,message_sent) :
 
     ### CHATBOT ###
     with st.sidebar:
-        # Set the style : Banner and hero
-        set_chatbot_style(message_sent=message_sent)
-        # Initialize the chatbot
-        qa, vectorstore = initialize_chatbot(openaikey=st.secrets["openaikey"],
-                                                     pineconekey=st.secrets["pineconekey"], index_name="agecap")
 
-        # Handle chat interactions
-        handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar,
-                                        workbook)
+        # Set the style : Banner and hero
+        set_chatbot_style()
+
+        # Initialize session state variables if they don't exist
+        if 'index' not in st.session_state:
+            st.session_state.index = "agecap"
+
+        if 'index_chosen' not in st.session_state:
+            st.session_state['index_chosen'] = False
+
+        if st.session_state.index_chosen == False:
+            st.info("Avant de chatter, veuillez indiquer si un membre de votre famille a plus de 60 ans : ")
+
+            # Display buttons
+            col1, col2 = st.columns(2)
+
+            with col1:
+                if st.button("Oui", key="button_oui", use_container_width=True):
+                    st.session_state['index'] = "agecap"
+                    st.session_state['index_chosen'] = True
+                    st.rerun()
+
+            with col2:
+                if st.button("Non", key="button_non", use_container_width=True):
+                    st.session_state['index'] = "sanad"
+                    st.session_state['index_chosen'] = True
+                    st.rerun()
+
+        # After setting the index, initialize the chatbot
+        if st.session_state.get('index_chosen'):
+            # Initialize the chatbot
+            qa, vectorstore = initialize_chatbot(
+                openaikey=st.secrets["openaikey"],
+                pineconekey=st.secrets["pineconekey"],
+                index_name=st.session_state['index']
+            )
+
+            # Handle chat interactions
+            handle_chat_interaction(qa, vectorstore, config.context, config.bot_avatar, config.user_avatar, workbook)
