@@ -2,7 +2,7 @@ import datetime
 
 
 # Function to find the age group from an age
-def find_age_group(age, relation, primes_df, compagnie = "AXA"):
+def find_age_group(age, relation, primes_df, compagnie):
     """Find the corresponding age group for a given age and relation."""
     if compagnie == "AXA":
 
@@ -33,7 +33,7 @@ def calculate_age(dob):
     return age
 
 # Function to calculate each premium
-def calculate_family_premiums(family_dobs, relation_types, primes_df, coefficients_df, compagnie = "AXA"):
+def calculate_family_premiums(family_dobs, relation_types, primes_df, coefficients_df, compagnie):
     if compagnie == "AXA":
         family_premiums = []
         first_dob = True  # Flag to check if it's the first dob

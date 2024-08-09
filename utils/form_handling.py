@@ -305,10 +305,10 @@ def process_form_submission(credentials,workbook):
                         )
 
                     if compagnie == "SANAD":
-                        primes = pd.read_excel(config.primes_and_coef["SANAD"], sheet_name="primes")
+                        primes = pd.read_excel(config.primes_and_coef["SANAD"], sheet_name="Sheet1")
                         # Calculate premiums
                         family_premiums = calculation.calculate_family_premiums(
-                            family_dobs,relation_types, primes, compagnie
+                            family_dobs, primes, compagnie
                         )
 
                     # Sum premiums
